@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Bright Star International School</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e3a5f',
+                        secondary: '#f59e0b',
+                        accent: '#0ea5e9',
+                        dark: '#0f172a'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Navigation -->
+    <nav class="bg-primary text-white sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-secondary rounded-full flex items-center justify-center">
+                        <i class="fas fa-star text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold">BRIGHT STAR</h1>
+                        <p class="text-xs text-gray-300">International School</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex space-x-6">
+                    <a href="/" class="hover:text-secondary transition">Home</a>
+                    <a href="/about" class="hover:text-secondary transition">About</a>
+                    <a href="/admissions" class="hover:text-secondary transition">Admissions</a>
+                    <a href="/gallery" class="hover:text-secondary transition">Gallery</a>
+                    <a href="/contact" class="text-secondary font-semibold">Contact</a>
+                    <a href="/login" class="bg-secondary px-4 py-2 rounded-lg hover:bg-yellow-600 transition">Login</a>
+                </div>
+                <button id="mobileMenuBtn" class="md:hidden text-2xl"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+        <div id="mobileMenu" class="hidden md:hidden bg-primary border-t border-gray-600">
+            <div class="px-4 py-3 space-y-3">
+                <a href="/" class="block hover:text-secondary">Home</a>
+                <a href="/about" class="block hover:text-secondary">About</a>
+                <a href="/admissions" class="block hover:text-secondary">Admissions</a>
+                <a href="/gallery" class="block hover:text-secondary">Gallery</a>
+                <a href="/contact" class="block text-secondary">Contact</a>
+                <a href="/login" class="block bg-secondary px-4 py-2 rounded-lg text-center">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="bg-gradient-to-r from-primary to-accent text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h1 class="text-4xl font-bold mb-4">Contact Us</h1>
+            <p class="text-xl text-gray-200">We'd Love to Hear From You</p>
+        </div>
+    </section>
+
+    <!-- Contact Info & Form -->
+    <section class="py-16">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid lg:grid-cols-2 gap-12">
+                <!-- Contact Information -->
+                <div>
+                    <h2 class="text-3xl font-bold text-primary mb-6">Get In Touch</h2>
+                    <p class="text-gray-600 mb-8">Have questions about admissions, programs, or anything else? We're here to help.</p>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-secondary rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-map-marker-alt text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-primary">Address</h4>
+                                <p class="text-gray-600">123 Education Avenue, Ikeja, Lagos State, Nigeria</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-accent rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-phone text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-primary">Phone</h4>
+                                <p class="text-gray-600">+234 801 234 5678</p>
+                                <p class="text-gray-600">+234 809 876 5432</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-envelope text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-primary">Email</h4>
+                                <p class="text-gray-600">info@brightstarschool.edu.ng</p>
+                                <p class="text-gray-600">admissions@brightstarschool.edu.ng</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-clock text-white"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-primary">Office Hours</h4>
+                                <p class="text-gray-600">Monday - Friday: 8:00 AM - 4:00 PM</p>
+                                <p class="text-gray-600">Saturday: 9:00 AM - 12:00 PM</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social Media -->
+                    <div class="mt-8">
+                        <h4 class="font-bold text-primary mb-4">Follow Us</h4>
+                        <div class="flex space-x-4">
+                            <a href="#" class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white hover:bg-secondary transition">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white hover:bg-secondary transition">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white hover:bg-secondary transition">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white hover:bg-secondary transition">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white hover:bg-secondary transition">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="bg-white rounded-2xl shadow-lg p-8">
+                    <h3 class="text-2xl font-bold text-primary mb-6">Send Us a Message</h3>
+                    <form id="contactForm" onsubmit="submitContact(event)" class="space-y-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">First Name</label>
+                                <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Last Name</label>
+                                <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Email</label>
+                            <input type="email" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Phone</label>
+                            <input type="tel" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Subject</label>
+                            <select class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option value="">Select a subject</option>
+                                <option>Admission Inquiry</option>
+                                <option>Fee Structure</option>
+                                <option>Academic Programs</option>
+                                <option>School Visit</option>
+                                <option>General Inquiry</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Message</label>
+                            <textarea rows="5" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent" required></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary/90 transition">
+                            <i class="fas fa-paper-plane mr-2"></i>Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="h-96 bg-gray-200">
+        <div class="w-full h-full bg-gradient-to-r from-primary/20 to-accent/20 flex items-center justify-center">
+            <div class="text-center">
+                <i class="fas fa-map-marked-alt text-primary text-6xl mb-4"></i>
+                <p class="text-gray-600 font-semibold">Interactive Map Coming Soon</p>
+                <p class="text-gray-500 text-sm">123 Education Avenue, Ikeja, Lagos</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center">
+                            <i class="fas fa-star text-white"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold">BRIGHT STAR</h3>
+                            <p class="text-xs text-gray-400">International School</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm">Nurturing Excellence, Building Future Leaders since 2005.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="/" class="hover:text-secondary">Home</a></li>
+                        <li><a href="/about" class="hover:text-secondary">About Us</a></li>
+                        <li><a href="/admissions" class="hover:text-secondary">Admissions</a></li>
+                        <li><a href="/gallery" class="hover:text-secondary">Gallery</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Portal</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="/login?role=student" class="hover:text-secondary">Student Portal</a></li>
+                        <li><a href="/login?role=teacher" class="hover:text-secondary">Teacher Portal</a></li>
+                        <li><a href="/login?role=admin" class="hover:text-secondary">Admin Portal</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Contact Us</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><i class="fas fa-map-marker-alt mr-2"></i>123 Education Avenue, Lagos</li>
+                        <li><i class="fas fa-phone mr-2"></i>+234 801 234 5678</li>
+                        <li><i class="fas fa-envelope mr-2"></i>info@brightstarschool.edu.ng</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
+                <p>&copy; 2026 Bright Star International School. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+    <script>
+        function submitContact(event) {
+            event.preventDefault();
+            alert('Thank you for your message! We will get back to you soon.');
+            event.target.reset();
+        }
+    </script>
+</body>
+</html>

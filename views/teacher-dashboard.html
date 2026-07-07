@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - Bright Star International School</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e3a5f',
+                        secondary: '#f59e0b',
+                        accent: '#0ea5e9',
+                        dark: '#0f172a'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; }
+        .sidebar { width: 260px; }
+        .sidebar.closed { width: 70px; }
+        .sidebar.closed .sidebar-text { display: none; }
+        .sidebar.closed + .main-content { margin-left: 70px; }
+        .nav-item.active { background: rgba(245, 158, 11, 0.1); border-right: 3px solid #f59e0b; }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); position: fixed; z-index: 50; }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0 !important; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar bg-primary text-white h-screen fixed left-0 top-0 overflow-y-auto transition-all duration-300">
+        <div class="p-4">
+            <div class="flex items-center space-x-3 mb-8">
+                <div class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center">
+                    <i class="fas fa-star text-white"></i>
+                </div>
+                <div class="sidebar-text">
+                    <h2 class="font-bold text-sm">BRIGHT STAR</h2>
+                    <p class="text-xs text-gray-300">Teacher Portal</p>
+                </div>
+            </div>
+            <nav class="space-y-2">
+                <a href="#" onclick="showSection('dashboard')" class="nav-item active flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
+                    <i class="fas fa-home w-5"></i><span class="sidebar-text">Dashboard</span>
+                </a>
+                <a href="#" onclick="showSection('myclasses')" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
+                    <i class="fas fa-chalkboard w-5"></i><span class="sidebar-text">My Classes</span>
+                </a>
+                <a href="#" onclick="showSection('results')" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
+                    <i class="fas fa-file-upload w-5"></i><span class="sidebar-text">Upload Results</span>
+                </a>
+                <a href="#" onclick="showSection('attendance')" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
+                    <i class="fas fa-check-double w-5"></i><span class="sidebar-text">Attendance</span>
+                </a>
+                <a href="#" onclick="showSection('assignments')" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
+                    <i class="fas fa-tasks w-5"></i><span class="sidebar-text">Assignments</span>
+                </a>
+                <a href="#" onclick="showSection('announcements')" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
+                    <i class="fas fa-bullhorn w-5"></i><span class="sidebar-text">Announcements</span>
+                </a>
+                <div class="border-t border-gray-600 my-4"></div>
+                <a href="#" onclick="logout()" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-red-500/20 transition text-red-400">
+                    <i class="fas fa-sign-out-alt w-5"></i><span class="sidebar-text">Logout</span>
+                </a>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content ml-0 md:ml-[260px] transition-all duration-300">
+        <header class="bg-white shadow-sm sticky top-0 z-40">
+            <div class="flex items-center justify-between px-6 py-4">
+                <button onclick="toggleSidebar()" class="md:hidden text-primary text-xl"><i class="fas fa-bars"></i></button>
+                <h1 class="text-xl font-bold text-primary">Teacher Dashboard</h1>
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-accent rounded-full flex items-center justify-center">
+                        <i class="fas fa-chalkboard-teacher text-white"></i>
+                    </div>
+                    <div class="sidebar-text">
+                        <p id="teacherName" class="font-semibold text-sm">Teacher</p>
+                        <p class="text-xs text-gray-500">Teacher</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="p-6">
+            <!-- Dashboard Section -->
+            <div id="dashboardSection" class="section">
+                <h2 class="text-2xl font-bold text-primary mb-6">Welcome, <span id="teacherFirstName">Teacher</span>!</h2>
+                
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">My Students</p>
+                                <p class="text-3xl font-bold text-primary">45</p>
+                            </div>
+                            <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-users text-blue-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Classes</p>
+                                <p class="text-3xl font-bold text-primary">3</p>
+                            </div>
+                            <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-chalkboard text-green-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Subjects</p>
+                                <p class="text-3xl font-bold text-primary">2</p>
+                            </div>
+                            <div class="w-14 h-14 bg-yellow-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-book text-yellow-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Pending Tasks</p>
+                                <p class="text-3xl font-bold text-primary">5</p>
+                            </div>
+                            <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-clipboard-list text-purple-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="grid md:grid-cols-3 gap-6 mb-6">
+                    <div onclick="showSection('results')" class="bg-gradient-to-r from-primary to-accent rounded-xl p-6 text-white cursor-pointer hover:shadow-lg transition">
+                        <i class="fas fa-file-upload text-3xl mb-3"></i>
+                        <h3 class="font-bold text-lg">Upload Results</h3>
+                        <p class="text-white/80 text-sm">Upload examination scores for your subjects</p>
+                    </div>
+                    <div onclick="showSection('attendance')" class="bg-gradient-to-r from-secondary to-orange-500 rounded-xl p-6 text-white cursor-pointer hover:shadow-lg transition">
+                        <i class="fas fa-check-double text-3xl mb-3"></i>
+                        <h3 class="font-bold text-lg">Mark Attendance</h3>
+                        <p class="text-white/80 text-sm">Record student attendance for today</p>
+                    </div>
+                    <div onclick="showSection('assignments')" class="bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl p-6 text-white cursor-pointer hover:shadow-lg transition">
+                        <i class="fas fa-tasks text-3xl mb-3"></i>
+                        <h3 class="font-bold text-lg">Post Assignment</h3>
+                        <p class="text-white/80 text-sm">Create new assignments for students</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- My Classes Section -->
+            <div id="myclassesSection" class="section hidden">
+                <h2 class="text-2xl font-bold text-primary mb-6">My Classes</h2>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="font-bold text-primary text-lg mb-2">SS1A</h3>
+                        <p class="text-gray-600 mb-4">30 Students</p>
+                        <p class="text-sm text-gray-500"><i class="fas fa-book mr-1"></i> Mathematics</p>
+                        <button class="mt-4 text-accent hover:underline text-sm">View Students <i class="fas fa-arrow-right ml-1"></i></button>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="font-bold text-primary text-lg mb-2">SS1B</h3>
+                        <p class="text-gray-600 mb-4">28 Students</p>
+                        <p class="text-sm text-gray-500"><i class="fas fa-book mr-1"></i> Mathematics</p>
+                        <button class="mt-4 text-accent hover:underline text-sm">View Students <i class="fas fa-arrow-right ml-1"></i></button>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="font-bold text-primary text-lg mb-2">SS2A</h3>
+                        <p class="text-gray-600 mb-4">32 Students</p>
+                        <p class="text-sm text-gray-500"><i class="fas fa-book mr-1"></i> Further Mathematics</p>
+                        <button class="mt-4 text-accent hover:underline text-sm">View Students <i class="fas fa-arrow-right ml-1"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload Results Section -->
+            <div id="resultsSection" class="section hidden">
+                <h2 class="text-2xl font-bold text-primary mb-6">Upload Results</h2>
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <form class="space-y-4">
+                        <div class="grid md:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Class</label>
+                                <select class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                                    <option>SS1A</option><option>SS1B</option><option>SS2A</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Subject</label>
+                                <select class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                                    <option>Mathematics</option><option>Further Mathematics</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Session</label>
+                                <select class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                                    <option>2025/2026</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Term</label>
+                                <select class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                                    <option>First Term</option><option selected>Second Term</option><option>Third Term</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="button" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/90">
+                            <i class="fas fa-search mr-2"></i>Load Students
+                        </button>
+                    </form>
+                    
+                    <div class="mt-6 overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-sm">Name</th>
+                                    <th class="px-4 py-3 text-center text-sm">CA1 (20)</th>
+                                    <th class="px-4 py-3 text-center text-sm">CA2 (20)</th>
+                                    <th class="px-4 py-3 text-center text-sm">Exam (60)</th>
+                                    <th class="px-4 py-3 text-center text-sm">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <tr>
+                                    <td class="px-4 py-3 text-sm">Chukwuemeka Okonkwo</td>
+                                    <td class="px-4 py-3 text-center"><input type="number" class="w-20 border rounded px-2 py-1 text-center" min="0" max="20"></td>
+                                    <td class="px-4 py-3 text-center"><input type="number" class="w-20 border rounded px-2 py-1 text-center" min="0" max="20"></td>
+                                    <td class="px-4 py-3 text-center"><input type="number" class="w-20 border rounded px-2 py-1 text-center" min="0" max="60"></td>
+                                    <td class="px-4 py-3 text-center font-bold">-</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3 text-sm">Amina Ibrahim</td>
+                                    <td class="px-4 py-3 text-center"><input type="number" class="w-20 border rounded px-2 py-1 text-center" min="0" max="20"></td>
+                                    <td class="px-4 py-3 text-center"><input type="number" class="w-20 border rounded px-2 py-1 text-center" min="0" max="20"></td>
+                                    <td class="px-4 py-3 text-center"><input type="number" class="w-20 border rounded px-2 py-1 text-center" min="0" max="60"></td>
+                                    <td class="px-4 py-3 text-center font-bold">-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <button class="bg-secondary text-white px-6 py-2 rounded-lg hover:bg-yellow-600">
+                            <i class="fas fa-save mr-2"></i>Save Results
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attendance Section -->
+            <div id="attendanceSection" class="section hidden">
+                <h2 class="text-2xl font-bold text-primary mb-6">Mark Attendance</h2>
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="grid md:grid-cols-3 gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Class</label>
+                            <select class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                                <option>SS1A</option><option>SS1B</option><option>SS2A</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Date</label>
+                            <input type="date" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                        </div>
+                        <div class="flex items-end">
+                            <button class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/90">
+                                <i class="fas fa-search mr-2"></i>Load Students
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="font-medium">Chukwuemeka Okonkwo</span>
+                            <div class="flex space-x-2">
+                                <label class="flex items-center"><input type="radio" name="att_1" value="present" class="mr-1"> Present</label>
+                                <label class="flex items-center"><input type="radio" name="att_1" value="absent" class="mr-1"> Absent</label>
+                                <label class="flex items-center"><input type="radio" name="att_1" value="late" class="mr-1"> Late</label>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <span class="font-medium">Amina Ibrahim</span>
+                            <div class="flex space-x-2">
+                                <label class="flex items-center"><input type="radio" name="att_2" value="present" class="mr-1"> Present</label>
+                                <label class="flex items-center"><input type="radio" name="att_2" value="absent" class="mr-1"> Absent</label>
+                                <label class="flex items-center"><input type="radio" name="att_2" value="late" class="mr-1"> Late</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex justify-end">
+                        <button class="bg-secondary text-white px-6 py-2 rounded-lg hover:bg-yellow-600">
+                            <i class="fas fa-save mr-2"></i>Save Attendance
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assignments Section -->
+            <div id="assignmentsSection" class="section hidden">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-primary">Assignments</h2>
+                    <button onclick="openModal('addAssignmentModal')" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition">
+                        <i class="fas fa-plus mr-2"></i>New Assignment
+                    </button>
+                </div>
+                <div class="space-y-4">
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded">Mathematics</span>
+                                <h3 class="text-lg font-bold text-primary mt-2">Quadratic Equations Worksheet</h3>
+                                <p class="text-gray-600 mt-2">Solve all 20 problems on quadratic equations.</p>
+                                <p class="text-sm text-gray-500 mt-2">Class: SS1A | Due: July 15, 2026</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-gray-500 text-sm">15 submissions</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Announcements Section -->
+            <div id="announcementsSection" class="section hidden">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-primary">Post Announcement</h2>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <form class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Title</label>
+                            <input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Content</label>
+                            <textarea rows="4" class="w-full border border-gray-300 rounded-lg px-4 py-2"></textarea>
+                        </div>
+                        <button type="button" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/90">
+                            <i class="fas fa-paper-plane mr-2"></i>Post Announcement
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/teacher-dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Bright Star International School</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e3a5f',
+                        secondary: '#f59e0b',
+                        accent: '#0ea5e9',
+                        dark: '#0f172a'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; }
+        .sidebar { width: 260px; }
+        .sidebar.closed { width: 70px; }
+        .sidebar.closed .sidebar-text { display: none; }
+        .sidebar.closed + .main-content { margin-left: 70px; }
+        .nav-item.active { background: rgba(245, 158, 11, 0.1); border-right: 3px solid #f59e0b; }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); position: fixed; z-index: 50; }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0 !important; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar bg-primary text-white h-screen fixed left-0 top-0 overflow-y-auto transition-all duration-300">
+        <div class="p-4">
+            <div class="flex items-center space-x-3 mb-8">
+                <div class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center">
+                    <i class="fas fa-star text-white"></i>
+                </div>
+                <div class="sidebar-text">
+                    <h2 class="font-bold text-sm">BRIGHT STAR</h2>
+                    <p class="text-xs text-gray-300">Student Portal</p>
+                </div>
+            </div>
+            <nav class="space-y-2">
+                <a href="#" onclick="showSection('dashboard')" class="nav-item active flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
+                    <i class="fas fa-home w-5"></i>
+                    <span class="sidebar-text">Dashboard</span>
+                </a>
+                <a href="#" onclick="showSection('profile')" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
+                    <i class="fas fa-user w-5"></i>
+                    <span class="sidebar-text">My Profile</span>
+                </a>
+                <a href="#" onclick="showSection('results')" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
+                    <i class="fas fa-file-alt w-5"></i>
+                    <span class="sidebar-text">Results</span>
+                </a>
+                <a href="#" onclick="showSection('timetable')" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
+                    <i class="fas fa-calendar w-5"></i>
+                    <span class="sidebar-text">Timetable</span>
+                </a>
+                <a href="#" onclick="showSection('assignments')" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
+                    <i class="fas fa-tasks w-5"></i>
+                    <span class="sidebar-text">Assignments</span>
+                </a>
+                <a href="#" onclick="showSection('attendance')" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
+                    <i class="fas fa-check-circle w-5"></i>
+                    <span class="sidebar-text">Attendance</span>
+                </a>
+                <a href="#" onclick="showSection('fees')" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
+                    <i class="fas fa-money-bill w-5"></i>
+                    <span class="sidebar-text">Fees</span>
+                </a>
+                <a href="#" onclick="showSection('announcements')" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
+                    <i class="fas fa-bullhorn w-5"></i>
+                    <span class="sidebar-text">Announcements</span>
+                </a>
+                <div class="border-t border-gray-600 my-4"></div>
+                <a href="#" onclick="showSection('settings')" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
+                    <i class="fas fa-cog w-5"></i>
+                    <span class="sidebar-text">Settings</span>
+                </a>
+                <a href="#" onclick="logout()" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-red-500/20 transition text-red-400">
+                    <i class="fas fa-sign-out-alt w-5"></i>
+                    <span class="sidebar-text">Logout</span>
+                </a>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content ml-0 md:ml-[260px] transition-all duration-300">
+        <!-- Top Bar -->
+        <header class="bg-white shadow-sm sticky top-0 z-40">
+            <div class="flex items-center justify-between px-6 py-4">
+                <button onclick="toggleSidebar()" class="md:hidden text-primary text-xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" placeholder="Search..." class="pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent w-64">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="relative text-gray-500 hover:text-primary">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+                    </button>
+                    <div class="flex items-center space-x-2">
+                        <div id="userAvatar" class="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-white"></i>
+                        </div>
+                        <div class="sidebar-text">
+                            <p id="userName" class="font-semibold text-sm">Student Name</p>
+                            <p id="userRole" class="text-xs text-gray-500">Student</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <main class="p-6">
+            <!-- Dashboard Section -->
+            <div id="dashboardSection" class="section">
+                <h2 class="text-2xl font-bold text-primary mb-6">Welcome Back, <span id="studentFirstName">Student</span>!</h2>
+                
+                <!-- Profile Card -->
+                <div class="bg-gradient-to-r from-primary to-accent rounded-2xl p-6 mb-6 text-white">
+                    <div class="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
+                        <div id="dashAvatar" class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-4xl"></i>
+                        </div>
+                        <div class="text-center md:text-left flex-1">
+                            <h3 id="dashName" class="text-2xl font-bold">Student Name</h3>
+                            <p id="dashAdmission" class="text-white/80">Admission No: BSS/2026/001</p>
+                            <div class="flex flex-wrap justify-center md:justify-start gap-4 mt-3">
+                                <span class="bg-white/20 px-3 py-1 rounded-full text-sm"><i class="fas fa-school mr-1"></i> <span id="dashClass">SS1</span></span>
+                                <span class="bg-white/20 px-3 py-1 rounded-full text-sm"><i class="fas fa-calendar mr-1"></i> <span id="dashSession">2025/2026</span></span>
+                                <span class="bg-white/20 px-3 py-1 rounded-full text-sm"><i class="fas fa-clock mr-1"></i> <span id="dashTerm">Second Term</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-white rounded-xl p-4 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Attendance</p>
+                                <p id="attendanceRate" class="text-2xl font-bold text-primary">85%</p>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Total Assignments</p>
+                                <p class="text-2xl font-bold text-primary">12</p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-tasks text-blue-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Average Score</p>
+                                <p id="avgScore" class="text-2xl font-bold text-primary">75%</p>
+                            </div>
+                            <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-chart-line text-yellow-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Class Position</p>
+                                <p id="classPosition" class="text-2xl font-bold text-primary">5th</p>
+                            </div>
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-trophy text-purple-600 text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Navigation -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <a href="#" onclick="showSection('results')" class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition text-center group">
+                        <div class="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/20 transition">
+                            <i class="fas fa-file-alt text-primary text-xl"></i>
+                        </div>
+                        <p class="font-semibold text-gray-700">Results</p>
+                    </a>
+                    <a href="#" onclick="showSection('timetable')" class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition text-center group">
+                        <div class="w-14 h-14 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-secondary/20 transition">
+                            <i class="fas fa-calendar text-secondary text-xl"></i>
+                        </div>
+                        <p class="font-semibold text-gray-700">Timetable</p>
+                    </a>
+                    <a href="#" onclick="showSection('assignments')" class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition text-center group">
+                        <div class="w-14 h-14 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-accent/20 transition">
+                            <i class="fas fa-tasks text-accent text-xl"></i>
+                        </div>
+                        <p class="font-semibold text-gray-700">Assignments</p>
+                    </a>
+                    <a href="#" onclick="showSection('fees')" class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition text-center group">
+                        <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-green-200 transition">
+                            <i class="fas fa-money-bill text-green-600 text-xl"></i>
+                        </div>
+                        <p class="font-semibold text-gray-700">Fees</p>
+                    </a>
+                </div>
+
+                <!-- Announcements -->
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h3 class="text-lg font-bold text-primary mb-4"><i class="fas fa-bullhorn mr-2 text-secondary"></i> Recent Announcements</h3>
+                    <div id="recentAnnouncements" class="space-y-4">
+                        <div class="border-l-4 border-secondary pl-4 py-2">
+                            <p class="font-semibold text-gray-700">Second Term Examinations</p>
+                            <p class="text-gray-500 text-sm">Examinations will commence from July 20th. All students are advised to prepare adequately.</p>
+                            <p class="text-gray-400 text-xs mt-1"><i class="fas fa-clock mr-1"></i> 2 days ago</p>
+                        </div>
+                        <div class="border-l-4 border-accent pl-4 py-2">
+                            <p class="font-semibold text-gray-700">Inter-House Sports Competition</p>
+                            <p class="text-gray-500 text-sm">Annual sports competition will hold on July 15th. Students should come in their house uniforms.</p>
+                            <p class="text-gray-400 text-xs mt-1"><i class="fas fa-clock mr-1"></i> 5 days ago</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultsSection" class="section hidden">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-primary">Academic Results</h2>
+                    <button onclick="downloadReportCard()" class="bg-secondary text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition">
+                        <i class="fas fa-download mr-2"></i>Download Report Card
+                    </button>
+                </div>
+
+                <!-- Session/Term Selection -->
+                <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
+                    <div class="flex flex-wrap gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Session</label>
+                            <select id="resultSession" class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary">
+                                <option>2025/2026</option>
+                                <option>2024/2025</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Term</label>
+                            <select id="resultTerm" class="border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary">
+                                <option>First Term</option>
+                                <option selected>Second Term</option>
+                                <option>Third Term</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <button onclick="loadResults()" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/90 transition">
+                                <i class="fas fa-search mr-2"></i>View Results
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Table -->
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+                    <table class="w-full">
+                        <thead class="bg-primary text-white">
+                            <tr>
+                                <th class="px-6 py-3 text-left">Subject</th>
+                                <th class="px-4 py-3 text-center">CA1 (20)</th>
+                                <th class="px-4 py-3 text-center">CA2 (20)</th>
+                                <th class="px-4 py-3 text-center">Exam (60)</th>
+                                <th class="px-4 py-3 text-center">Total</th>
+                                <th class="px-4 py-3 text-center">Grade</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTable" class="divide-y divide-gray-100">
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium">Mathematics</td>
+                                <td class="px-4 py-4 text-center">18</td>
+                                <td class="px-4 py-4 text-center">17</td>
+                                <td class="px-4 py-4 text-center">52</td>
+                                <td class="px-4 py-4 text-center font-bold">87</td>
+                                <td class="px-4 py-4 text-center"><span class="bg-green-100 text-green-700 px-2 py-1 rounded">A</span></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium">English Language</td>
+                                <td class="px-4 py-4 text-center">16</td>
+                                <td class="px-4 py-4 text-center">15</td>
+                                <td class="px-4 py-4 text-center">45</td>
+                                <td class="px-4 py-4 text-center font-bold">76</td>
+                                <td class="px-4 py-4 text-center"><span class="bg-green-100 text-green-700 px-2 py-1 rounded">A</span></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium">Physics</td>
+                                <td class="px-4 py-4 text-center">15</td>
+                                <td class="px-4 py-4 text-center">14</td>
+                                <td class="px-4 py-4 text-center">42</td>
+                                <td class="px-4 py-4 text-center font-bold">71</td>
+                                <td class="px-4 py-4 text-center"><span class="bg-green-100 text-green-700 px-2 py-1 rounded">A</span></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium">Chemistry</td>
+                                <td class="px-4 py-4 text-center">14</td>
+                                <td class="px-4 py-4 text-center">13</td>
+                                <td class="px-4 py-4 text-center">38</td>
+                                <td class="px-4 py-4 text-center font-bold">65</td>
+                                <td class="px-4 py-4 text-center"><span class="bg-blue-100 text-blue-700 px-2 py-1 rounded">B</span></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 font-medium">Biology</td>
+                                <td class="px-4 py-4 text-center">16</td>
+                                <td class="px-4 py-4 text-center">15</td>
+                                <td class="px-4 py-4 text-center">40</td>
+                                <td class="px-4 py-4 text-center font-bold">71</td>
+                                <td class="px-4 py-4 text-center"><span class="bg-green-100 text-green-700 px-2 py-1 rounded">A</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Result Summary -->
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-lg font-bold text-primary mb-4">Summary</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between"><span class="text-gray-600">Total Score:</span><span id="totalScore" class="font-bold">370</span></div>
+                            <div class="flex justify-between"><span class="text-gray-600">Average:</span><span id="averageScore" class="font-bold text-primary">74.00</span></div>
+                            <div class="flex justify-between"><span class="text-gray-600">Class Position:</span><span id="position" class="font-bold text-secondary">5th</span></div>
+                            <div class="flex justify-between"><span class="text-gray-600">Total Subjects:</span><span class="font-bold">5</span></div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h3 class="text-lg font-bold text-primary mb-4">Remarks</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <p class="text-sm text-gray-500">Class Teacher's Remark:</p>
+                                <p class="font-medium text-gray-700">Good performance. Keep it up!</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-500">Principal's Remark:</p>
+                                <p class="font-medium text-gray-700">Excellent effort. Continue to strive for excellence.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Section -->
+            <div id="profileSection" class="section hidden">
+                <h2 class="text-2xl font-bold text-primary mb-6">My Profile</h2>
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex items-center space-x-6 mb-6">
+                        <div id="profileAvatar" class="w-24 h-24 bg-primary rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-white text-3xl"></i>
+                        </div>
+                        <div>
+                            <h3 id="profileName" class="text-xl font-bold text-primary">Student Name</h3>
+                            <p id="profileAdmission" class="text-gray-500">Admission No: BSS/2026/001</p>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-sm text-gray-500">Full Name</label>
+                                <p id="profileFullName" class="font-medium">-</p>
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-500">Class</label>
+                                <p id="profileClass" class="font-medium">-</p>
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-500">Gender</label>
+                                <p id="profileGender" class="font-medium">-</p>
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-500">Date of Birth</label>
+                                <p id="profileDOB" class="font-medium">-</p>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-sm text-gray-500">Email</label>
+                                <p id="profileEmail" class="font-medium">-</p>
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-500">Parent/Guardian</label>
+                                <p id="profileParent" class="font-medium">-</p>
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-500">Parent Phone</label>
+                                <p id="profileParentPhone" class="font-medium">-</p>
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-500">Session</label>
+                                <p id="profileSession" class="font-medium">-</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timetable Section -->
+            <div id="timetableSection" class="section hidden">
+                <h2 class="text-2xl font-bold text-primary mb-6">Class Timetable</h2>
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-primary text-white">
+                                <tr>
+                                    <th class="px-4 py-3 text-left">Time</th>
+                                    <th class="px-4 py-3 text-center">Monday</th>
+                                    <th class="px-4 py-3 text-center">Tuesday</th>
+                                    <th class="px-4 py-3 text-center">Wednesday</th>
+                                    <th class="px-4 py-3 text-center">Thursday</th>
+                                    <th class="px-4 py-3 text-center">Friday</th>
+                                </tr>
+                            </thead>
+                            <tbody id="timetableBody" class="divide-y divide-gray-100">
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-sm">8:00 - 8:40</td>
+                                    <td class="px-4 py-3 text-center text-sm">Mathematics</td>
+                                    <td class="px-4 py-3 text-center text-sm">English</td>
+                                    <td class="px-4 py-3 text-center text-sm">Physics</td>
+                                    <td class="px-4 py-3 text-center text-sm">Chemistry</td>
+                                    <td class="px-4 py-3 text-center text-sm">Biology</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-sm">8:45 - 9:25</td>
+                                    <td class="px-4 py-3 text-center text-sm">English</td>
+                                    <td class="px-4 py-3 text-center text-sm">Mathematics</td>
+                                    <td class="px-4 py-3 text-center text-sm">English</td>
+                                    <td class="px-4 py-3 text-center text-sm">Mathematics</td>
+                                    <td class="px-4 py-3 text-center text-sm">English</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-sm">9:30 - 10:10</td>
+                                    <td class="px-4 py-3 text-center text-sm">Physics</td>
+                                    <td class="px-4 py-3 text-center text-sm">Chemistry</td>
+                                    <td class="px-4 py-3 text-center text-sm">Mathematics</td>
+                                    <td class="px-4 py-3 text-center text-sm">Biology</td>
+                                    <td class="px-4 py-3 text-center text-sm">Physics</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-sm">10:10 - 10:40</td>
+                                    <td class="px-4 py-3 text-center text-sm bg-yellow-50">Break Time</td>
+                                    <td class="px-4 py-3 text-center text-sm bg-yellow-50">Break Time</td>
+                                    <td class="px-4 py-3 text-center text-sm bg-yellow-50">Break Time</td>
+                                    <td class="px-4 py-3 text-center text-sm bg-yellow-50">Break Time</td>
+                                    <td class="px-4 py-3 text-center text-sm bg-yellow-50">Break Time</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-sm">10:40 - 11:20</td>
+                                    <td class="px-4 py-3 text-center text-sm">Chemistry</td>
+                                    <td class="px-4 py-3 text-center text-sm">Biology</td>
+                                    <td class="px-4 py-3 text-center text-sm">Chemistry</td>
+                                    <td class="px-4 py-3 text-center text-sm">Physics</td>
+                                    <td class="px-4 py-3 text-center text-sm">Chemistry</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-sm">11:25 - 12:05</td>
+                                    <td class="px-4 py-3 text-center text-sm">Biology</td>
+                                    <td class="px-4 py-3 text-center text-sm">Physics</td>
+                                    <td class="px-4 py-3 text-center text-sm">Biology</td>
+                                    <td class="px-4 py-3 text-center text-sm">English</td>
+                                    <td class="px-4 py-3 text-center text-sm">Agriculture</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assignments Section -->
+            <div id="assignmentsSection" class="section hidden">
+                <h2 class="text-2xl font-bold text-primary mb-6">Assignments</h2>
+                <div id="assignmentsList" class="space-y-4">
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded">Mathematics</span>
+                                <h3 class="text-lg font-bold text-primary mt-2">Quadratic Equations Worksheet</h3>
+                                <p class="text-gray-600 mt-2">Solve all 20 problems on quadratic equations. Show all working steps.</p>
+                                <p class="text-sm text-gray-500 mt-4"><i class="fas fa-clock mr-1"></i> Due: July 15, 2026</p>
+                            </div>
+                            <span class="bg-yellow-100 text-yellow-700 text-xs px-3 py-1 rounded-full">Pending</span>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded">English</span>
+                                <h3 class="text-lg font-bold text-primary mt-2">Essay Writing Assignment</h3>
+                                <p class="text-gray-600 mt-2">Write a 500-word essay on "The Importance of Education in Modern Society".</p>
+                                <p class="text-sm text-gray-500 mt-4"><i class="fas fa-clock mr-1"></i> Due: July 18, 2026</p>
+                            </div>
+                            <span class="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full">Submitted</span>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <span class="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded">Physics</span>
+                                <h3 class="text-lg font-bold text-primary mt-2">Practical Report</h3>
+                                <p class="text-gray-600 mt-2">Write a detailed report on the electricity practical conducted in class.</p>
+                                <p class="text-sm text-gray-500 mt-4"><i class="fas fa-clock mr-1"></i> Due: July 20, 2026</p>
+                            </div>
+                            <span class="bg-red-100 text-red-700 text-xs px-3 py-1 rounded-full">Overdue</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attendance Section -->
+            <div id="attendanceSection" class="section hidden">
+                <h2 class="text-2xl font-bold text-primary mb-6">Attendance Record</h2>
+                
+                <div class="grid md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-white rounded-xl p-4 shadow-sm text-center">
+                        <p class="text-gray-500 text-sm">Total Days</p>
+                        <p id="totalDays" class="text-3xl font-bold text-primary">120</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm text-center">
+                        <p class="text-gray-500 text-sm">Present</p>
+                        <p id="presentDays" class="text-3xl font-bold text-green-600">108</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm text-center">
+                        <p class="text-gray-500 text-sm">Absent</p>
+                        <p id="absentDays" class="text-3xl font-bold text-red-600">8</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm text-center">
+                        <p class="text-gray-500 text-sm">Attendance %</p>
+                        <p id="attendancePercent" class="text-3xl font-bold text-secondary">90%</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <table class="w-full">
+                        <thead class="bg-primary text-white">
+                            <tr>
+                                <th class="px-6 py-3 text-left">Date</th>
+                                <th class="px-6 py-3 text-center">Status</th>
+                                <th class="px-6 py-3 text-center">Remark</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceTable" class="divide-y divide-gray-100">
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4">July 7, 2026</td>
+                                <td class="px-6 py-4 text-center"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">Present</span></td>
+                                <td class="px-6 py-4 text-center text-gray-500">-</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4">July 4, 2026</td>
+                                <td class="px-6 py-4 text-center"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">Present</span></td>
+                                <td class="px-6 py-4 text-center text-gray-500">-</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4">July 3, 2026</td>
+                                <td class="px-6 py-4 text-center"><span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm">Late</span></td>
+                                <td class="px-6 py-4 text-center text-gray-500">Arrived 15 minutes late</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4">July 2, 2026</td>
+                                <td class="px-6 py-4 text-center"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">Present</span></td>
+                                <td class="px-6 py-4 text-center text-gray-500">-</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4">July 1, 2026</td>
+                                <td class="px-6 py-4 text-center"><span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm">Absent</span></td>
+                                <td class="px-6 py-4 text-center text-gray-500">No remark</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Fees Section -->
+            <div id="feesSection" class="section hidden">
+                <h2 class="text-2xl font-bold text-primary mb-6">School Fees</h2>
+                
+                <div class="grid md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <p class="text-gray-500 text-sm">Total Fee</p>
+                        <p id="totalFee" class="text-3xl font-bold text-primary">₦350,000</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <p class="text-gray-500 text-sm">Amount Paid</p>
+                        <p id="amountPaid" class="text-3xl font-bold text-green-600">₦250,000</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <p class="text-gray-500 text-sm">Balance</p>
+                        <p id="balance" class="text-3xl font-bold text-red-600">₦100,000</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <div class="p-4 border-b">
+                        <h3 class="font-bold text-primary">Payment History</h3>
+                    </div>
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Date</th>
+                                <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Amount</th>
+                                <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Method</th>
+                                <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Reference</th>
+                                <th class="px-6 py-3 text-center text-sm font-semibold text-gray-600">Receipt</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 text-sm">Sep 15, 2025</td>
+                                <td class="px-6 py-4 text-sm font-medium">₦150,000</td>
+                                <td class="px-6 py-4 text-sm">Bank Transfer</td>
+                                <td class="px-6 py-4 text-sm">TRF/2025/001</td>
+                                <td class="px-6 py-4 text-center">
+                                    <button class="text-accent hover:underline text-sm"><i class="fas fa-download mr-1"></i>Download</button>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 text-sm">Jan 10, 2026</td>
+                                <td class="px-6 py-4 text-sm font-medium">₦100,000</td>
+                                <td class="px-6 py-4 text-sm">Cash</td>
+                                <td class="px-6 py-4 text-sm">CSH/2026/001</td>
+                                <td class="px-6 py-4 text-center">
+                                    <button class="text-accent hover:underline text-sm"><i class="fas fa-download mr-1"></i>Download</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Announcements Section -->
+            <div id="announcementsSection" class="section hidden">
+                <h2 class="text-2xl font-bold text-primary mb-6">Announcements</h2>
+                <div id="allAnnouncements" class="space-y-4">
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-secondary rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-exclamation-triangle text-white"></i>
+                            </div>
+                            <div>
+                                <span class="bg-red-100 text-red-700 text-xs px-2 py-1 rounded">Urgent</span>
+                                <h3 class="text-lg font-bold text-primary mt-1">Second Term Examinations</h3>
+                                <p class="text-gray-600 mt-2">Second term examinations will commence from July 20th to August 1st, 2026. All students are advised to prepare adequately. The examination timetable has been released and is available on the portal.</p>
+                                <p class="text-sm text-gray-500 mt-4"><i class="fas fa-clock mr-1"></i> Posted: July 5, 2026</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-accent rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-futbol text-white"></i>
+                            </div>
+                            <div>
+                                <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded">Sports</span>
+                                <h3 class="text-lg font-bold text-primary mt-1">Inter-House Sports Competition</h3>
+                                <p class="text-gray-600 mt-2">Annual inter-house sports competition will hold on July 15th, 2026. Students should come in their respective house uniforms. Registration for various events is ongoing.</p>
+                                <p class="text-sm text-gray-500 mt-4"><i class="fas fa-clock mr-1"></i> Posted: July 2, 2026</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-graduation-cap text-white"></i>
+                            </div>
+                            <div>
+                                <span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded">Academic</span>
+                                <h3 class="text-lg font-bold text-primary mt-1">Graduation Ceremony 2026</h3>
+                                <p class="text-gray-600 mt-2">The graduation ceremony for the class of 2026 will hold on August 5th, 2026. All graduating students and their parents are expected to attend.</p>
+                                <p class="text-sm text-gray-500 mt-4"><i class="fas fa-clock mr-1"></i> Posted: June 28, 2026</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Section -->
+            <div id="settingsSection" class="section hidden">
+                <h2 class="text-2xl font-bold text-primary mb-6">Settings</h2>
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h3 class="text-lg font-bold text-primary mb-4">Change Password</h3>
+                    <form id="changePasswordForm" onsubmit="changePassword(event)" class="max-w-md space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Current Password</label>
+                            <input type="password" id="currentPassword" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">New Password</label>
+                            <input type="password" id="newPassword" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-1">Confirm New Password</label>
+                            <input type="password" id="confirmPassword" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary" required>
+                        </div>
+                        <button type="submit" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/90 transition">
+                            Update Password
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>

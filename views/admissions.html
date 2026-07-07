@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admissions - Bright Star International School</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e3a5f',
+                        secondary: '#f59e0b',
+                        accent: '#0ea5e9',
+                        dark: '#0f172a'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Navigation -->
+    <nav class="bg-primary text-white sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-secondary rounded-full flex items-center justify-center">
+                        <i class="fas fa-star text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold">BRIGHT STAR</h1>
+                        <p class="text-xs text-gray-300">International School</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex space-x-6">
+                    <a href="/" class="hover:text-secondary transition">Home</a>
+                    <a href="/about" class="hover:text-secondary transition">About</a>
+                    <a href="/admissions" class="text-secondary font-semibold">Admissions</a>
+                    <a href="/gallery" class="hover:text-secondary transition">Gallery</a>
+                    <a href="/contact" class="hover:text-secondary transition">Contact</a>
+                    <a href="/login" class="bg-secondary px-4 py-2 rounded-lg hover:bg-yellow-600 transition">Login</a>
+                </div>
+                <button id="mobileMenuBtn" class="md:hidden text-2xl"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+        <div id="mobileMenu" class="hidden md:hidden bg-primary border-t border-gray-600">
+            <div class="px-4 py-3 space-y-3">
+                <a href="/" class="block hover:text-secondary">Home</a>
+                <a href="/about" class="block hover:text-secondary">About</a>
+                <a href="/admissions" class="block text-secondary">Admissions</a>
+                <a href="/gallery" class="block hover:text-secondary">Gallery</a>
+                <a href="/contact" class="block hover:text-secondary">Contact</a>
+                <a href="/login" class="block bg-secondary px-4 py-2 rounded-lg text-center">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="bg-gradient-to-r from-primary to-accent text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h1 class="text-4xl font-bold mb-4">Admissions</h1>
+            <p class="text-xl text-gray-200">Join the Bright Star Family</p>
+        </div>
+    </section>
+
+    <!-- Admission Process -->
+    <section class="py-16">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-primary text-center mb-12">Admission Process</h2>
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-white font-bold text-xl">1</span>
+                    </div>
+                    <h4 class="font-bold text-primary mb-2">Inquiry</h4>
+                    <p class="text-gray-600 text-sm">Visit the school or contact us for admission information</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-white font-bold text-xl">2</span>
+                    </div>
+                    <h4 class="font-bold text-primary mb-2">Application</h4>
+                    <p class="text-gray-600 text-sm">Obtain and complete the admission form</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-white font-bold text-xl">3</span>
+                    </div>
+                    <h4 class="font-bold text-primary mb-2">Entrance Exam</h4>
+                    <p class="text-gray-600 text-sm">Sit for the entrance examination</p>
+                </div>
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-white font-bold text-xl">4</span>
+                    </div>
+                    <h4 class="font-bold text-primary mb-2">Enrollment</h4>
+                    <p class="text-gray-600 text-sm">Complete registration and start classes</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Requirements -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid md:grid-cols-2 gap-12">
+                <div>
+                    <h2 class="text-3xl font-bold text-primary mb-6">Admission Requirements</h2>
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <i class="fas fa-check-circle text-secondary mt-1"></i>
+                            <p class="text-gray-600">Completed admission form</p>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <i class="fas fa-check-circle text-secondary mt-1"></i>
+                            <p class="text-gray-600">Birth certificate or age declaration</p>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <i class="fas fa-check-circle text-secondary mt-1"></i>
+                            <p class="text-gray-600">Previous school report card (if transfer)</p>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <i class="fas fa-check-circle text-secondary mt-1"></i>
+                            <p class="text-gray-600">Four passport photographs</p>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <i class="fas fa-check-circle text-secondary mt-1"></i>
+                            <p class="text-gray-600">Medical fitness certificate</p>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <i class="fas fa-check-circle text-secondary mt-1"></i>
+                            <p class="text-gray-600">Parent/Guardian's ID</p>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-bold text-primary mb-6">School Fees Structure</h2>
+                    <div class="bg-gray-50 rounded-xl overflow-hidden">
+                        <table class="w-full">
+                            <thead class="bg-primary text-white">
+                                <tr>
+                                    <th class="px-6 py-3 text-left">Class</th>
+                                    <th class="px-6 py-3 text-right">Fees (per term)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr><td class="px-6 py-3">JSS1</td><td class="px-6 py-3 text-right font-semibold">₦250,000</td></tr>
+                                <tr><td class="px-6 py-3">JSS2</td><td class="px-6 py-3 text-right font-semibold">₦270,000</td></tr>
+                                <tr><td class="px-6 py-3">JSS3</td><td class="px-6 py-3 text-right font-semibold">₦280,000</td></tr>
+                                <tr><td class="px-6 py-3">SS1</td><td class="px-6 py-3 text-right font-semibold">₦320,000</td></tr>
+                                <tr><td class="px-6 py-3">SS2</td><td class="px-6 py-3 text-right font-semibold">₦340,000</td></tr>
+                                <tr><td class="px-6 py-3">SS3</td><td class="px-6 py-3 text-right font-semibold">₦350,000</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-4">* Fees include tuition, textbooks, and basic materials</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Academic Calendar -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-3xl font-bold text-primary text-center mb-12">Academic Calendar 2025/2026</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-play text-green-600 text-xl"></i>
+                    </div>
+                    <h4 class="font-bold text-primary mb-2">First Term</h4>
+                    <p class="text-gray-600 text-sm">September 8 - December 12, 2025</p>
+                    <p class="text-gray-500 text-xs mt-2">Mid-term break: October 27-31</p>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-arrow-right text-blue-600 text-xl"></i>
+                    </div>
+                    <h4 class="font-bold text-primary mb-2">Second Term</h4>
+                    <p class="text-gray-600 text-sm">January 6 - April 3, 2026</p>
+                    <p class="text-gray-500 text-xs mt-2">Mid-term break: February 16-20</p>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-flag-checkered text-yellow-600 text-xl"></i>
+                    </div>
+                    <h4 class="font-bold text-primary mb-2">Third Term</h4>
+                    <p class="text-gray-600 text-sm">April 20 - July 24, 2026</p>
+                    <p class="text-gray-500 text-xs mt-2">Examinations: July 6-17</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact CTA -->
+    <section class="py-16 bg-primary">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold text-white mb-4">Ready to Apply?</h2>
+            <p class="text-gray-300 mb-8">Contact our admissions office for more information or to schedule a visit.</p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="/contact" class="bg-secondary text-white px-8 py-3 rounded-lg font-semibold hover:bg-yellow-600 transition">
+                    <i class="fas fa-phone mr-2"></i>Contact Us
+                </a>
+                <a href="mailto:admissions@brightstarschool.edu.ng" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary transition">
+                    <i class="fas fa-envelope mr-2"></i>Email Admissions
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center">
+                            <i class="fas fa-star text-white"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold">BRIGHT STAR</h3>
+                            <p class="text-xs text-gray-400">International School</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm">Nurturing Excellence, Building Future Leaders since 2005.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="/" class="hover:text-secondary">Home</a></li>
+                        <li><a href="/about" class="hover:text-secondary">About Us</a></li>
+                        <li><a href="/admissions" class="hover:text-secondary">Admissions</a></li>
+                        <li><a href="/gallery" class="hover:text-secondary">Gallery</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Portal</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="/login?role=student" class="hover:text-secondary">Student Portal</a></li>
+                        <li><a href="/login?role=teacher" class="hover:text-secondary">Teacher Portal</a></li>
+                        <li><a href="/login?role=admin" class="hover:text-secondary">Admin Portal</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Contact Us</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><i class="fas fa-map-marker-alt mr-2"></i>123 Education Avenue, Lagos</li>
+                        <li><i class="fas fa-phone mr-2"></i>+234 801 234 5678</li>
+                        <li><i class="fas fa-envelope mr-2"></i>info@brightstarschool.edu.ng</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
+                <p>&copy; 2026 Bright Star International School. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

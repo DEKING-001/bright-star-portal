@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Fees - Bright Star International School</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e3a5f',
+                        secondary: '#f59e0b',
+                        accent: '#0ea5e9',
+                        dark: '#0f172a'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-primary text-white py-4">
+        <div class="max-w-4xl mx-auto px-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center">
+                    <i class="fas fa-star text-white"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold">BRIGHT STAR</h1>
+                    <p class="text-xs text-gray-300">School Fees Portal</p>
+                </div>
+            </div>
+            <a href="/login?role=student" class="text-sm hover:text-secondary">Back to Login</a>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-8">
+        <!-- Fee Checker Form -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+            <h2 class="text-2xl font-bold text-primary mb-6 text-center">Check Your Fees</h2>
+            <form id="feeCheckerForm" onsubmit="checkFees(event)" class="space-y-6">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Admission Number</label>
+                        <input type="text" id="feeAdmission" placeholder="e.g., BSS/2026/001" 
+                            class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Session</label>
+                        <select id="feeSession" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary">
+                            <option>2025/2026</option>
+                            <option>2024/2025</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary/90 transition">
+                    <i class="fas fa-search mr-2"></i>Check Fees
+                </button>
+            </form>
+        </div>
+
+        <!-- Fee Display -->
+        <div id="feeDisplay" class="hidden">
+            <!-- Student Info -->
+            <div class="bg-gradient-to-r from-primary to-accent rounded-2xl p-6 text-white mb-6">
+                <div class="flex items-center space-x-6">
+                    <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user-graduate text-3xl"></i>
+                    </div>
+                    <div>
+                        <h3 id="feeStudentName" class="text-2xl font-bold">Student Name</h3>
+                        <p id="feeAdmissionNo" class="text-white/80">Admission No: BSS/2026/001</p>
+                        <p id="feeClassInfo" class="text-white/80">Class: SS1A | Session: 2025/2026</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fee Summary -->
+            <div class="grid md:grid-cols-3 gap-4 mb-6">
+                <div class="bg-white rounded-xl p-6 shadow-sm text-center">
+                    <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-money-bill-wave text-blue-600 text-xl"></i>
+                    </div>
+                    <p class="text-gray-500 text-sm">Total Fee</p>
+                    <p id="totalFeeDisplay" class="text-3xl font-bold text-primary">₦0</p>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-sm text-center">
+                    <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                    </div>
+                    <p class="text-gray-500 text-sm">Amount Paid</p>
+                    <p id="paidDisplay" class="text-3xl font-bold text-green-600">₦0</p>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-sm text-center">
+                    <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mb-3">
+                        <i class="fas fa-exclamation-circle text-red-600 text-xl"></i>
+                    </div>
+                    <p class="text-gray-500 text-sm">Balance</p>
+                    <p id="balanceDisplay" class="text-3xl font-bold text-red-600">₦0</p>
+                </div>
+            </div>
+
+            <!-- Payment Status -->
+            <div id="paymentStatus" class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-primary text-lg">Payment Status</h3>
+                        <p id="statusText" class="text-gray-600">-</p>
+                    </div>
+                    <span id="statusBadge" class="px-4 py-2 rounded-full font-semibold">-</span>
+                </div>
+            </div>
+
+            <!-- Payment History -->
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden mb-6">
+                <div class="p-4 border-b bg-gray-50">
+                    <h3 class="font-bold text-primary">Payment History</h3>
+                </div>
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Date</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Amount</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Method</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Reference</th>
+                            <th class="px-6 py-3 text-center text-sm font-semibold text-gray-600">Receipt</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paymentHistoryBody" class="divide-y divide-gray-100">
+                        <!-- Payment history will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Note -->
+            <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-info-circle text-yellow-600 mt-1"></i>
+                    <div>
+                        <p class="font-semibold text-yellow-800">Payment Information</p>
+                        <p class="text-yellow-700 text-sm mt-1">For bank transfers, please use your admission number as reference. Payments are updated within 24 hours. For complaints, please contact the bursary office.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-6 mt-8">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="text-gray-400 text-sm">&copy; 2026 Bright Star International School. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Demo fee data
+        const demoFees = {
+            'BSS/2026/001': {
+                name: 'Chukwuemeka Okonkwo',
+                class: 'SS1A',
+                totalFee: 350000,
+                amountPaid: 250000,
+                balance: 100000,
+                status: 'partial',
+                payments: [
+                    { date: 'Sep 15, 2025', amount: 150000, method: 'Bank Transfer', reference: 'TRF/2025/001' },
+                    { date: 'Jan 10, 2026', amount: 100000, method: 'Cash', reference: 'CSH/2026/001' }
+                ]
+            },
+            'BSS/2026/002': {
+                name: 'Amina Ibrahim',
+                class: 'SS1A',
+                totalFee: 350000,
+                amountPaid: 350000,
+                balance: 0,
+                status: 'paid',
+                payments: [
+                    { date: 'Sep 10, 2025', amount: 200000, method: 'Bank Transfer', reference: 'TRF/2025/002' },
+                    { date: 'Dec 5, 2025', amount: 150000, method: 'Online', reference: 'ONL/2025/001' }
+                ]
+            }
+        };
+
+        async function checkFees(event) {
+            event.preventDefault();
+            
+            const admissionNo = document.getElementById('feeAdmission').value.trim();
+            const session = document.getElementById('feeSession').value;
+            
+            // Check demo data first
+            if (demoFees[admissionNo]) {
+                displayFees(demoFees[admissionNo], admissionNo, session);
+                return;
+            }
+            
+            // Try API
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/fees/student', {
+                    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.fees && data.fees.length > 0) {
+                        alert('Fees found! Please login to view full details.');
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.error('API error:', error);
+            }
+            
+            alert('No fee records found. Try: BSS/2026/001 or BSS/2026/002');
+        }
+
+        function displayFees(data, admissionNo, session) {
+            const display = document.getElementById('feeDisplay');
+            display.classList.remove('hidden');
+            
+            document.getElementById('feeStudentName').textContent = data.name;
+            document.getElementById('feeAdmissionNo').textContent = `Admission No: ${admissionNo}`;
+            document.getElementById('feeClassInfo').textContent = `Class: ${data.class} | Session: ${session}`;
+            
+            document.getElementById('totalFeeDisplay').textContent = formatCurrency(data.totalFee);
+            document.getElementById('paidDisplay').textContent = formatCurrency(data.amountPaid);
+            document.getElementById('balanceDisplay').textContent = formatCurrency(data.balance);
+            
+            const statusText = document.getElementById('statusText');
+            const statusBadge = document.getElementById('statusBadge');
+            
+            if (data.status === 'paid') {
+                statusText.textContent = 'Your fees have been fully paid. Thank you!';
+                statusBadge.className = 'px-4 py-2 rounded-full font-semibold bg-green-100 text-green-700';
+                statusBadge.textContent = 'Fully Paid';
+            } else if (data.status === 'partial') {
+                statusText.textContent = `You have an outstanding balance of ${formatCurrency(data.balance)}.`;
+                statusBadge.className = 'px-4 py-2 rounded-full font-semibold bg-yellow-100 text-yellow-700';
+                statusBadge.textContent = 'Partially Paid';
+            } else {
+                statusText.textContent = 'You have not made any payment yet.';
+                statusBadge.className = 'px-4 py-2 rounded-full font-semibold bg-red-100 text-red-700';
+                statusBadge.textContent = 'Unpaid';
+            }
+            
+            const tbody = document.getElementById('paymentHistoryBody');
+            tbody.innerHTML = data.payments.map(p => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 text-sm">${p.date}</td>
+                    <td class="px-6 py-4 text-sm font-medium">${formatCurrency(p.amount)}</td>
+                    <td class="px-6 py-4 text-sm">${p.method}</td>
+                    <td class="px-6 py-4 text-sm">${p.reference}</td>
+                    <td class="px-6 py-4 text-center">
+                        <button onclick="downloadReceipt('${p.reference}')" class="text-accent hover:underline text-sm">
+                            <i class="fas fa-download mr-1"></i>Download
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            display.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function downloadReceipt(reference) {
+            alert(`Receipt ${reference} download will be available soon. This feature requires PDF generation.`);
+        }
+
+        function formatCurrency(amount) {
+            return '₦' + amount.toLocaleString();
+        }
+    </script>
+</body>
+</html>

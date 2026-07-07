@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Bright Star International School</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e3a5f',
+                        secondary: '#f59e0b',
+                        accent: '#0ea5e9',
+                        dark: '#0f172a'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; }
+        .login-bg {
+            background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
+        }
+    </style>
+</head>
+<body class="login-bg min-h-screen flex items-center justify-center py-8">
+    <div class="max-w-md w-full mx-4">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <div class="w-20 h-20 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-star text-white text-3xl"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-white">Bright Star International School</h1>
+            <p class="text-gray-300 mt-2">Portal Login</p>
+        </div>
+
+        <!-- Login Card -->
+        <div class="bg-white rounded-2xl shadow-2xl p-8">
+            <!-- Role Selection -->
+            <div class="flex mb-6 bg-gray-100 rounded-lg p-1">
+                <button id="studentBtn" onclick="selectRole('student')" class="flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition bg-primary text-white">
+                    <i class="fas fa-user-graduate mr-1"></i> Student
+                </button>
+                <button id="teacherBtn" onclick="selectRole('teacher')" class="flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition text-gray-600">
+                    <i class="fas fa-chalkboard-teacher mr-1"></i> Teacher
+                </button>
+                <button id="adminBtn" onclick="selectRole('admin')" class="flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition text-gray-600">
+                    <i class="fas fa-user-shield mr-1"></i> Admin
+                </button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <input type="hidden" id="role" value="student">
+                
+                <div id="studentFields">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-semibold mb-2">Admission Number</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-3 text-gray-400"><i class="fas fa-id-card"></i></span>
+                            <input type="text" id="identifier" placeholder="e.g., BSS/2026/001" 
+                                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                required>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="teacherFields" class="hidden">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-semibold mb-2">Staff ID</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-3 text-gray-400"><i class="fas fa-id-badge"></i></span>
+                            <input type="text" id="teacherIdentifier" placeholder="e.g., TCH/001" 
+                                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="adminFields" class="hidden">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-semibold mb-2">Email Address</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-3 text-gray-400"><i class="fas fa-envelope"></i></span>
+                            <input type="email" id="adminIdentifier" placeholder="admin@brightstarschool.edu.ng" 
+                                class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-semibold mb-2">Password</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-3 text-gray-400"><i class="fas fa-lock"></i></span>
+                        <input type="password" id="password" placeholder="Enter your password" 
+                            class="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                            required>
+                        <button type="button" onclick="togglePassword()" class="absolute right-3 top-3 text-gray-400 hover:text-primary">
+                            <i id="eyeIcon" class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between mb-6">
+                    <label class="flex items-center">
+                        <input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary">
+                        <span class="ml-2 text-sm text-gray-600">Remember me</span>
+                    </label>
+                    <a href="#" class="text-sm text-primary hover:underline">Forgot Password?</a>
+                </div>
+
+                <div id="errorMessage" class="hidden mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm"></div>
+
+                <button type="submit" id="loginBtn" class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary/90 transition flex items-center justify-center">
+                    <span id="loginText">Login as Student</span>
+                    <i id="loginSpinner" class="fas fa-spinner fa-spin ml-2 hidden"></i>
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <p class="text-gray-500 text-sm">
+                    <a href="/" class="text-primary hover:underline"><i class="fas fa-arrow-left mr-1"></i> Back to Home</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Demo Credentials -->
+        <div class="mt-6 bg-white/10 rounded-lg p-4">
+            <h4 class="text-white font-semibold mb-2 text-sm"><i class="fas fa-info-circle mr-1"></i> Demo Credentials</h4>
+            <div class="text-gray-300 text-xs space-y-1">
+                <p><strong>Student:</strong> BSS/2026/001 / password123</p>
+                <p><strong>Teacher:</strong> TCH/001 / password123</p>
+                <p><strong>Admin:</strong> admin@brightstar.com / admin123</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results Checker - Bright Star International School</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e3a5f',
+                        secondary: '#f59e0b',
+                        accent: '#0ea5e9',
+                        dark: '#0f172a'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Header -->
+    <header class="bg-primary text-white py-4">
+        <div class="max-w-4xl mx-auto px-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center">
+                    <i class="fas fa-star text-white"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold">BRIGHT STAR</h1>
+                    <p class="text-xs text-gray-300">Results Checker</p>
+                </div>
+            </div>
+            <a href="/login?role=student" class="text-sm hover:text-secondary">Back to Login</a>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-8">
+        <!-- Checker Form -->
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+            <h2 class="text-2xl font-bold text-primary mb-6 text-center">Check Your Results</h2>
+            <form id="resultCheckerForm" onsubmit="checkResults(event)" class="space-y-6">
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Admission Number</label>
+                        <input type="text" id="checkAdmission" placeholder="e.g., BSS/2026/001" 
+                            class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Session</label>
+                        <select id="checkSession" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary">
+                            <option>2025/2026</option>
+                            <option>2024/2025</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Term</label>
+                        <select id="checkTerm" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary">
+                            <option>First Term</option>
+                            <option selected>Second Term</option>
+                            <option>Third Term</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary/90 transition">
+                    <i class="fas fa-search mr-2"></i>Check Results
+                </button>
+            </form>
+        </div>
+
+        <!-- Results Display -->
+        <div id="resultsDisplay" class="hidden">
+            <!-- Student Info Card -->
+            <div class="bg-gradient-to-r from-primary to-accent rounded-2xl p-6 text-white mb-6">
+                <div class="flex items-center space-x-6">
+                    <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user-graduate text-3xl"></i>
+                    </div>
+                    <div>
+                        <h3 id="resultStudentName" class="text-2xl font-bold">Student Name</h3>
+                        <p id="resultAdmissionNo" class="text-white/80">Admission No: BSS/2026/001</p>
+                        <p id="resultClassInfo" class="text-white/80">Class: SS1A | Session: 2025/2026 | Term: Second Term</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Table -->
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden mb-6">
+                <div class="p-4 border-b bg-gray-50">
+                    <h3 class="font-bold text-primary">Subject Scores</h3>
+                </div>
+                <table class="w-full">
+                    <thead class="bg-primary text-white">
+                        <tr>
+                            <th class="px-6 py-3 text-left">Subject</th>
+                            <th class="px-4 py-3 text-center">CA1 (20)</th>
+                            <th class="px-4 py-3 text-center">CA2 (20)</th>
+                            <th class="px-4 py-3 text-center">Exam (60)</th>
+                            <th class="px-4 py-3 text-center">Total (100)</th>
+                            <th class="px-4 py-3 text-center">Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsTableBody" class="divide-y divide-gray-100">
+                        <!-- Results will be populated here -->
+                    </tbody>
+                    <tfoot id="resultsTableFoot" class="bg-gray-50 font-bold">
+                        <!-- Summary will be populated here -->
+                    </tfoot>
+                </table>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="grid md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-white rounded-xl p-4 shadow-sm text-center">
+                    <p class="text-gray-500 text-sm">Total Score</p>
+                    <p id="totalScoreDisplay" class="text-3xl font-bold text-primary">0</p>
+                </div>
+                <div class="bg-white rounded-xl p-4 shadow-sm text-center">
+                    <p class="text-gray-500 text-sm">Average</p>
+                    <p id="averageDisplay" class="text-3xl font-bold text-secondary">0</p>
+                </div>
+                <div class="bg-white rounded-xl p-4 shadow-sm text-center">
+                    <p class="text-gray-500 text-sm">Class Position</p>
+                    <p id="positionDisplay" class="text-3xl font-bold text-accent">-</p>
+                </div>
+                <div class="bg-white rounded-xl p-4 shadow-sm text-center">
+                    <p class="text-gray-500 text-sm">Total Subjects</p>
+                    <p id="subjectsDisplay" class="text-3xl font-bold text-primary">0</p>
+                </div>
+            </div>
+
+            <!-- Remarks -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+                <h3 class="font-bold text-primary mb-4">Remarks</h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="border-l-4 border-accent pl-4">
+                        <p class="text-sm text-gray-500 mb-1">Class Teacher's Remark:</p>
+                        <p id="teacherRemark" class="font-medium text-gray-700">-</p>
+                    </div>
+                    <div class="border-l-4 border-secondary pl-4">
+                        <p class="text-sm text-gray-500 mb-1">Principal's Remark:</p>
+                        <p id="principalRemark" class="font-medium text-gray-700">-</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grade Legend -->
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+                <h3 class="font-bold text-primary mb-4">Grading System</h3>
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
+                    <div class="bg-green-100 rounded-lg p-3">
+                        <p class="font-bold text-green-700">A</p>
+                        <p class="text-sm text-gray-600">70 - 100</p>
+                        <p class="text-xs text-gray-500">Excellent</p>
+                    </div>
+                    <div class="bg-blue-100 rounded-lg p-3">
+                        <p class="font-bold text-blue-700">B</p>
+                        <p class="text-sm text-gray-600">60 - 69</p>
+                        <p class="text-xs text-gray-500">Very Good</p>
+                    </div>
+                    <div class="bg-yellow-100 rounded-lg p-3">
+                        <p class="font-bold text-yellow-700">C</p>
+                        <p class="text-sm text-gray-600">50 - 59</p>
+                        <p class="text-xs text-gray-500">Good</p>
+                    </div>
+                    <div class="bg-orange-100 rounded-lg p-3">
+                        <p class="font-bold text-orange-700">D</p>
+                        <p class="text-sm text-gray-600">40 - 49</p>
+                        <p class="text-xs text-gray-500">Fair</p>
+                    </div>
+                    <div class="bg-red-100 rounded-lg p-3">
+                        <p class="font-bold text-red-700">F</p>
+                        <p class="text-sm text-gray-600">0 - 39</p>
+                        <p class="text-xs text-gray-500">Fail</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-6 mt-8">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="text-gray-400 text-sm">&copy; 2026 Bright Star International School. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Demo results data
+        const demoResults = {
+            'BSS/2026/001': {
+                name: 'Chukwuemeka Okonkwo',
+                class: 'SS1A',
+                results: [
+                    { subject: 'Mathematics', ca1: 18, ca2: 17, exam: 52, total: 87, grade: 'A' },
+                    { subject: 'English Language', ca1: 16, ca2: 15, exam: 45, total: 76, grade: 'A' },
+                    { subject: 'Physics', ca1: 15, ca2: 14, exam: 42, total: 71, grade: 'A' },
+                    { subject: 'Chemistry', ca1: 14, ca2: 13, exam: 38, total: 65, grade: 'B' },
+                    { subject: 'Biology', ca1: 16, ca2: 15, exam: 40, total: 71, grade: 'A' }
+                ],
+                teacherRemark: 'Good performance. Keep it up!',
+                principalRemark: 'Excellent effort. Continue to strive for excellence.',
+                position: 5
+            },
+            'BSS/2026/002': {
+                name: 'Amina Ibrahim',
+                class: 'SS1A',
+                results: [
+                    { subject: 'Mathematics', ca1: 17, ca2: 16, exam: 48, total: 81, grade: 'A' },
+                    { subject: 'English Language', ca1: 18, ca2: 17, exam: 50, total: 85, grade: 'A' },
+                    { subject: 'Physics', ca1: 14, ca2: 13, exam: 36, total: 63, grade: 'B' },
+                    { subject: 'Chemistry', ca1: 15, ca2: 14, exam: 40, total: 69, grade: 'B' },
+                    { subject: 'Biology', ca1: 17, ca2: 16, exam: 44, total: 77, grade: 'A' }
+                ],
+                teacherRemark: 'Excellent work! Very consistent.',
+                principalRemark: 'Outstanding performance. A role model to other students.',
+                position: 2
+            }
+        };
+
+        async function checkResults(event) {
+            event.preventDefault();
+            
+            const admissionNo = document.getElementById('checkAdmission').value.trim();
+            const session = document.getElementById('checkSession').value;
+            const term = document.getElementById('checkTerm').value;
+            
+            const display = document.getElementById('resultsDisplay');
+            
+            // Check demo data first
+            if (demoResults[admissionNo]) {
+                displayResults(demoResults[admissionNo], admissionNo, session, term);
+                return;
+            }
+            
+            // Try API
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/results/student?session=${session}&term=${term}`, {
+                    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.results && data.results.length > 0) {
+                        displayResultsFromAPI(data);
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.error('API error:', error);
+            }
+            
+            alert('No results found for this admission number. Try: BSS/2026/001 or BSS/2026/002');
+        }
+
+        function displayResults(data, admissionNo, session, term) {
+            const display = document.getElementById('resultsDisplay');
+            display.classList.remove('hidden');
+            
+            document.getElementById('resultStudentName').textContent = data.name;
+            document.getElementById('resultAdmissionNo').textContent = `Admission No: ${admissionNo}`;
+            document.getElementById('resultClassInfo').textContent = `Class: ${data.class} | Session: ${session} | Term: ${term}`;
+            
+            const tbody = document.getElementById('resultsTableBody');
+            const gradeColors = {
+                'A': 'bg-green-100 text-green-700',
+                'B': 'bg-blue-100 text-blue-700',
+                'C': 'bg-yellow-100 text-yellow-700',
+                'D': 'bg-orange-100 text-orange-700',
+                'F': 'bg-red-100 text-red-700'
+            };
+            
+            let totalAll = 0;
+            tbody.innerHTML = data.results.map(r => {
+                totalAll += r.total;
+                return `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 font-medium">${r.subject}</td>
+                        <td class="px-4 py-4 text-center">${r.ca1}</td>
+                        <td class="px-4 py-4 text-center">${r.ca2}</td>
+                        <td class="px-4 py-4 text-center">${r.exam}</td>
+                        <td class="px-4 py-4 text-center font-bold">${r.total}</td>
+                        <td class="px-4 py-4 text-center">
+                            <span class="${gradeColors[r.grade]} px-2 py-1 rounded">${r.grade}</span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            const average = (totalAll / data.results.length).toFixed(2);
+            
+            document.getElementById('resultsTableFoot').innerHTML = `
+                <tr>
+                    <td class="px-6 py-4" colspan="4" class="text-right">Total:</td>
+                    <td class="px-4 py-4 text-center text-lg">${totalAll}</td>
+                    <td></td>
+                </tr>
+            `;
+            
+            document.getElementById('totalScoreDisplay').textContent = totalAll;
+            document.getElementById('averageDisplay').textContent = average;
+            document.getElementById('positionDisplay').textContent = getOrdinal(data.position);
+            document.getElementById('subjectsDisplay').textContent = data.results.length;
+            document.getElementById('teacherRemark').textContent = data.teacherRemark;
+            document.getElementById('principalRemark').textContent = data.principalRemark;
+            
+            display.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function displayResultsFromAPI(data) {
+            const display = document.getElementById('resultsDisplay');
+            display.classList.remove('hidden');
+            
+            if (data.results.length > 0) {
+                const first = data.results[0];
+                document.getElementById('resultStudentName').textContent = `${first.student?.firstName || 'Student'} ${first.student?.lastName || ''}`;
+                document.getElementById('resultAdmissionNo').textContent = `Admission No: ${first.admissionNumber}`;
+                document.getElementById('resultClassInfo').textContent = `Class: ${first.class} | Session: ${first.session} | Term: ${first.term}`;
+            }
+            
+            const tbody = document.getElementById('resultsTableBody');
+            const gradeColors = {
+                'A': 'bg-green-100 text-green-700',
+                'B': 'bg-blue-100 text-blue-700',
+                'C': 'bg-yellow-100 text-yellow-700',
+                'D': 'bg-orange-100 text-orange-700',
+                'F': 'bg-red-100 text-red-700'
+            };
+            
+            let totalAll = 0;
+            tbody.innerHTML = data.results.map(r => {
+                totalAll += r.totalScore;
+                return `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 font-medium">${r.subject}</td>
+                        <td class="px-4 py-4 text-center">${r.ca1}</td>
+                        <td class="px-4 py-4 text-center">${r.ca2}</td>
+                        <td class="px-4 py-4 text-center">${r.exam}</td>
+                        <td class="px-4 py-4 text-center font-bold">${r.totalScore}</td>
+                        <td class="px-4 py-4 text-center">
+                            <span class="${gradeColors[r.grade] || 'bg-gray-100'} px-2 py-1 rounded">${r.grade}</span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            const average = data.summary ? data.summary.average : (totalAll / data.results.length).toFixed(2);
+            const position = data.summary ? data.summary.position : '-';
+            
+            document.getElementById('totalScoreDisplay').textContent = totalAll;
+            document.getElementById('averageDisplay').textContent = average;
+            document.getElementById('positionDisplay').textContent = position !== '-' ? getOrdinal(position) : '-';
+            document.getElementById('subjectsDisplay').textContent = data.results.length;
+            document.getElementById('teacherRemark').textContent = data.results[0]?.teacherRemark || '-';
+            document.getElementById('principalRemark').textContent = data.results[0]?.principalRemark || '-';
+            
+            display.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function getOrdinal(n) {
+            const s = ['th', 'st', 'nd', 'rd'];
+            const v = n % 100;
+            return n + (s[(v - 20) % 10] || s[v] || s[0]);
+        }
+    </script>
+</body>
+</html>

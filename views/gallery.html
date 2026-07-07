@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery - Bright Star International School</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e3a5f',
+                        secondary: '#f59e0b',
+                        accent: '#0ea5e9',
+                        dark: '#0f172a'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Poppins', sans-serif; }
+        .gallery-item:hover .overlay { opacity: 1; }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Navigation -->
+    <nav class="bg-primary text-white sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-secondary rounded-full flex items-center justify-center">
+                        <i class="fas fa-star text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold">BRIGHT STAR</h1>
+                        <p class="text-xs text-gray-300">International School</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex space-x-6">
+                    <a href="/" class="hover:text-secondary transition">Home</a>
+                    <a href="/about" class="hover:text-secondary transition">About</a>
+                    <a href="/admissions" class="hover:text-secondary transition">Admissions</a>
+                    <a href="/gallery" class="text-secondary font-semibold">Gallery</a>
+                    <a href="/contact" class="hover:text-secondary transition">Contact</a>
+                    <a href="/login" class="bg-secondary px-4 py-2 rounded-lg hover:bg-yellow-600 transition">Login</a>
+                </div>
+                <button id="mobileMenuBtn" class="md:hidden text-2xl"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+        <div id="mobileMenu" class="hidden md:hidden bg-primary border-t border-gray-600">
+            <div class="px-4 py-3 space-y-3">
+                <a href="/" class="block hover:text-secondary">Home</a>
+                <a href="/about" class="block hover:text-secondary">About</a>
+                <a href="/admissions" class="block hover:text-secondary">Admissions</a>
+                <a href="/gallery" class="block text-secondary">Gallery</a>
+                <a href="/contact" class="block hover:text-secondary">Contact</a>
+                <a href="/login" class="block bg-secondary px-4 py-2 rounded-lg text-center">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="bg-gradient-to-r from-primary to-accent text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h1 class="text-4xl font-bold mb-4">School Gallery</h1>
+            <p class="text-xl text-gray-200">Explore Our Campus and Activities</p>
+        </div>
+    </section>
+
+    <!-- Gallery Filter -->
+    <section class="py-8 bg-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex flex-wrap justify-center gap-4">
+                <button onclick="filterGallery('all')" class="gallery-filter active px-6 py-2 rounded-full bg-primary text-white font-semibold transition">All</button>
+                <button onclick="filterGallery('campus')" class="gallery-filter px-6 py-2 rounded-full bg-gray-200 text-gray-700 font-semibold hover:bg-primary hover:text-white transition">Campus</button>
+                <button onclick="filterGallery('classrooms')" class="gallery-filter px-6 py-2 rounded-full bg-gray-200 text-gray-700 font-semibold hover:bg-primary hover:text-white transition">Classrooms</button>
+                <button onclick="filterGallery('activities')" class="gallery-filter px-6 py-2 rounded-full bg-gray-200 text-gray-700 font-semibold hover:bg-primary hover:text-white transition">Activities</button>
+                <button onclick="filterGallery('events')" class="gallery-filter px-6 py-2 rounded-full bg-gray-200 text-gray-700 font-semibold hover:bg-primary hover:text-white transition">Events</button>
+                <button onclick="filterGallery('sports')" class="gallery-filter px-6 py-2 rounded-full bg-gray-200 text-gray-700 font-semibold hover:bg-primary hover:text-white transition">Sports</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Grid -->
+    <section class="py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div id="galleryGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <!-- Campus -->
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="campus">
+                    <div class="aspect-square bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                        <i class="fas fa-school text-white text-5xl"></i>
+                    </div>
+                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <i class="fas fa-search-plus text-3xl mb-2"></i>
+                            <p class="font-semibold">School Building</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="campus">
+                    <div class="aspect-square bg-gradient-to-br from-green-500 to-accent flex items-center justify-center">
+                        <i class="fas fa-tree text-white text-5xl"></i>
+                    </div>
+                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <i class="fas fa-search-plus text-3xl mb-2"></i>
+                            <p class="font-semibold">School Garden</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="campus">
+                    <div class="aspect-square bg-gradient-to-br from-secondary to-red-500 flex items-center justify-center">
+                        <i class="fas fa-swimming-pool text-white text-5xl"></i>
+                    </div>
+                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <i class="fas fa-search-plus text-3xl mb-2"></i>
+                            <p class="font-semibold">Swimming Pool</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="campus">
+                    <div class="aspect-square bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                        <i class="fas fa-futbol text-white text-5xl"></i>
+                    </div>
+                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <i class="fas fa-search-plus text-3xl mb-2"></i>
+                            <p class="font-semibold">Sports Field</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Classrooms -->
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="classrooms">
+                    <div class="aspect-square bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                        <i class="fas fa-chalkboard text-white text-5xl"></i>
+                    </div>
+                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <i class="fas fa-search-plus text-3xl mb-2"></i>
+                            <p class="font-semibold">Classroom</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="classrooms">
+                    <div class="aspect-square bg-gradient-to-br from-teal-500 to-green-500 flex items-center justify-center">
+                        <i class="fas fa-flask text-white text-5xl"></i>
+                    </div>
+                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <i class="fas fa-search-plus text-3xl mb-2"></i>
+                            <p class="font-semibold">Science Laboratory</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="classrooms">
+                    <div class="aspect-square bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
+                        <i class="fas fa-laptop text-white text-5xl"></i>
+                    </div>
+                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <i class="fas fa-search-plus text-3xl mb-2"></i>
+                            <p class="font-semibold">Computer Lab</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="classrooms">
+                    <div class="aspect-square bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center">
+                        <i class="fas fa-book text-white text-5xl"></i>
+                    </div>
+                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <i class="fas fa-search-plus text-3xl mb-2"></i>
+                            <p class="font-semibold">Library</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activities -->
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="activities">
+                    <div class="aspect-square bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center">
+                        <i class="fas fa-music text-white text-5xl"></i>
+                    </div>
+                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <i class="fas fa-search-plus text-3xl mb-2"></i>
+                            <p class="font-semibold">Music Class</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="activities">
+                    <div class="aspect-square bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
+                        <i class="fas fa-palette text-white text-5xl"></i>
+                    </div>
+                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <i class="fas fa-search-plus text-3xl mb-2"></i>
+                            <p class="font-semibold">Art Class</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="activities">
+                    <div class="aspect-square bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center">
+                        <i class="fas fa-robot text-white text-5xl"></i>
+                    </div>
+                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <i class="fas fa-search-plus text-3xl mb-2"></i>
+                            <p class="font-semibold">Robotics Club</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="activities">
+                    <div class="aspect-square bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
+                        <i class="fas fa-seedling text-white text-5xl"></i>
+                    </div>
+                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <i class="fas fa-search-plus text-3xl mb-2"></i>
+                            <p class="font-semibold">Agricultural Science</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Events -->
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="events">
+                    <div class="aspect-square bg-gradient-to-br from-amber-500 to-yellow-500 flex items-center justify-center">
+                        <i class="fas fa-graduation-cap text-white text-5xl"></i>
+                    </div>
+                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <i class="fas fa-search-plus text-3xl mb-2"></i>
+                            <p class="font-semibold">Graduation Day</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="events">
+                    <div class="aspect-square bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center">
+                        <i class="fas fa-microphone text-white text-5xl"></i>
+                    </div>
+                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <i class="fas fa-search-plus text-3xl mb-2"></i>
+                            <p class="font-semibold">Cultural Day</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="events">
+                    <div class="aspect-square bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center">
+                        <i class="fas fa-trophy text-white text-5xl"></i>
+                    </div>
+                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <i class="fas fa-search-plus text-3xl mb-2"></i>
+                            <p class="font-semibold">Prize Giving Day</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="events">
+                    <div class="aspect-square bg-gradient-to-br from-fuchsia-500 to-pink-500 flex items-center justify-center">
+                        <i class="fas fa-hands text-white text-5xl"></i>
+                    </div>
+                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <i class="fas fa-search-plus text-3xl mb-2"></i>
+                            <p class="font-semibold">Inter-House Competition</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sports -->
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="sports">
+                    <div class="aspect-square bg-gradient-to-br from-green-600 to-emerald-600 flex items-center justify-center">
+                        <i class="fas fa-running text-white text-5xl"></i>
+                    </div>
+                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <i class="fas fa-search-plus text-3xl mb-2"></i>
+                            <p class="font-semibold">Athletics</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="sports">
+                    <div class="aspect-square bg-gradient-to-br from-orange-600 to-amber-600 flex items-center justify-center">
+                        <i class="fas fa-basketball-ball text-white text-5xl"></i>
+                    </div>
+                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <i class="fas fa-search-plus text-3xl mb-2"></i>
+                            <p class="font-semibold">Basketball</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="sports">
+                    <div class="aspect-square bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center">
+                        <i class="fas fa-table-tennis text-white text-5xl"></i>
+                    </div>
+                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <i class="fas fa-search-plus text-3xl mb-2"></i>
+                            <p class="font-semibold">Table Tennis</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="sports">
+                    <div class="aspect-square bg-gradient-to-br from-red-600 to-rose-600 flex items-center justify-center">
+                        <i class="fas fa-futbol text-white text-5xl"></i>
+                    </div>
+                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                        <div class="text-center text-white">
+                            <i class="fas fa-search-plus text-3xl mb-2"></i>
+                            <p class="font-semibold">Football</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center">
+                            <i class="fas fa-star text-white"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold">BRIGHT STAR</h3>
+                            <p class="text-xs text-gray-400">International School</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm">Nurturing Excellence, Building Future Leaders since 2005.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="/" class="hover:text-secondary">Home</a></li>
+                        <li><a href="/about" class="hover:text-secondary">About Us</a></li>
+                        <li><a href="/admissions" class="hover:text-secondary">Admissions</a></li>
+                        <li><a href="/gallery" class="hover:text-secondary">Gallery</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Portal</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="/login?role=student" class="hover:text-secondary">Student Portal</a></li>
+                        <li><a href="/login?role=teacher" class="hover:text-secondary">Teacher Portal</a></li>
+                        <li><a href="/login?role=admin" class="hover:text-secondary">Admin Portal</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Contact Us</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><i class="fas fa-map-marker-alt mr-2"></i>123 Education Avenue, Lagos</li>
+                        <li><i class="fas fa-phone mr-2"></i>+234 801 234 5678</li>
+                        <li><i class="fas fa-envelope mr-2"></i>info@brightstarschool.edu.ng</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
+                <p>&copy; 2026 Bright Star International School. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+    <script>
+        function filterGallery(category) {
+            const items = document.querySelectorAll('.gallery-item');
+            const buttons = document.querySelectorAll('.gallery-filter');
+            
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-primary', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            event.currentTarget.classList.remove('bg-gray-200', 'text-gray-700');
+            event.currentTarget.classList.add('bg-primary', 'text-white');
+            
+            items.forEach(item => {
+                if (category === 'all' || item.dataset.category === category) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
