@@ -2,10 +2,12 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const JWT_SECRET = process.env.JWT_SECRET || 'bright_star_secret';
 
 // Middleware
 app.use(cors());
@@ -18,95 +20,261 @@ app.use('/css', express.static(path.join(__dirname, 'public', 'css')));
 app.use('/js', express.static(path.join(__dirname, 'public', 'js')));
 app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
 
-// Serve HTML pages
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'index.html'));
-});
+// Demo Users Database
+const demoUsers = {
+    'admin@brightstar.com': { id: '1', email: 'admin@brightstar.com', password: 'admin123', firstName: 'Admin', lastName: 'User', role: 'admin' },
+    'TCH/001': { id: '2', email: 'john.owens@brightstar.com', password: 'password123', firstName: 'John', lastName: 'Owens', role: 'teacher', staffId: 'TCH/001' },
+    'BSS/2026/001': { id: '3', email: 'chukwuemeka@student.com', password: 'password123', firstName: 'Chukwuemeka', lastName: 'Okonkwo', role: 'student', admissionNumber: 'BSS/2026/001', class: 'SS1', session: '2025/2026', term: 'Second Term' },
+    'BSS/2026/002': { id: '4', email: 'amina@student.com', password: 'password123', firstName: 'Amina', lastName: 'Ibrahim', role: 'student', admissionNumber: 'BSS/2026/002', class: 'SS1', session: '2025/2026', term: 'Second Term' }
+};
 
-app.get('/about', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'about.html'));
-});
+// Demo Results
+const demoResults = {
+    'BSS/2026/001': [
+        { subject: 'Mathematics', ca1: 18, ca2: 17, exam: 52, totalScore: 87, grade: 'A' },
+        { subject: 'English Language', ca1: 16, ca2: 15, exam: 45, totalScore: 76, grade: 'A' },
+        { subject: 'Physics', ca1: 15, ca2: 14, exam: 42, totalScore: 71, grade: 'A' },
+        { subject: 'Chemistry', ca1: 14, ca2: 13, exam: 38, totalScore: 65, grade: 'B' },
+        { subject: 'Biology', ca1: 16, ca2: 15, exam: 40, totalScore: 71, grade: 'A' }
+    ],
+    'BSS/2026/002': [
+        { subject: 'Mathematics', ca1: 17, ca2: 16, exam: 48, totalScore: 81, grade: 'A' },
+        { subject: 'English Language', ca1: 18, ca2: 17, exam: 50, totalScore: 85, grade: 'A' },
+        { subject: 'Physics', ca1: 14, ca2: 13, exam: 36, totalScore: 63, grade: 'B' },
+        { subject: 'Chemistry', ca1: 15, ca2: 14, exam: 40, totalScore: 69, grade: 'B' },
+        { subject: 'Biology', ca1: 17, ca2: 16, exam: 44, totalScore: 77, grade: 'A' }
+    ]
+};
 
-app.get('/admissions', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'admissions.html'));
-});
+// Demo Announcements
+const demoAnnouncements = [
+    { _id: '1', title: 'Second Term Examinations', content: 'Second term examinations will commence from July 20th to August 1st, 2026.', category: 'academic', createdAt: new Date('2026-07-05') },
+    { _id: '2', title: 'Inter-House Sports Competition', content: 'Annual inter-house sports competition will hold on July 15th, 2026.', category: 'sports', createdAt: new Date('2026-07-02') },
+    { _id: '3', title: 'Graduation Ceremony 2026', content: 'The graduation ceremony for the class of 2026 will hold on August 5th, 2026.', category: 'events', createdAt: new Date('2026-06-28') }
+];
 
-app.get('/gallery', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'gallery.html'));
-});
+// Demo Students
+const demoStudents = [
+    { _id: '1', admissionNumber: 'BSS/2026/001', class: 'SS1', classArm: 'A', session: '2025/2026', term: 'Second Term', gender: 'Male', parentName: 'Mr. Okonkwo', parentPhone: '+234 801 234 5678', user: { firstName: 'Chukwuemeka', lastName: 'Okonkwo', email: 'chukwuemeka@student.com' } },
+    { _id: '2', admissionNumber: 'BSS/2026/002', class: 'SS1', classArm: 'A', session: '2025/2026', term: 'Second Term', gender: 'Female', parentName: 'Mr. Ibrahim', parentPhone: '+234 802 345 6789', user: { firstName: 'Amina', lastName: 'Ibrahim', email: 'amina@student.com' } },
+    { _id: '3', admissionNumber: 'BSS/2026/003', class: 'SS1', classArm: 'B', session: '2025/2026', term: 'Second Term', gender: 'Male', parentName: 'Mrs. Adeyemi', parentPhone: '+234 803 456 7890', user: { firstName: 'David', lastName: 'Adeyemi', email: 'david@student.com' } },
+    { _id: '4', admissionNumber: 'BSS/2026/004', class: 'SS2', classArm: 'A', session: '2025/2026', term: 'Second Term', gender: 'Female', parentName: 'Alhaji Mohammed', parentPhone: '+234 804 567 8901', user: { firstName: 'Fatima', lastName: 'Mohammed', email: 'fatima@student.com' } },
+    { _id: '5', admissionNumber: 'BSS/2026/005', class: 'SS2', classArm: 'A', session: '2025/2026', term: 'Second Term', gender: 'Male', parentName: 'Dr. Okoro', parentPhone: '+234 805 678 9012', user: { firstName: 'Emmanuel', lastName: 'Okoro', email: 'emmanuel@student.com' } }
+];
 
-app.get('/contact', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'contact.html'));
-});
+// Demo Teachers
+const demoTeachers = [
+    { _id: '1', staffId: 'TCH/001', department: 'Science', subjects: ['Mathematics', 'Further Mathematics'], qualification: 'M.Sc Mathematics', experience: 10, status: 'active', user: { firstName: 'John', lastName: 'Owens', email: 'john.owens@brightstar.com' } },
+    { _id: '2', staffId: 'TCH/002', department: 'Languages', subjects: ['English Language', 'Literature'], qualification: 'M.A English', experience: 8, status: 'active', user: { firstName: 'Sarah', lastName: 'Adesanya', email: 'sarah.adesanya@brightstar.com' } },
+    { _id: '3', staffId: 'TCH/003', department: 'Science', subjects: ['Physics', 'Chemistry'], qualification: 'M.Sc Physics', experience: 12, status: 'active', user: { firstName: 'Michael', lastName: 'Ugbo', email: 'michael.ugbo@brightstar.com' } }
+];
 
-app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'login.html'));
-});
+// Demo Fees
+const demoFees = [
+    { _id: '1', admissionNumber: 'BSS/2026/001', session: '2025/2026', term: 'Second Term', totalFee: 350000, amountPaid: 250000, balance: 100000, status: 'partial', paymentHistory: [{ amount: 150000, date: new Date('2025-09-15'), method: 'bank_transfer', reference: 'TRF/2025/001' }, { amount: 100000, date: new Date('2026-01-10'), method: 'cash', reference: 'CSH/2026/001' }] },
+    { _id: '2', admissionNumber: 'BSS/2026/002', session: '2025/2026', term: 'Second Term', totalFee: 350000, amountPaid: 350000, balance: 0, status: 'paid', paymentHistory: [{ amount: 200000, date: new Date('2025-09-10'), method: 'bank_transfer', reference: 'TRF/2025/002' }, { amount: 150000, date: new Date('2025-12-05'), method: 'online', reference: 'ONL/2025/001' }] }
+];
 
-app.get('/dashboard', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'dashboard.html'));
-});
+// Demo Attendance
+const demoAttendance = [
+    { _id: '1', admissionNumber: 'BSS/2026/001', date: new Date('2026-07-07'), status: 'present' },
+    { _id: '2', admissionNumber: 'BSS/2026/001', date: new Date('2026-07-04'), status: 'present' },
+    { _id: '3', admissionNumber: 'BSS/2026/001', date: new Date('2026-07-03'), status: 'late', remark: 'Arrived 15 minutes late' },
+    { _id: '4', admissionNumber: 'BSS/2026/001', date: new Date('2026-07-02'), status: 'present' },
+    { _id: '5', admissionNumber: 'BSS/2026/001', date: new Date('2026-07-01'), status: 'absent' }
+];
 
-app.get('/admin-dashboard', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'admin-dashboard.html'));
-});
-
-app.get('/teacher-dashboard', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'teacher-dashboard.html'));
-});
-
-app.get('/results', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'results.html'));
-});
-
-app.get('/fees', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'fees.html'));
-});
-
-// Try to connect to MongoDB and load API routes
-const MONGODB_URI = process.env.MONGODB_URI;
-
-if (MONGODB_URI) {
-    const mongoose = require('mongoose');
-    
-    mongoose.connect(MONGODB_URI)
-        .then(() => {
-            console.log('Connected to MongoDB');
-            loadApiRoutes(app);
-        })
-        .catch(err => {
-            console.error('MongoDB connection error:', err.message);
-            console.log('Running without database - API routes disabled');
-        });
-} else {
-    console.log('No MONGODB_URI set - Running without database');
+// Generate JWT Token
+function generateToken(id) {
+    return jwt.sign({ id }, JWT_SECRET, { expiresIn: '7d' });
 }
 
-function loadApiRoutes(app) {
-    const authRoutes = require('./src/routes/auth');
-    const studentRoutes = require('./src/routes/students');
-    const teacherRoutes = require('./src/routes/teachers');
-    const adminRoutes = require('./src/routes/admin');
-    const resultRoutes = require('./src/routes/results');
-    const feeRoutes = require('./src/routes/fees');
-    const announcementRoutes = require('./src/routes/announcements');
-    const timetableRoutes = require('./src/routes/timetables');
-    const assignmentRoutes = require('./src/routes/assignments');
-    const attendanceRoutes = require('./src/routes/attendance');
+// ============ API ROUTES ============
 
-    app.use('/api/auth', authRoutes);
-    app.use('/api/students', studentRoutes);
-    app.use('/api/teachers', teacherRoutes);
-    app.use('/api/admin', adminRoutes);
-    app.use('/api/results', resultRoutes);
-    app.use('/api/fees', feeRoutes);
-    app.use('/api/announcements', announcementRoutes);
-    app.use('/api/timetables', timetableRoutes);
-    app.use('/api/assignments', assignmentRoutes);
-    app.use('/api/attendance', attendanceRoutes);
+// Auth - Login
+app.post('/api/auth/login', (req, res) => {
+    const { identifier, password, role } = req.body;
     
-    console.log('API routes loaded');
-}
+    const user = demoUsers[identifier];
+    
+    if (!user || user.password !== password) {
+        return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    }
+    
+    if (role && user.role !== role) {
+        return res.status(401).json({ success: false, message: 'Invalid role for this account' });
+    }
+    
+    const token = generateToken(user.id);
+    
+    res.json({
+        success: true,
+        token,
+        user: {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            role: user.role,
+            admissionNumber: user.admissionNumber,
+            staffId: user.staffId
+        }
+    });
+});
+
+// Auth - Get current user
+app.get('/api/auth/me', (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
+    
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const user = Object.values(demoUsers).find(u => u.id === decoded.id);
+        if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+        
+        const { password, ...userWithoutPassword } = user;
+        res.json({ success: true, user: userWithoutPassword });
+    } catch (err) {
+        res.status(401).json({ success: false, message: 'Not authorized' });
+    }
+});
+
+// Auth - Change Password
+app.put('/api/auth/change-password', (req, res) => {
+    res.json({ success: true, message: 'Password updated successfully' });
+});
+
+// Students - Get profile
+app.get('/api/students/profile', (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
+    
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const user = Object.values(demoUsers).find(u => u.id === decoded.id);
+        if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+        
+        const student = demoStudents.find(s => s.admissionNumber === user.admissionNumber);
+        res.json({ success: true, student: student || { admissionNumber: user.admissionNumber, class: user.class, session: user.session, term: user.term } });
+    } catch (err) {
+        res.status(401).json({ success: false, message: 'Not authorized' });
+    }
+});
+
+// Students - Get all
+app.get('/api/students/all', (req, res) => {
+    res.json({ success: true, count: demoStudents.length, students: demoStudents });
+});
+
+// Teachers - Get all
+app.get('/api/teachers/all', (req, res) => {
+    res.json({ success: true, count: demoTeachers.length, teachers: demoTeachers });
+});
+
+// Results - Get student results
+app.get('/api/results/student', (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    let admissionNumber = 'BSS/2026/001';
+    
+    if (token) {
+        try {
+            const decoded = jwt.verify(token, JWT_SECRET);
+            const user = Object.values(demoUsers).find(u => u.id === decoded.id);
+            if (user) admissionNumber = user.admissionNumber;
+        } catch (err) {}
+    }
+    
+    const results = demoResults[admissionNumber] || [];
+    let totalScore = 0;
+    results.forEach(r => totalScore += r.totalScore);
+    const average = results.length > 0 ? (totalScore / results.length).toFixed(2) : 0;
+    
+    res.json({
+        success: true,
+        results,
+        summary: { totalScore, average: parseFloat(average), position: 5, totalSubjects: results.length }
+    });
+});
+
+// Fees - Get student fees
+app.get('/api/fees/student', (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    let admissionNumber = 'BSS/2026/001';
+    
+    if (token) {
+        try {
+            const decoded = jwt.verify(token, JWT_SECRET);
+            const user = Object.values(demoUsers).find(u => u.id === decoded.id);
+            if (user) admissionNumber = user.admissionNumber;
+        } catch (err) {}
+    }
+    
+    const fees = demoFees.filter(f => f.admissionNumber === admissionNumber);
+    let totalPaid = 0, totalBalance = 0;
+    fees.forEach(f => { totalPaid += f.amountPaid; totalBalance += f.balance; });
+    
+    res.json({ success: true, fees, summary: { totalPaid, totalBalance } });
+});
+
+// Announcements - Get all
+app.get('/api/announcements', (req, res) => {
+    res.json({ success: true, announcements: demoAnnouncements });
+});
+
+// Attendance - Get student attendance
+app.get('/api/attendance/student', (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    let admissionNumber = 'BSS/2026/001';
+    
+    if (token) {
+        try {
+            const decoded = jwt.verify(token, JWT_SECRET);
+            const user = Object.values(demoUsers).find(u => u.id === decoded.id);
+            if (user) admissionNumber = user.admissionNumber;
+        } catch (err) {}
+    }
+    
+    const attendance = demoAttendance.filter(a => a.admissionNumber === admissionNumber);
+    const totalDays = attendance.length;
+    const presentDays = attendance.filter(a => a.status === 'present').length;
+    const absentDays = attendance.filter(a => a.status === 'absent').length;
+    const lateDays = attendance.filter(a => a.status === 'late').length;
+    const percentage = totalDays > 0 ? ((presentDays / totalDays) * 100).toFixed(1) : 0;
+    
+    res.json({
+        success: true,
+        attendance,
+        summary: { totalDays, presentDays, absentDays, lateDays, percentage: parseFloat(percentage) }
+    });
+});
+
+// Admin - Dashboard stats
+app.get('/api/admin/dashboard', (req, res) => {
+    res.json({
+        success: true,
+        stats: {
+            totalStudents: demoStudents.length,
+            totalTeachers: demoTeachers.length,
+            totalAdmins: 1,
+            recentStudents: demoStudents.slice(0, 3),
+            activeSession: { name: '2025/2026', currentTerm: 'Second Term' }
+        }
+    });
+});
+
+// ============ HTML PAGES ============
+
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'index.html')));
+app.get('/about', (req, res) => res.sendFile(path.join(__dirname, 'views', 'about.html')));
+app.get('/admissions', (req, res) => res.sendFile(path.join(__dirname, 'views', 'admissions.html')));
+app.get('/gallery', (req, res) => res.sendFile(path.join(__dirname, 'views', 'gallery.html')));
+app.get('/contact', (req, res) => res.sendFile(path.join(__dirname, 'views', 'contact.html')));
+app.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'views', 'login.html')));
+app.get('/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'views', 'dashboard.html')));
+app.get('/admin-dashboard', (req, res) => res.sendFile(path.join(__dirname, 'views', 'admin-dashboard.html')));
+app.get('/teacher-dashboard', (req, res) => res.sendFile(path.join(__dirname, 'views', 'teacher-dashboard.html')));
+app.get('/results', (req, res) => res.sendFile(path.join(__dirname, 'views', 'results.html')));
+app.get('/fees', (req, res) => res.sendFile(path.join(__dirname, 'views', 'fees.html')));
 
 // Start server
 app.listen(PORT, () => {
