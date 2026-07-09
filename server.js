@@ -177,10 +177,19 @@ app.post('/api/students', (req, res) => {
         return res.status(401).json({ success: false, message: 'Not authorized' });
     }
     
-    const { firstName, lastName, email, admissionNumber, class: studentClass, gender, password, session, term } = req.body;
+    const { firstName, lastName, email, admissionNumber: inputAdmissionNo, class: studentClass, gender, password, session, term } = req.body;
     
-    if (!firstName || !lastName || !admissionNumber) {
-        return res.status(400).json({ success: false, message: 'Missing required fields' });
+    if (!firstName || !lastName) {
+        return res.status(400).json({ success: false, message: 'First name and last name are required' });
+    }
+    
+    // Auto-generate admission number if not provided
+    let admissionNumber = inputAdmissionNo;
+    if (!admissionNumber) {
+        const currentYear = new Date().getFullYear();
+        const yearStudents = demoStudents.filter(s => s.admissionNumber && s.admissionNumber.includes(`BSS/${currentYear}`));
+        const nextNumber = yearStudents.length + 1;
+        admissionNumber = `BSS/${currentYear}/${String(nextNumber).padStart(3, '0')}`;
     }
     
     const exists = demoStudents.find(s => s.admissionNumber === admissionNumber);

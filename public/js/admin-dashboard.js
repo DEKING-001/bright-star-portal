@@ -549,6 +549,7 @@ async function addStudent(event) {
     event.preventDefault();
     try {
         const token = localStorage.getItem('token');
+        const admissionNo = document.getElementById('studentAdmissionNo').value.trim();
         const response = await fetch('/api/students', {
             method: 'POST',
             headers: {
@@ -559,7 +560,7 @@ async function addStudent(event) {
                 firstName: document.getElementById('studentFirstName').value,
                 lastName: document.getElementById('studentLastName').value,
                 email: document.getElementById('studentEmail').value,
-                admissionNumber: document.getElementById('studentAdmissionNo').value,
+                admissionNumber: admissionNo || undefined,
                 class: document.getElementById('studentClass').value,
                 gender: document.getElementById('studentGender').value,
                 password: document.getElementById('studentPassword').value,
@@ -569,7 +570,8 @@ async function addStudent(event) {
         });
         
         if (response.ok) {
-            alert('Student added successfully');
+            const data = await response.json();
+            alert(`Student added successfully!\n\nAdmission Number: ${data.student.admissionNumber}`);
             closeModal('addStudentModal');
             loadStudents();
             document.getElementById('addStudentForm').reset();
