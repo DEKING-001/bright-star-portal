@@ -10,10 +10,15 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#5d3a1a',
-                        secondary: '#d4a574',
-                        accent: '#8b5a2b',
-                        dark: '#2c1810'
+                        brand: '#3b82f6',
+                        'brand-dark': '#2563eb',
+                        dark: '#0f172a',
+                        slate: {
+                            850: '#1a2332'
+                        }
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif']
                     }
                 }
             }
@@ -21,64 +26,65 @@
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Poppins', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
         .gallery-item:hover .overlay { opacity: 1; }
+        .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #1a2332 100%); }
     </style>
 </head>
-<body class="bg-[#f8fafc]">
+<body class="bg-slate-50">
     <!-- Navigation -->
-    <nav class="bg-primary text-white sticky top-0 z-50 shadow-lg">
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-between items-center py-4">
                 <div class="flex items-center space-x-3">
-                    <img src="/images/logo.jpeg" alt="Bright Star Logo" class="w-12 h-12 rounded-full object-cover">
+                    <img src="/images/logo.jpeg" alt="Bright Star Logo" class="w-10 h-10 rounded-lg object-cover">
                     <div>
-                        <h1 class="text-xl font-bold">BRIGHT STAR</h1>
-                        <p class="text-xs text-gray-300">International School</p>
+                        <h1 class="text-lg font-bold text-slate-900">BRIGHT STAR</h1>
+                        <p class="text-xs text-slate-500">International School</p>
                     </div>
                 </div>
-                <div class="hidden md:flex space-x-6">
-                    <a href="/" class="hover:text-secondary transition">Home</a>
-                    <a href="/about" class="hover:text-secondary transition">About</a>
-                    <a href="/admissions" class="hover:text-secondary transition">Admissions</a>
-                    <a href="/gallery" class="text-secondary font-semibold">Gallery</a>
-                    <a href="/contact" class="hover:text-secondary transition">Contact</a>
-                    <a href="/login" class="bg-secondary px-4 py-2 rounded-lg hover:bg-yellow-600 transition">Login</a>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="/" class="text-slate-600 hover:text-brand transition font-medium">Home</a>
+                    <a href="/about" class="text-slate-600 hover:text-brand transition font-medium">About</a>
+                    <a href="/admissions" class="text-slate-600 hover:text-brand transition font-medium">Admissions</a>
+                    <a href="/gallery" class="text-brand font-semibold">Gallery</a>
+                    <a href="/contact" class="text-slate-600 hover:text-brand transition font-medium">Contact</a>
+                    <a href="/login" class="bg-brand text-white px-5 py-2 rounded-lg hover:bg-brand-dark transition font-medium">Login</a>
                 </div>
-                <button id="mobileMenuBtn" class="md:hidden text-2xl"><i class="fas fa-bars"></i></button>
+                <button id="mobileMenuBtn" class="md:hidden text-slate-700 text-2xl"><i class="fas fa-bars"></i></button>
             </div>
         </div>
-        <div id="mobileMenu" class="hidden md:hidden bg-primary border-t border-gray-600">
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-slate-200">
             <div class="px-4 py-3 space-y-3">
-                <a href="/" class="block hover:text-secondary">Home</a>
-                <a href="/about" class="block hover:text-secondary">About</a>
-                <a href="/admissions" class="block hover:text-secondary">Admissions</a>
-                <a href="/gallery" class="block text-secondary">Gallery</a>
-                <a href="/contact" class="block hover:text-secondary">Contact</a>
-                <a href="/login" class="block bg-secondary px-4 py-2 rounded-lg text-center">Login</a>
+                <a href="/" class="block text-slate-600 hover:text-brand">Home</a>
+                <a href="/about" class="block text-slate-600 hover:text-brand">About</a>
+                <a href="/admissions" class="block text-slate-600 hover:text-brand">Admissions</a>
+                <a href="/gallery" class="block text-brand font-semibold">Gallery</a>
+                <a href="/contact" class="block text-slate-600 hover:text-brand">Contact</a>
+                <a href="/login" class="block bg-brand text-white px-4 py-2 rounded-lg text-center">Login</a>
             </div>
         </div>
     </nav>
 
-    <!-- Page Header -->
-    <section class="bg-gradient-to-r from-primary to-accent text-white py-16">
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white py-20">
         <div class="max-w-7xl mx-auto px-4 text-center">
-            <h1 class="text-4xl font-bold mb-4">School Gallery</h1>
-            <p class="text-xl text-gray-200">Explore Our Campus and Activities</p>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">School Gallery</h1>
+            <p class="text-lg text-slate-300 max-w-2xl mx-auto">Explore Our Campus and Activities</p>
         </div>
     </section>
 
     <!-- Gallery Filter -->
-    <section class="py-8 bg-white">
+    <section class="py-8 bg-white border-b border-slate-200">
         <div class="max-w-7xl mx-auto px-4">
-            <div class="flex flex-wrap justify-center gap-4">
-                <button onclick="filterGallery('all')" class="gallery-filter active px-6 py-2 rounded-full bg-primary text-white font-semibold transition">All</button>
-                <button onclick="filterGallery('campus')" class="gallery-filter px-6 py-2 rounded-full bg-gray-200 text-gray-700 font-semibold hover:bg-primary hover:text-white transition">Campus</button>
-                <button onclick="filterGallery('classrooms')" class="gallery-filter px-6 py-2 rounded-full bg-gray-200 text-gray-700 font-semibold hover:bg-primary hover:text-white transition">Classrooms</button>
-                <button onclick="filterGallery('activities')" class="gallery-filter px-6 py-2 rounded-full bg-gray-200 text-gray-700 font-semibold hover:bg-primary hover:text-white transition">Activities</button>
-                <button onclick="filterGallery('events')" class="gallery-filter px-6 py-2 rounded-full bg-gray-200 text-gray-700 font-semibold hover:bg-primary hover:text-white transition">Events</button>
-                <button onclick="filterGallery('sports')" class="gallery-filter px-6 py-2 rounded-full bg-gray-200 text-gray-700 font-semibold hover:bg-primary hover:text-white transition">Sports</button>
+            <div class="flex flex-wrap justify-center gap-3">
+                <button onclick="filterGallery('all')" class="gallery-filter active px-5 py-2 rounded-full bg-brand text-white font-medium transition text-sm">All</button>
+                <button onclick="filterGallery('campus')" class="gallery-filter px-5 py-2 rounded-full bg-slate-100 text-slate-600 font-medium hover:bg-brand hover:text-white transition text-sm">Campus</button>
+                <button onclick="filterGallery('classrooms')" class="gallery-filter px-5 py-2 rounded-full bg-slate-100 text-slate-600 font-medium hover:bg-brand hover:text-white transition text-sm">Classrooms</button>
+                <button onclick="filterGallery('activities')" class="gallery-filter px-5 py-2 rounded-full bg-slate-100 text-slate-600 font-medium hover:bg-brand hover:text-white transition text-sm">Activities</button>
+                <button onclick="filterGallery('events')" class="gallery-filter px-5 py-2 rounded-full bg-slate-100 text-slate-600 font-medium hover:bg-brand hover:text-white transition text-sm">Events</button>
+                <button onclick="filterGallery('sports')" class="gallery-filter px-5 py-2 rounded-full bg-slate-100 text-slate-600 font-medium hover:bg-brand hover:text-white transition text-sm">Sports</button>
             </div>
         </div>
     </section>
@@ -86,46 +92,46 @@
     <!-- Gallery Grid -->
     <section class="py-12">
         <div class="max-w-7xl mx-auto px-4">
-            <div id="galleryGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div id="galleryGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                 <!-- Campus -->
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="campus">
-                    <div class="aspect-square bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="campus">
+                    <div class="aspect-square bg-gradient-to-br from-brand to-indigo-500 flex items-center justify-center">
                         <i class="fas fa-school text-white text-5xl"></i>
                     </div>
-                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
                             <i class="fas fa-search-plus text-3xl mb-2"></i>
                             <p class="font-semibold">School Building</p>
                         </div>
                     </div>
                 </div>
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="campus">
-                    <div class="aspect-square bg-gradient-to-br from-green-500 to-accent flex items-center justify-center">
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="campus">
+                    <div class="aspect-square bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
                         <i class="fas fa-tree text-white text-5xl"></i>
                     </div>
-                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
                             <i class="fas fa-search-plus text-3xl mb-2"></i>
                             <p class="font-semibold">School Garden</p>
                         </div>
                     </div>
                 </div>
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="campus">
-                    <div class="aspect-square bg-gradient-to-br from-secondary to-red-500 flex items-center justify-center">
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="campus">
+                    <div class="aspect-square bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center">
                         <i class="fas fa-swimming-pool text-white text-5xl"></i>
                     </div>
-                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
                             <i class="fas fa-search-plus text-3xl mb-2"></i>
                             <p class="font-semibold">Swimming Pool</p>
                         </div>
                     </div>
                 </div>
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="campus">
-                    <div class="aspect-square bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="campus">
+                    <div class="aspect-square bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center">
                         <i class="fas fa-futbol text-white text-5xl"></i>
                     </div>
-                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
                             <i class="fas fa-search-plus text-3xl mb-2"></i>
                             <p class="font-semibold">Sports Field</p>
@@ -134,44 +140,44 @@
                 </div>
 
                 <!-- Classrooms -->
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="classrooms">
-                    <div class="aspect-square bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="classrooms">
+                    <div class="aspect-square bg-gradient-to-br from-blue-500 to-brand flex items-center justify-center">
                         <i class="fas fa-chalkboard text-white text-5xl"></i>
                     </div>
-                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
                             <i class="fas fa-search-plus text-3xl mb-2"></i>
                             <p class="font-semibold">Classroom</p>
                         </div>
                     </div>
                 </div>
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="classrooms">
-                    <div class="aspect-square bg-gradient-to-br from-teal-500 to-green-500 flex items-center justify-center">
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="classrooms">
+                    <div class="aspect-square bg-gradient-to-br from-teal-500 to-emerald-500 flex items-center justify-center">
                         <i class="fas fa-flask text-white text-5xl"></i>
                     </div>
-                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
                             <i class="fas fa-search-plus text-3xl mb-2"></i>
                             <p class="font-semibold">Science Laboratory</p>
                         </div>
                     </div>
                 </div>
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="classrooms">
-                    <div class="aspect-square bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="classrooms">
+                    <div class="aspect-square bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center">
                         <i class="fas fa-laptop text-white text-5xl"></i>
                     </div>
-                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
                             <i class="fas fa-search-plus text-3xl mb-2"></i>
                             <p class="font-semibold">Computer Lab</p>
                         </div>
                     </div>
                 </div>
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="classrooms">
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="classrooms">
                     <div class="aspect-square bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center">
                         <i class="fas fa-book text-white text-5xl"></i>
                     </div>
-                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
                             <i class="fas fa-search-plus text-3xl mb-2"></i>
                             <p class="font-semibold">Library</p>
@@ -180,44 +186,44 @@
                 </div>
 
                 <!-- Activities -->
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="activities">
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="activities">
                     <div class="aspect-square bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center">
                         <i class="fas fa-music text-white text-5xl"></i>
                     </div>
-                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
                             <i class="fas fa-search-plus text-3xl mb-2"></i>
                             <p class="font-semibold">Music Class</p>
                         </div>
                     </div>
                 </div>
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="activities">
-                    <div class="aspect-square bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="activities">
+                    <div class="aspect-square bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center">
                         <i class="fas fa-palette text-white text-5xl"></i>
                     </div>
-                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
                             <i class="fas fa-search-plus text-3xl mb-2"></i>
                             <p class="font-semibold">Art Class</p>
                         </div>
                     </div>
                 </div>
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="activities">
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="activities">
                     <div class="aspect-square bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center">
                         <i class="fas fa-robot text-white text-5xl"></i>
                     </div>
-                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
                             <i class="fas fa-search-plus text-3xl mb-2"></i>
                             <p class="font-semibold">Robotics Club</p>
                         </div>
                     </div>
                 </div>
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="activities">
-                    <div class="aspect-square bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="activities">
+                    <div class="aspect-square bg-gradient-to-br from-emerald-500 to-green-500 flex items-center justify-center">
                         <i class="fas fa-seedling text-white text-5xl"></i>
                     </div>
-                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
                             <i class="fas fa-search-plus text-3xl mb-2"></i>
                             <p class="font-semibold">Agricultural Science</p>
@@ -226,44 +232,44 @@
                 </div>
 
                 <!-- Events -->
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="events">
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="events">
                     <div class="aspect-square bg-gradient-to-br from-amber-500 to-yellow-500 flex items-center justify-center">
                         <i class="fas fa-graduation-cap text-white text-5xl"></i>
                     </div>
-                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
                             <i class="fas fa-search-plus text-3xl mb-2"></i>
                             <p class="font-semibold">Graduation Day</p>
                         </div>
                     </div>
                 </div>
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="events">
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="events">
                     <div class="aspect-square bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center">
                         <i class="fas fa-microphone text-white text-5xl"></i>
                     </div>
-                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
                             <i class="fas fa-search-plus text-3xl mb-2"></i>
                             <p class="font-semibold">Cultural Day</p>
                         </div>
                     </div>
                 </div>
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="events">
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="events">
                     <div class="aspect-square bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center">
                         <i class="fas fa-trophy text-white text-5xl"></i>
                     </div>
-                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
                             <i class="fas fa-search-plus text-3xl mb-2"></i>
                             <p class="font-semibold">Prize Giving Day</p>
                         </div>
                     </div>
                 </div>
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="events">
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="events">
                     <div class="aspect-square bg-gradient-to-br from-fuchsia-500 to-pink-500 flex items-center justify-center">
                         <i class="fas fa-hands text-white text-5xl"></i>
                     </div>
-                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
                             <i class="fas fa-search-plus text-3xl mb-2"></i>
                             <p class="font-semibold">Inter-House Competition</p>
@@ -272,44 +278,44 @@
                 </div>
 
                 <!-- Sports -->
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="sports">
-                    <div class="aspect-square bg-gradient-to-br from-green-600 to-emerald-600 flex items-center justify-center">
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="sports">
+                    <div class="aspect-square bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
                         <i class="fas fa-running text-white text-5xl"></i>
                     </div>
-                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
                             <i class="fas fa-search-plus text-3xl mb-2"></i>
                             <p class="font-semibold">Athletics</p>
                         </div>
                     </div>
                 </div>
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="sports">
-                    <div class="aspect-square bg-gradient-to-br from-orange-600 to-amber-600 flex items-center justify-center">
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="sports">
+                    <div class="aspect-square bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center">
                         <i class="fas fa-basketball-ball text-white text-5xl"></i>
                     </div>
-                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
                             <i class="fas fa-search-plus text-3xl mb-2"></i>
                             <p class="font-semibold">Basketball</p>
                         </div>
                     </div>
                 </div>
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="sports">
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="sports">
                     <div class="aspect-square bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center">
                         <i class="fas fa-table-tennis text-white text-5xl"></i>
                     </div>
-                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
                             <i class="fas fa-search-plus text-3xl mb-2"></i>
                             <p class="font-semibold">Table Tennis</p>
                         </div>
                     </div>
                 </div>
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer" data-category="sports">
-                    <div class="aspect-square bg-gradient-to-br from-red-600 to-rose-600 flex items-center justify-center">
+                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="sports">
+                    <div class="aspect-square bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center">
                         <i class="fas fa-futbol text-white text-5xl"></i>
                     </div>
-                    <div class="overlay absolute inset-0 bg-black/50 opacity-0 transition-opacity flex items-center justify-center">
+                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
                             <i class="fas fa-search-plus text-3xl mb-2"></i>
                             <p class="font-semibold">Football</p>
@@ -326,41 +332,41 @@
             <div class="grid md:grid-cols-4 gap-8">
                 <div>
                     <div class="flex items-center space-x-3 mb-4">
-                        <img src="/images/logo.jpeg" alt="Bright Star Logo" class="w-10 h-10 rounded-full object-cover">
+                        <img src="/images/logo.jpeg" alt="Bright Star Logo" class="w-10 h-10 rounded-lg object-cover">
                         <div>
-                            <h3 class="font-bold">BRIGHT STAR</h3>
-                            <p class="text-xs text-gray-400">International School</p>
+                            <h3 class="font-bold text-white">BRIGHT STAR</h3>
+                            <p class="text-xs text-slate-400">International School</p>
                         </div>
                     </div>
-                    <p class="text-gray-400 text-sm">Nurturing Excellence, Building Future Leaders since 2005.</p>
+                    <p class="text-slate-400 text-sm">Nurturing Excellence, Building Future Leaders since 2005.</p>
                 </div>
                 <div>
-                    <h4 class="font-bold mb-4">Quick Links</h4>
-                    <ul class="space-y-2 text-gray-400 text-sm">
-                        <li><a href="/" class="hover:text-secondary">Home</a></li>
-                        <li><a href="/about" class="hover:text-secondary">About Us</a></li>
-                        <li><a href="/admissions" class="hover:text-secondary">Admissions</a></li>
-                        <li><a href="/gallery" class="hover:text-secondary">Gallery</a></li>
+                    <h4 class="font-semibold mb-4 text-white">Quick Links</h4>
+                    <ul class="space-y-2 text-slate-400 text-sm">
+                        <li><a href="/" class="hover:text-brand transition">Home</a></li>
+                        <li><a href="/about" class="hover:text-brand transition">About Us</a></li>
+                        <li><a href="/admissions" class="hover:text-brand transition">Admissions</a></li>
+                        <li><a href="/gallery" class="hover:text-brand transition">Gallery</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-bold mb-4">Portal</h4>
-                    <ul class="space-y-2 text-gray-400 text-sm">
-                        <li><a href="/login?role=student" class="hover:text-secondary">Student Portal</a></li>
-                        <li><a href="/login?role=teacher" class="hover:text-secondary">Teacher Portal</a></li>
-                        <li><a href="/login?role=admin" class="hover:text-secondary">Admin Portal</a></li>
+                    <h4 class="font-semibold mb-4 text-white">Portal</h4>
+                    <ul class="space-y-2 text-slate-400 text-sm">
+                        <li><a href="/login?role=student" class="hover:text-brand transition">Student Portal</a></li>
+                        <li><a href="/login?role=teacher" class="hover:text-brand transition">Teacher Portal</a></li>
+                        <li><a href="/login?role=admin" class="hover:text-brand transition">Admin Portal</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-bold mb-4">Contact Us</h4>
-                    <ul class="space-y-2 text-gray-400 text-sm">
+                    <h4 class="font-semibold mb-4 text-white">Contact Us</h4>
+                    <ul class="space-y-2 text-slate-400 text-sm">
                         <li><i class="fas fa-map-marker-alt mr-2"></i>123 Education Avenue, Lagos</li>
                         <li><i class="fas fa-phone mr-2"></i>+234 801 234 5678</li>
                         <li><i class="fas fa-envelope mr-2"></i>info@brightstarschool.edu.ng</li>
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
+            <div class="border-t border-slate-700 mt-8 pt-8 text-center text-slate-400 text-sm">
                 <p>&copy; 2026 Bright Star International School. All rights reserved.</p>
             </div>
         </div>
@@ -373,11 +379,11 @@
             const buttons = document.querySelectorAll('.gallery-filter');
             
             buttons.forEach(btn => {
-                btn.classList.remove('bg-primary', 'text-white');
-                btn.classList.add('bg-gray-200', 'text-gray-700');
+                btn.classList.remove('bg-brand', 'text-white');
+                btn.classList.add('bg-slate-100', 'text-slate-600');
             });
-            event.currentTarget.classList.remove('bg-gray-200', 'text-gray-700');
-            event.currentTarget.classList.add('bg-primary', 'text-white');
+            event.currentTarget.classList.remove('bg-slate-100', 'text-slate-600');
+            event.currentTarget.classList.add('bg-brand', 'text-white');
             
             items.forEach(item => {
                 if (category === 'all' || item.dataset.category === category) {
@@ -390,4 +396,3 @@
     </script>
 </body>
 </html>
-

@@ -10,10 +10,9 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#5d3a1a',
-                        secondary: '#d4a574',
-                        accent: '#8b5a2b',
-                        dark: '#2c1810'
+                        brand: '#3b82f6',
+                        'brand-dark': '#2563eb',
+                        sidebar: '#0f172a'
                     }
                 }
             }
@@ -21,80 +20,80 @@
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Poppins', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="bg-[#f8fafc]">
+<body class="bg-slate-50">
     <!-- Navigation -->
-    <nav class="bg-primary text-white sticky top-0 z-50 shadow-lg">
+    <nav class="bg-white shadow-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-between items-center py-4">
                 <div class="flex items-center space-x-3">
                     <img src="/images/logo.jpeg" alt="Bright Star Logo" class="w-12 h-12 rounded-full object-cover">
                     <div>
-                        <h1 class="text-xl font-bold">BRIGHT STAR</h1>
-                        <p class="text-xs text-gray-300">International School</p>
+                        <h1 class="text-xl font-bold text-slate-900">BRIGHT STAR</h1>
+                        <p class="text-xs text-slate-500">International School</p>
                     </div>
                 </div>
                 <div class="hidden md:flex space-x-6">
-                    <a href="/" class="hover:text-secondary transition">Home</a>
-                    <a href="/about" class="text-secondary font-semibold">About</a>
-                    <a href="/admissions" class="hover:text-secondary transition">Admissions</a>
-                    <a href="/gallery" class="hover:text-secondary transition">Gallery</a>
-                    <a href="/contact" class="hover:text-secondary transition">Contact</a>
-                    <a href="/login" class="bg-secondary px-4 py-2 rounded-lg hover:bg-yellow-600 transition">Login</a>
+                    <a href="/" class="text-slate-700 hover:text-brand transition font-medium">Home</a>
+                    <a href="/about" class="text-brand font-semibold">About</a>
+                    <a href="/admissions" class="text-slate-700 hover:text-brand transition font-medium">Admissions</a>
+                    <a href="/gallery" class="text-slate-700 hover:text-brand transition font-medium">Gallery</a>
+                    <a href="/contact" class="text-slate-700 hover:text-brand transition font-medium">Contact</a>
+                    <a href="/login" class="bg-brand px-5 py-2 rounded-lg text-white hover:bg-brand-dark transition font-medium">Login</a>
                 </div>
-                <button id="mobileMenuBtn" class="md:hidden text-2xl"><i class="fas fa-bars"></i></button>
+                <button id="mobileMenuBtn" class="md:hidden text-2xl text-slate-700"><i class="fas fa-bars"></i></button>
             </div>
         </div>
-        <div id="mobileMenu" class="hidden md:hidden bg-primary border-t border-gray-600">
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-slate-100">
             <div class="px-4 py-3 space-y-3">
-                <a href="/" class="block hover:text-secondary">Home</a>
-                <a href="/about" class="block text-secondary">About</a>
-                <a href="/admissions" class="block hover:text-secondary">Admissions</a>
-                <a href="/gallery" class="block hover:text-secondary">Gallery</a>
-                <a href="/contact" class="block hover:text-secondary">Contact</a>
-                <a href="/login" class="block bg-secondary px-4 py-2 rounded-lg text-center">Login</a>
+                <a href="/" class="block text-slate-700 hover:text-brand">Home</a>
+                <a href="/about" class="block text-brand font-semibold">About</a>
+                <a href="/admissions" class="block text-slate-700 hover:text-brand">Admissions</a>
+                <a href="/gallery" class="block text-slate-700 hover:text-brand">Gallery</a>
+                <a href="/contact" class="block text-slate-700 hover:text-brand">Contact</a>
+                <a href="/login" class="block bg-brand px-4 py-2 rounded-lg text-white text-center">Login</a>
             </div>
         </div>
     </nav>
 
     <!-- Page Header -->
-    <section class="bg-gradient-to-r from-primary to-accent text-white py-16">
+    <section class="bg-slate-900 py-20">
         <div class="max-w-7xl mx-auto px-4 text-center">
-            <h1 class="text-4xl font-bold mb-4">About Our School</h1>
-            <p class="text-xl text-gray-200">Nurturing Excellence, Building Future Leaders</p>
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">About Our School</h1>
+            <p class="text-xl text-slate-300">Nurturing Excellence, Building Future Leaders</p>
         </div>
     </section>
 
     <!-- About Content -->
-    <section class="py-16">
+    <section class="py-20">
         <div class="max-w-7xl mx-auto px-4">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
                 <div>
-                    <h2 class="text-3xl font-bold text-primary mb-6">Our Story</h2>
-                    <p class="text-gray-600 mb-4">Bright Star International School was founded in 2005 with a vision to provide quality education that prepares students for the challenges of the 21st century. What started as a small institution with just 50 students has grown into one of the leading secondary schools in the region.</p>
-                    <p class="text-gray-600 mb-4">Over the past two decades, we have maintained our commitment to academic excellence while fostering a nurturing environment where every child can discover and develop their unique talents.</p>
-                    <p class="text-gray-600">Our alumni have gone on to excel in various fields including medicine, engineering, law, and the creative arts, making us proud in institutions across Nigeria and around the world.</p>
+                    <h2 class="text-3xl font-bold text-slate-900 mb-6">Our Story</h2>
+                    <p class="text-slate-600 mb-4 leading-relaxed">Bright Star International School was founded in 2005 with a vision to provide quality education that prepares students for the challenges of the 21st century. What started as a small institution with just 50 students has grown into one of the leading secondary schools in the region.</p>
+                    <p class="text-slate-600 mb-4 leading-relaxed">Over the past two decades, we have maintained our commitment to academic excellence while fostering a nurturing environment where every child can discover and develop their unique talents.</p>
+                    <p class="text-slate-600 leading-relaxed">Our alumni have gone on to excel in various fields including medicine, engineering, law, and the creative arts, making us proud in institutions across Nigeria and around the world.</p>
                 </div>
-                <div class="bg-gradient-to-br from-primary to-accent rounded-2xl p-8 text-white">
+                <div class="bg-gradient-to-br from-brand to-blue-700 rounded-2xl p-8 text-white">
                     <div class="grid grid-cols-2 gap-6">
                         <div class="text-center">
-                            <p class="text-4xl font-bold text-secondary">20+</p>
-                            <p class="text-gray-200">Years of Excellence</p>
+                            <p class="text-4xl font-bold">20+</p>
+                            <p class="text-blue-200">Years of Excellence</p>
                         </div>
                         <div class="text-center">
-                            <p class="text-4xl font-bold text-secondary">5000+</p>
-                            <p class="text-gray-200">Graduates</p>
+                            <p class="text-4xl font-bold">5000+</p>
+                            <p class="text-blue-200">Graduates</p>
                         </div>
                         <div class="text-center">
-                            <p class="text-4xl font-bold text-secondary">50+</p>
-                            <p class="text-gray-200">Qualified Teachers</p>
+                            <p class="text-4xl font-bold">50+</p>
+                            <p class="text-blue-200">Qualified Teachers</p>
                         </div>
                         <div class="text-center">
-                            <p class="text-4xl font-bold text-secondary">95%</p>
-                            <p class="text-gray-200">Pass Rate</p>
+                            <p class="text-4xl font-bold">95%</p>
+                            <p class="text-blue-200">Pass Rate</p>
                         </div>
                     </div>
                 </div>
@@ -103,105 +102,105 @@
     </section>
 
     <!-- Vision & Mission -->
-    <section class="py-16 bg-white">
+    <section class="py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4">
             <div class="grid md:grid-cols-2 gap-8">
-                <div class="bg-gray-50 rounded-2xl p-8">
-                    <div class="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mb-6">
+                <div class="bg-slate-50 rounded-2xl p-8 border border-slate-100">
+                    <div class="w-16 h-16 bg-brand rounded-full flex items-center justify-center mb-6">
                         <i class="fas fa-eye text-white text-2xl"></i>
                     </div>
-                    <h3 class="text-2xl font-bold text-primary mb-4">Our Vision</h3>
-                    <p class="text-gray-600">To be a world-class educational institution that produces globally competitive students who are academically excellent, morally upright, and socially responsible.</p>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-4">Our Vision</h3>
+                    <p class="text-slate-600 leading-relaxed">To be a world-class educational institution that produces globally competitive students who are academically excellent, morally upright, and socially responsible.</p>
                 </div>
-                <div class="bg-gray-50 rounded-2xl p-8">
-                    <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center mb-6">
+                <div class="bg-slate-50 rounded-2xl p-8 border border-slate-100">
+                    <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-6">
                         <i class="fas fa-bullseye text-white text-2xl"></i>
                     </div>
-                    <h3 class="text-2xl font-bold text-primary mb-4">Our Mission</h3>
-                    <p class="text-gray-600">To provide a stimulating learning environment that nurtures intellectual curiosity, creativity, and character development, empowering students to become leaders and positive contributors to society.</p>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-4">Our Mission</h3>
+                    <p class="text-slate-600 leading-relaxed">To provide a stimulating learning environment that nurtures intellectual curiosity, creativity, and character development, empowering students to become leaders and positive contributors to society.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Core Values -->
-    <section class="py-16 bg-gray-50">
+    <section class="py-20 bg-slate-50">
         <div class="max-w-7xl mx-auto px-4">
-            <h2 class="text-3xl font-bold text-primary text-center mb-12">Our Core Values</h2>
+            <h2 class="text-3xl font-bold text-slate-900 text-center mb-12">Our Core Values</h2>
             <div class="grid md:grid-cols-4 gap-6">
-                <div class="bg-white rounded-xl p-6 text-center shadow-sm">
-                    <div class="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-medal text-primary text-xl"></i>
+                <div class="bg-white rounded-xl p-6 text-center border border-slate-100 shadow-sm hover:shadow-md transition">
+                    <div class="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-medal text-brand text-xl"></i>
                     </div>
-                    <h4 class="font-bold text-primary mb-2">Excellence</h4>
-                    <p class="text-gray-600 text-sm">Striving for the highest standards in all we do</p>
+                    <h4 class="font-bold text-slate-900 mb-2">Excellence</h4>
+                    <p class="text-slate-500 text-sm">Striving for the highest standards in all we do</p>
                 </div>
-                <div class="bg-white rounded-xl p-6 text-center shadow-sm">
-                    <div class="w-14 h-14 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-handshake text-secondary text-xl"></i>
+                <div class="bg-white rounded-xl p-6 text-center border border-slate-100 shadow-sm hover:shadow-md transition">
+                    <div class="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-handshake text-brand text-xl"></i>
                     </div>
-                    <h4 class="font-bold text-primary mb-2">Integrity</h4>
-                    <p class="text-gray-600 text-sm">Upholding honesty and moral principles</p>
+                    <h4 class="font-bold text-slate-900 mb-2">Integrity</h4>
+                    <p class="text-slate-500 text-sm">Upholding honesty and moral principles</p>
                 </div>
-                <div class="bg-white rounded-xl p-6 text-center shadow-sm">
-                    <div class="w-14 h-14 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-users text-accent text-xl"></i>
+                <div class="bg-white rounded-xl p-6 text-center border border-slate-100 shadow-sm hover:shadow-md transition">
+                    <div class="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-users text-brand text-xl"></i>
                     </div>
-                    <h4 class="font-bold text-primary mb-2">Respect</h4>
-                    <p class="text-gray-600 text-sm">Valuing diversity and treating all with dignity</p>
+                    <h4 class="font-bold text-slate-900 mb-2">Respect</h4>
+                    <p class="text-slate-500 text-sm">Valuing diversity and treating all with dignity</p>
                 </div>
-                <div class="bg-white rounded-xl p-6 text-center shadow-sm">
-                    <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-lightbulb text-green-600 text-xl"></i>
+                <div class="bg-white rounded-xl p-6 text-center border border-slate-100 shadow-sm hover:shadow-md transition">
+                    <div class="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-lightbulb text-brand text-xl"></i>
                     </div>
-                    <h4 class="font-bold text-primary mb-2">Innovation</h4>
-                    <p class="text-gray-600 text-sm">Embracing creativity and new ideas</p>
+                    <h4 class="font-bold text-slate-900 mb-2">Innovation</h4>
+                    <p class="text-slate-500 text-sm">Embracing creativity and new ideas</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-dark text-white py-12">
+    <footer class="bg-sidebar text-white py-12">
         <div class="max-w-7xl mx-auto px-4">
             <div class="grid md:grid-cols-4 gap-8">
                 <div>
                     <div class="flex items-center space-x-3 mb-4">
                         <img src="/images/logo.jpeg" alt="Bright Star Logo" class="w-10 h-10 rounded-full object-cover">
                         <div>
-                            <h3 class="font-bold">BRIGHT STAR</h3>
-                            <p class="text-xs text-gray-400">International School</p>
+                            <h3 class="font-bold text-white">BRIGHT STAR</h3>
+                            <p class="text-xs text-slate-400">International School</p>
                         </div>
                     </div>
-                    <p class="text-gray-400 text-sm">Nurturing Excellence, Building Future Leaders since 2005.</p>
+                    <p class="text-slate-400 text-sm">Nurturing Excellence, Building Future Leaders since 2005.</p>
                 </div>
                 <div>
-                    <h4 class="font-bold mb-4">Quick Links</h4>
-                    <ul class="space-y-2 text-gray-400 text-sm">
-                        <li><a href="/" class="hover:text-secondary">Home</a></li>
-                        <li><a href="/about" class="hover:text-secondary">About Us</a></li>
-                        <li><a href="/admissions" class="hover:text-secondary">Admissions</a></li>
-                        <li><a href="/gallery" class="hover:text-secondary">Gallery</a></li>
+                    <h4 class="font-bold text-white mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-slate-400 text-sm">
+                        <li><a href="/" class="hover:text-white transition">Home</a></li>
+                        <li><a href="/about" class="hover:text-white transition">About Us</a></li>
+                        <li><a href="/admissions" class="hover:text-white transition">Admissions</a></li>
+                        <li><a href="/gallery" class="hover:text-white transition">Gallery</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-bold mb-4">Portal</h4>
-                    <ul class="space-y-2 text-gray-400 text-sm">
-                        <li><a href="/login?role=student" class="hover:text-secondary">Student Portal</a></li>
-                        <li><a href="/login?role=teacher" class="hover:text-secondary">Teacher Portal</a></li>
-                        <li><a href="/login?role=admin" class="hover:text-secondary">Admin Portal</a></li>
+                    <h4 class="font-bold text-white mb-4">Portal</h4>
+                    <ul class="space-y-2 text-slate-400 text-sm">
+                        <li><a href="/login?role=student" class="hover:text-white transition">Student Portal</a></li>
+                        <li><a href="/login?role=teacher" class="hover:text-white transition">Teacher Portal</a></li>
+                        <li><a href="/login?role=admin" class="hover:text-white transition">Admin Portal</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-bold mb-4">Contact Us</h4>
-                    <ul class="space-y-2 text-gray-400 text-sm">
+                    <h4 class="font-bold text-white mb-4">Contact Us</h4>
+                    <ul class="space-y-2 text-slate-400 text-sm">
                         <li><i class="fas fa-map-marker-alt mr-2"></i>123 Education Avenue, Lagos</li>
                         <li><i class="fas fa-phone mr-2"></i>+234 801 234 5678</li>
                         <li><i class="fas fa-envelope mr-2"></i>info@brightstarschool.edu.ng</li>
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
+            <div class="border-t border-slate-700 mt-8 pt-8 text-center text-slate-400 text-sm">
                 <p>&copy; 2026 Bright Star International School. All rights reserved.</p>
             </div>
         </div>
@@ -210,4 +209,3 @@
     <script src="/js/main.js"></script>
 </body>
 </html>
-

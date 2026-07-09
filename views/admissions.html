@@ -10,10 +10,9 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#5d3a1a',
-                        secondary: '#d4a574',
-                        accent: '#8b5a2b',
-                        dark: '#2c1810'
+                        brand: '#3b82f6',
+                        'brand-dark': '#2563eb',
+                        'brand-light': '#60a5fa'
                     }
                 }
             }
@@ -21,192 +20,203 @@
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Poppins', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="bg-[#f8fafc]">
+<body class="bg-slate-50">
     <!-- Navigation -->
-    <nav class="bg-primary text-white sticky top-0 z-50 shadow-lg">
+    <nav class="bg-white sticky top-0 z-50 shadow-sm border-b border-slate-100">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-between items-center py-4">
                 <div class="flex items-center space-x-3">
                     <img src="/images/logo.jpeg" alt="Bright Star Logo" class="w-12 h-12 rounded-full object-cover">
                     <div>
-                        <h1 class="text-xl font-bold">BRIGHT STAR</h1>
-                        <p class="text-xs text-gray-300">International School</p>
+                        <h1 class="text-xl font-bold text-slate-900">BRIGHT STAR</h1>
+                        <p class="text-xs text-slate-500">International School</p>
                     </div>
                 </div>
-                <div class="hidden md:flex space-x-6">
-                    <a href="/" class="hover:text-secondary transition">Home</a>
-                    <a href="/about" class="hover:text-secondary transition">About</a>
-                    <a href="/admissions" class="text-secondary font-semibold">Admissions</a>
-                    <a href="/gallery" class="hover:text-secondary transition">Gallery</a>
-                    <a href="/contact" class="hover:text-secondary transition">Contact</a>
-                    <a href="/login" class="bg-secondary px-4 py-2 rounded-lg hover:bg-yellow-600 transition">Login</a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/" class="text-slate-600 hover:text-brand transition font-medium">Home</a>
+                    <a href="/about" class="text-slate-600 hover:text-brand transition font-medium">About</a>
+                    <a href="/admissions" class="text-brand font-semibold">Admissions</a>
+                    <a href="/gallery" class="text-slate-600 hover:text-brand transition font-medium">Gallery</a>
+                    <a href="/contact" class="text-slate-600 hover:text-brand transition font-medium">Contact</a>
+                    <a href="/login" class="bg-brand text-white px-5 py-2.5 rounded-lg hover:bg-brand-dark transition font-medium shadow-sm">Login</a>
                 </div>
-                <button id="mobileMenuBtn" class="md:hidden text-2xl"><i class="fas fa-bars"></i></button>
+                <button id="mobileMenuBtn" class="md:hidden text-2xl text-slate-600"><i class="fas fa-bars"></i></button>
             </div>
         </div>
-        <div id="mobileMenu" class="hidden md:hidden bg-primary border-t border-gray-600">
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-slate-100">
             <div class="px-4 py-3 space-y-3">
-                <a href="/" class="block hover:text-secondary">Home</a>
-                <a href="/about" class="block hover:text-secondary">About</a>
-                <a href="/admissions" class="block text-secondary">Admissions</a>
-                <a href="/gallery" class="block hover:text-secondary">Gallery</a>
-                <a href="/contact" class="block hover:text-secondary">Contact</a>
-                <a href="/login" class="block bg-secondary px-4 py-2 rounded-lg text-center">Login</a>
+                <a href="/" class="block text-slate-600 hover:text-brand py-2">Home</a>
+                <a href="/about" class="block text-slate-600 hover:text-brand py-2">About</a>
+                <a href="/admissions" class="block text-brand font-semibold py-2">Admissions</a>
+                <a href="/gallery" class="block text-slate-600 hover:text-brand py-2">Gallery</a>
+                <a href="/contact" class="block text-slate-600 hover:text-brand py-2">Contact</a>
+                <a href="/login" class="block bg-brand text-white px-4 py-2.5 rounded-lg text-center font-medium">Login</a>
             </div>
         </div>
     </nav>
 
     <!-- Page Header -->
-    <section class="bg-gradient-to-r from-primary to-accent text-white py-16">
+    <section class="bg-gradient-to-br from-slate-900 via-slate-800 to-brand-dark text-white py-20">
         <div class="max-w-7xl mx-auto px-4 text-center">
-            <h1 class="text-4xl font-bold mb-4">Admissions</h1>
-            <p class="text-xl text-gray-200">Join the Bright Star Family</p>
+            <div class="inline-flex items-center bg-brand/20 text-brand-light px-4 py-2 rounded-full text-sm font-medium mb-6">
+                <i class="fas fa-graduation-cap mr-2"></i> Admissions Open 2025/2026
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Admissions</h1>
+            <p class="text-xl text-slate-300 max-w-2xl mx-auto">Join the Bright Star Family and give your child the foundation for academic excellence</p>
         </div>
     </section>
 
     <!-- Admission Process -->
     <section class="py-16">
         <div class="max-w-7xl mx-auto px-4">
-            <h2 class="text-3xl font-bold text-primary text-center mb-12">Admission Process</h2>
+            <div class="text-center mb-12">
+                <span class="text-brand font-semibold text-sm uppercase tracking-wider">Simple Process</span>
+                <h2 class="text-3xl font-bold text-slate-900 mt-2">Admission Process</h2>
+            </div>
             <div class="grid md:grid-cols-4 gap-8">
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                <div class="text-center bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition">
+                    <div class="w-16 h-16 bg-brand rounded-2xl flex items-center justify-center mx-auto mb-4">
                         <span class="text-white font-bold text-xl">1</span>
                     </div>
-                    <h4 class="font-bold text-primary mb-2">Inquiry</h4>
-                    <p class="text-gray-600 text-sm">Visit the school or contact us for admission information</p>
+                    <h4 class="font-bold text-slate-900 mb-2">Inquiry</h4>
+                    <p class="text-slate-500 text-sm">Visit the school or contact us for admission information</p>
                 </div>
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                <div class="text-center bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition">
+                    <div class="w-16 h-16 bg-brand rounded-2xl flex items-center justify-center mx-auto mb-4">
                         <span class="text-white font-bold text-xl">2</span>
                     </div>
-                    <h4 class="font-bold text-primary mb-2">Application</h4>
-                    <p class="text-gray-600 text-sm">Obtain and complete the admission form</p>
+                    <h4 class="font-bold text-slate-900 mb-2">Application</h4>
+                    <p class="text-slate-500 text-sm">Obtain and complete the admission form</p>
                 </div>
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                <div class="text-center bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition">
+                    <div class="w-16 h-16 bg-brand rounded-2xl flex items-center justify-center mx-auto mb-4">
                         <span class="text-white font-bold text-xl">3</span>
                     </div>
-                    <h4 class="font-bold text-primary mb-2">Entrance Exam</h4>
-                    <p class="text-gray-600 text-sm">Sit for the entrance examination</p>
+                    <h4 class="font-bold text-slate-900 mb-2">Entrance Exam</h4>
+                    <p class="text-slate-500 text-sm">Sit for the entrance examination</p>
                 </div>
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                <div class="text-center bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition">
+                    <div class="w-16 h-16 bg-brand rounded-2xl flex items-center justify-center mx-auto mb-4">
                         <span class="text-white font-bold text-xl">4</span>
                     </div>
-                    <h4 class="font-bold text-primary mb-2">Enrollment</h4>
-                    <p class="text-gray-600 text-sm">Complete registration and start classes</p>
+                    <h4 class="font-bold text-slate-900 mb-2">Enrollment</h4>
+                    <p class="text-slate-500 text-sm">Complete registration and start classes</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Requirements -->
-    <section class="py-16 bg-white">
+    <section class="py-16 bg-white border-y border-slate-100">
         <div class="max-w-7xl mx-auto px-4">
             <div class="grid md:grid-cols-2 gap-12">
                 <div>
-                    <h2 class="text-3xl font-bold text-primary mb-6">Admission Requirements</h2>
+                    <span class="text-brand font-semibold text-sm uppercase tracking-wider">What You Need</span>
+                    <h2 class="text-3xl font-bold text-slate-900 mt-2 mb-6">Admission Requirements</h2>
                     <div class="space-y-4">
                         <div class="flex items-start space-x-3">
-                            <i class="fas fa-check-circle text-secondary mt-1"></i>
-                            <p class="text-gray-600">Completed admission form</p>
+                            <i class="fas fa-check-circle text-brand mt-1"></i>
+                            <p class="text-slate-600">Completed admission form</p>
                         </div>
                         <div class="flex items-start space-x-3">
-                            <i class="fas fa-check-circle text-secondary mt-1"></i>
-                            <p class="text-gray-600">Birth certificate or age declaration</p>
+                            <i class="fas fa-check-circle text-brand mt-1"></i>
+                            <p class="text-slate-600">Birth certificate or age declaration</p>
                         </div>
                         <div class="flex items-start space-x-3">
-                            <i class="fas fa-check-circle text-secondary mt-1"></i>
-                            <p class="text-gray-600">Previous school report card (if transfer)</p>
+                            <i class="fas fa-check-circle text-brand mt-1"></i>
+                            <p class="text-slate-600">Previous school report card (if transfer)</p>
                         </div>
                         <div class="flex items-start space-x-3">
-                            <i class="fas fa-check-circle text-secondary mt-1"></i>
-                            <p class="text-gray-600">Four passport photographs</p>
+                            <i class="fas fa-check-circle text-brand mt-1"></i>
+                            <p class="text-slate-600">Four passport photographs</p>
                         </div>
                         <div class="flex items-start space-x-3">
-                            <i class="fas fa-check-circle text-secondary mt-1"></i>
-                            <p class="text-gray-600">Medical fitness certificate</p>
+                            <i class="fas fa-check-circle text-brand mt-1"></i>
+                            <p class="text-slate-600">Medical fitness certificate</p>
                         </div>
                         <div class="flex items-start space-x-3">
-                            <i class="fas fa-check-circle text-secondary mt-1"></i>
-                            <p class="text-gray-600">Parent/Guardian's ID</p>
+                            <i class="fas fa-check-circle text-brand mt-1"></i>
+                            <p class="text-slate-600">Parent/Guardian's ID</p>
                         </div>
                     </div>
                 </div>
                 <div>
-                    <h2 class="text-3xl font-bold text-primary mb-6">School Fees Structure</h2>
-                    <div class="bg-gray-50 rounded-xl overflow-hidden">
+                    <span class="text-brand font-semibold text-sm uppercase tracking-wider">Pricing</span>
+                    <h2 class="text-3xl font-bold text-slate-900 mt-2 mb-6">School Fees Structure</h2>
+                    <div class="bg-slate-50 rounded-2xl overflow-hidden border border-slate-100">
                         <table class="w-full">
-                            <thead class="bg-primary text-white">
+                            <thead class="bg-slate-900 text-white">
                                 <tr>
                                     <th class="px-6 py-3 text-left">Class</th>
                                     <th class="px-6 py-3 text-right">Fees (per term)</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                <tr><td class="px-6 py-3">JSS1</td><td class="px-6 py-3 text-right font-semibold">₦250,000</td></tr>
-                                <tr><td class="px-6 py-3">JSS2</td><td class="px-6 py-3 text-right font-semibold">₦270,000</td></tr>
-                                <tr><td class="px-6 py-3">JSS3</td><td class="px-6 py-3 text-right font-semibold">₦280,000</td></tr>
-                                <tr><td class="px-6 py-3">SS1</td><td class="px-6 py-3 text-right font-semibold">₦320,000</td></tr>
-                                <tr><td class="px-6 py-3">SS2</td><td class="px-6 py-3 text-right font-semibold">₦340,000</td></tr>
-                                <tr><td class="px-6 py-3">SS3</td><td class="px-6 py-3 text-right font-semibold">₦350,000</td></tr>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr class="hover:bg-slate-50"><td class="px-6 py-3 text-slate-700">JSS1</td><td class="px-6 py-3 text-right font-semibold text-slate-900">₦250,000</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="px-6 py-3 text-slate-700">JSS2</td><td class="px-6 py-3 text-right font-semibold text-slate-900">₦270,000</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="px-6 py-3 text-slate-700">JSS3</td><td class="px-6 py-3 text-right font-semibold text-slate-900">₦280,000</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="px-6 py-3 text-slate-700">SS1</td><td class="px-6 py-3 text-right font-semibold text-slate-900">₦320,000</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="px-6 py-3 text-slate-700">SS2</td><td class="px-6 py-3 text-right font-semibold text-slate-900">₦340,000</td></tr>
+                                <tr class="hover:bg-slate-50"><td class="px-6 py-3 text-slate-700">SS3</td><td class="px-6 py-3 text-right font-semibold text-slate-900">₦350,000</td></tr>
                             </tbody>
                         </table>
                     </div>
-                    <p class="text-sm text-gray-500 mt-4">* Fees include tuition, textbooks, and basic materials</p>
+                    <p class="text-sm text-slate-400 mt-4">* Fees include tuition, textbooks, and basic materials</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Academic Calendar -->
-    <section class="py-16 bg-gray-50">
+    <section class="py-16 bg-slate-50">
         <div class="max-w-7xl mx-auto px-4">
-            <h2 class="text-3xl font-bold text-primary text-center mb-12">Academic Calendar 2025/2026</h2>
+            <div class="text-center mb-12">
+                <span class="text-brand font-semibold text-sm uppercase tracking-wider">Schedule</span>
+                <h2 class="text-3xl font-bold text-slate-900 mt-2">Academic Calendar 2025/2026</h2>
+            </div>
             <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-white rounded-xl p-6 shadow-sm">
-                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                        <i class="fas fa-play text-green-600 text-xl"></i>
+                <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-play text-emerald-600 text-xl"></i>
                     </div>
-                    <h4 class="font-bold text-primary mb-2">First Term</h4>
-                    <p class="text-gray-600 text-sm">September 8 - December 12, 2025</p>
-                    <p class="text-gray-500 text-xs mt-2">Mid-term break: October 27-31</p>
+                    <h4 class="font-bold text-slate-900 mb-2">First Term</h4>
+                    <p class="text-slate-500 text-sm">September 8 - December 12, 2025</p>
+                    <p class="text-slate-400 text-xs mt-2">Mid-term break: October 27-31</p>
                 </div>
-                <div class="bg-white rounded-xl p-6 shadow-sm">
-                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                        <i class="fas fa-arrow-right text-blue-600 text-xl"></i>
+                <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-brand/10 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-arrow-right text-brand text-xl"></i>
                     </div>
-                    <h4 class="font-bold text-primary mb-2">Second Term</h4>
-                    <p class="text-gray-600 text-sm">January 6 - April 3, 2026</p>
-                    <p class="text-gray-500 text-xs mt-2">Mid-term break: February 16-20</p>
+                    <h4 class="font-bold text-slate-900 mb-2">Second Term</h4>
+                    <p class="text-slate-500 text-sm">January 6 - April 3, 2026</p>
+                    <p class="text-slate-400 text-xs mt-2">Mid-term break: February 16-20</p>
                 </div>
-                <div class="bg-white rounded-xl p-6 shadow-sm">
-                    <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mb-4">
-                        <i class="fas fa-flag-checkered text-yellow-600 text-xl"></i>
+                <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-flag-checkered text-amber-600 text-xl"></i>
                     </div>
-                    <h4 class="font-bold text-primary mb-2">Third Term</h4>
-                    <p class="text-gray-600 text-sm">April 20 - July 24, 2026</p>
-                    <p class="text-gray-500 text-xs mt-2">Examinations: July 6-17</p>
+                    <h4 class="font-bold text-slate-900 mb-2">Third Term</h4>
+                    <p class="text-slate-500 text-sm">April 20 - July 24, 2026</p>
+                    <p class="text-slate-400 text-xs mt-2">Examinations: July 6-17</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Contact CTA -->
-    <section class="py-16 bg-primary">
+    <section class="py-16 bg-gradient-to-br from-slate-900 via-slate-800 to-brand-dark">
         <div class="max-w-4xl mx-auto px-4 text-center">
             <h2 class="text-3xl font-bold text-white mb-4">Ready to Apply?</h2>
-            <p class="text-gray-300 mb-8">Contact our admissions office for more information or to schedule a visit.</p>
+            <p class="text-slate-300 mb-8">Contact our admissions office for more information or to schedule a visit.</p>
             <div class="flex flex-wrap justify-center gap-4">
-                <a href="/contact" class="bg-secondary text-white px-8 py-3 rounded-lg font-semibold hover:bg-yellow-600 transition">
+                <a href="/contact" class="bg-brand text-white px-8 py-3 rounded-lg font-semibold hover:bg-brand-dark transition shadow-lg shadow-brand/25">
                     <i class="fas fa-phone mr-2"></i>Contact Us
                 </a>
-                <a href="mailto:admissions@brightstarschool.edu.ng" class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary transition">
+                <a href="mailto:admissions@brightstarschool.edu.ng" class="border-2 border-white/30 text-white px-8 py-3 rounded-lg font-semibold hover:bg-white/10 transition">
                     <i class="fas fa-envelope mr-2"></i>Email Admissions
                 </a>
             </div>
@@ -214,7 +224,7 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-dark text-white py-12">
+    <footer class="bg-[#0f172a] text-white py-12">
         <div class="max-w-7xl mx-auto px-4">
             <div class="grid md:grid-cols-4 gap-8">
                 <div>
@@ -222,38 +232,38 @@
                         <img src="/images/logo.jpeg" alt="Bright Star Logo" class="w-10 h-10 rounded-full object-cover">
                         <div>
                             <h3 class="font-bold">BRIGHT STAR</h3>
-                            <p class="text-xs text-gray-400">International School</p>
+                            <p class="text-xs text-slate-400">International School</p>
                         </div>
                     </div>
-                    <p class="text-gray-400 text-sm">Nurturing Excellence, Building Future Leaders since 2005.</p>
+                    <p class="text-slate-400 text-sm">Nurturing Excellence, Building Future Leaders since 2005.</p>
                 </div>
                 <div>
                     <h4 class="font-bold mb-4">Quick Links</h4>
-                    <ul class="space-y-2 text-gray-400 text-sm">
-                        <li><a href="/" class="hover:text-secondary">Home</a></li>
-                        <li><a href="/about" class="hover:text-secondary">About Us</a></li>
-                        <li><a href="/admissions" class="hover:text-secondary">Admissions</a></li>
-                        <li><a href="/gallery" class="hover:text-secondary">Gallery</a></li>
+                    <ul class="space-y-2 text-slate-400 text-sm">
+                        <li><a href="/" class="hover:text-brand transition">Home</a></li>
+                        <li><a href="/about" class="hover:text-brand transition">About Us</a></li>
+                        <li><a href="/admissions" class="hover:text-brand transition">Admissions</a></li>
+                        <li><a href="/gallery" class="hover:text-brand transition">Gallery</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="font-bold mb-4">Portal</h4>
-                    <ul class="space-y-2 text-gray-400 text-sm">
-                        <li><a href="/login?role=student" class="hover:text-secondary">Student Portal</a></li>
-                        <li><a href="/login?role=teacher" class="hover:text-secondary">Teacher Portal</a></li>
-                        <li><a href="/login?role=admin" class="hover:text-secondary">Admin Portal</a></li>
+                    <ul class="space-y-2 text-slate-400 text-sm">
+                        <li><a href="/login?role=student" class="hover:text-brand transition">Student Portal</a></li>
+                        <li><a href="/login?role=teacher" class="hover:text-brand transition">Teacher Portal</a></li>
+                        <li><a href="/login?role=admin" class="hover:text-brand transition">Admin Portal</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="font-bold mb-4">Contact Us</h4>
-                    <ul class="space-y-2 text-gray-400 text-sm">
-                        <li><i class="fas fa-map-marker-alt mr-2"></i>123 Education Avenue, Lagos</li>
-                        <li><i class="fas fa-phone mr-2"></i>+234 801 234 5678</li>
-                        <li><i class="fas fa-envelope mr-2"></i>info@brightstarschool.edu.ng</li>
+                    <ul class="space-y-2 text-slate-400 text-sm">
+                        <li><i class="fas fa-map-marker-alt mr-2 text-brand"></i>123 Education Avenue, Lagos</li>
+                        <li><i class="fas fa-phone mr-2 text-brand"></i>+234 801 234 5678</li>
+                        <li><i class="fas fa-envelope mr-2 text-brand"></i>info@brightstarschool.edu.ng</li>
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
+            <div class="border-t border-slate-700/50 mt-8 pt-8 text-center text-slate-400 text-sm">
                 <p>&copy; 2026 Bright Star International School. All rights reserved.</p>
             </div>
         </div>
@@ -262,4 +272,3 @@
     <script src="/js/main.js"></script>
 </body>
 </html>
-
