@@ -39,6 +39,19 @@ function showSection(section) {
     document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
     if (event && event.currentTarget) event.currentTarget.classList.add('active');
     
+    // Update page title
+    const titles = {
+        'dashboard': 'Dashboard',
+        'students': 'Students',
+        'teachers': 'Teachers',
+        'results': 'Results',
+        'announcements': 'Announcements',
+        'fees': 'Fees',
+        'sessions': 'Sessions',
+        'settings': 'Settings'
+    };
+    document.getElementById('pageTitle').textContent = titles[section] || 'Dashboard';
+    
     if (section === 'students') loadStudents();
     if (section === 'teachers') loadTeachers();
     if (section === 'announcements') loadAnnouncements();
@@ -98,23 +111,30 @@ function renderStudentsTable(students) {
     const tbody = document.getElementById('editStudentsTable');
     
     if (students.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">No students found</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center text-slate-400">No students found</td></tr>';
         return;
     }
     
     tbody.innerHTML = students.map(s => `
-        <tr class="hover:bg-gray-50">
-            <td class="px-6 py-4">${s.user?.firstName || ''} ${s.user?.lastName || ''}</td>
-            <td class="px-6 py-4">${s.admissionNumber}</td>
-            <td class="px-6 py-4">${s.class}</td>
+        <tr class="table-row border-b border-slate-100">
+            <td class="px-6 py-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-brand-100 rounded-full flex items-center justify-center">
+                        <span class="text-brand-600 font-semibold text-xs">${(s.user?.firstName || 'S')[0]}</span>
+                    </div>
+                    <span class="font-medium text-slate-700">${s.user?.firstName || ''} ${s.user?.lastName || ''}</span>
+                </div>
+            </td>
+            <td class="px-6 py-4 text-slate-600">${s.admissionNumber}</td>
+            <td class="px-6 py-4 text-slate-600">${s.class}</td>
             <td class="px-6 py-4 text-center">
-                <button onclick="editStudent('${s._id}')" class="text-accent hover:underline mr-3" title="Edit">
+                <button onclick="editStudent('${s._id}')" class="text-brand-500 hover:text-brand-700 mr-3 transition" title="Edit">
                     <i class="fas fa-edit"></i>
                 </button>
-                <button onclick="resetStudentPassword('${s._id}')" class="text-yellow-500 hover:underline mr-3" title="Reset Password">
+                <button onclick="resetStudentPassword('${s._id}')" class="text-amber-500 hover:text-amber-700 mr-3 transition" title="Reset Password">
                     <i class="fas fa-key"></i>
                 </button>
-                <button onclick="deleteStudent('${s._id}')" class="text-red-500 hover:underline" title="Delete">
+                <button onclick="deleteStudent('${s._id}')" class="text-red-500 hover:text-red-700 transition" title="Delete">
                     <i class="fas fa-trash"></i>
                 </button>
             </td>
@@ -253,23 +273,30 @@ function renderTeachersTable(teachers) {
     const tbody = document.getElementById('editTeachersTable');
     
     if (teachers.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">No teachers found</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center text-slate-400">No teachers found</td></tr>';
         return;
     }
     
     tbody.innerHTML = teachers.map(t => `
-        <tr class="hover:bg-gray-50">
-            <td class="px-6 py-4">${t.user?.firstName || ''} ${t.user?.lastName || ''}</td>
-            <td class="px-6 py-4">${t.staffId}</td>
-            <td class="px-6 py-4">${t.department || '-'}</td>
+        <tr class="table-row border-b border-slate-100">
+            <td class="px-6 py-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
+                        <span class="text-emerald-600 font-semibold text-xs">${(t.user?.firstName || 'T')[0]}</span>
+                    </div>
+                    <span class="font-medium text-slate-700">${t.user?.firstName || ''} ${t.user?.lastName || ''}</span>
+                </div>
+            </td>
+            <td class="px-6 py-4 text-slate-600">${t.staffId}</td>
+            <td class="px-6 py-4 text-slate-600">${t.department || '-'}</td>
             <td class="px-6 py-4 text-center">
-                <button onclick="editTeacher('${t._id}')" class="text-accent hover:underline mr-3" title="Edit">
+                <button onclick="editTeacher('${t._id}')" class="text-brand-500 hover:text-brand-700 mr-3 transition" title="Edit">
                     <i class="fas fa-edit"></i>
                 </button>
-                <button onclick="resetTeacherPassword('${t._id}')" class="text-yellow-500 hover:underline mr-3" title="Reset Password">
+                <button onclick="resetTeacherPassword('${t._id}')" class="text-amber-500 hover:text-amber-700 mr-3 transition" title="Reset Password">
                     <i class="fas fa-key"></i>
                 </button>
-                <button onclick="deleteTeacher('${t._id}')" class="text-red-500 hover:underline" title="Delete">
+                <button onclick="deleteTeacher('${t._id}')" class="text-red-500 hover:text-red-700 transition" title="Delete">
                     <i class="fas fa-trash"></i>
                 </button>
             </td>
@@ -409,19 +436,29 @@ async function loadStudents() {
             const tbody = document.getElementById('studentsTable');
             
             if (data.students.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">No students found</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-slate-400">No students found</td></tr>';
                 return;
             }
             
             tbody.innerHTML = data.students.map(s => `
-                <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4">${s.user?.firstName || ''} ${s.user?.lastName || ''}</td>
-                    <td class="px-6 py-4">${s.admissionNumber}</td>
-                    <td class="px-6 py-4">${s.class}</td>
-                    <td class="px-6 py-4 text-center"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-sm">${s.status || 'active'}</span></td>
+                <tr class="table-row border-b border-slate-100">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-9 h-9 bg-brand-100 rounded-full flex items-center justify-center">
+                                <span class="text-brand-600 font-semibold text-sm">${(s.user?.firstName || 'S')[0]}</span>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate-700">${s.user?.firstName || ''} ${s.user?.lastName || ''}</p>
+                                <p class="text-xs text-slate-400">${s.user?.email || ''}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-slate-600">${s.admissionNumber}</td>
+                    <td class="px-6 py-4 text-slate-600">${s.class}</td>
+                    <td class="px-6 py-4 text-center"><span class="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full text-xs font-semibold">${s.status || 'active'}</span></td>
                     <td class="px-6 py-4 text-center">
-                        <button class="text-accent hover:underline mr-2"><i class="fas fa-edit"></i></button>
-                        <button class="text-red-500 hover:underline"><i class="fas fa-trash"></i></button>
+                        <button class="text-brand-500 hover:text-brand-700 mr-3 transition" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button class="text-red-500 hover:text-red-700 transition" title="Delete"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
@@ -443,19 +480,29 @@ async function loadTeachers() {
             const tbody = document.getElementById('teachersTable');
             
             if (data.teachers.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">No teachers found</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-slate-400">No teachers found</td></tr>';
                 return;
             }
             
             tbody.innerHTML = data.teachers.map(t => `
-                <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4">${t.user?.firstName || ''} ${t.user?.lastName || ''}</td>
-                    <td class="px-6 py-4">${t.staffId}</td>
-                    <td class="px-6 py-4">${t.department || '-'}</td>
-                    <td class="px-6 py-4 text-center"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-sm">${t.status || 'active'}</span></td>
+                <tr class="table-row border-b border-slate-100">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-9 h-9 bg-emerald-100 rounded-full flex items-center justify-center">
+                                <span class="text-emerald-600 font-semibold text-sm">${(t.user?.firstName || 'T')[0]}</span>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate-700">${t.user?.firstName || ''} ${t.user?.lastName || ''}</p>
+                                <p class="text-xs text-slate-400">${t.user?.email || ''}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-slate-600">${t.staffId}</td>
+                    <td class="px-6 py-4 text-slate-600">${t.department || '-'}</td>
+                    <td class="px-6 py-4 text-center"><span class="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full text-xs font-semibold">${t.status || 'active'}</span></td>
                     <td class="px-6 py-4 text-center">
-                        <button class="text-accent hover:underline mr-2"><i class="fas fa-edit"></i></button>
-                        <button class="text-red-500 hover:underline"><i class="fas fa-trash"></i></button>
+                        <button class="text-brand-500 hover:text-brand-700 mr-3 transition" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button class="text-red-500 hover:text-red-700 transition" title="Delete"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
@@ -473,19 +520,22 @@ async function loadAnnouncements() {
             const container = document.getElementById('announcementsList');
             
             if (data.announcements.length === 0) {
-                container.innerHTML = '<p class="text-gray-500 text-center py-4">No announcements yet</p>';
+                container.innerHTML = '<p class="text-slate-400 text-center py-4">No announcements yet</p>';
                 return;
             }
             
             container.innerHTML = data.announcements.map(ann => `
-                <div class="bg-white rounded-xl shadow-sm p-6">
+                <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 ${ann.category === 'urgent' ? 'border-red-500' : ann.category === 'academic' ? 'border-brand-500' : 'border-emerald-500'}">
                     <div class="flex items-start justify-between">
-                        <div>
-                            <span class="bg-${ann.category === 'urgent' ? 'red' : ann.category === 'academic' ? 'blue' : 'green'}-100 text-${ann.category === 'urgent' ? 'red' : ann.category === 'academic' ? 'blue' : 'green'}-700 text-xs px-2 py-1 rounded">${ann.category.toUpperCase()}</span>
-                            <h3 class="text-lg font-bold text-primary mt-2">${ann.title}</h3>
-                            <p class="text-gray-600 mt-2">${ann.content}</p>
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <span class="${ann.category === 'urgent' ? 'bg-red-100 text-red-700' : ann.category === 'academic' ? 'bg-brand-100 text-brand-700' : 'bg-emerald-100 text-emerald-700'} text-xs px-2.5 py-1 rounded-full font-semibold">${ann.category.toUpperCase()}</span>
+                                <span class="text-slate-400 text-xs">${new Date(ann.createdAt).toLocaleDateString()}</span>
+                            </div>
+                            <h3 class="text-lg font-semibold text-slate-800">${ann.title}</h3>
+                            <p class="text-slate-500 mt-1">${ann.content}</p>
                         </div>
-                        <button onclick="deleteAnnouncement('${ann._id}')" class="text-red-500 hover:underline"><i class="fas fa-trash"></i></button>
+                        <button onclick="deleteAnnouncement('${ann._id}')" class="text-slate-400 hover:text-red-500 p-2 hover:bg-red-50 rounded-lg transition ml-4"><i class="fas fa-trash"></i></button>
                     </div>
                 </div>
             `).join('');

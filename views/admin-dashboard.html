@@ -3,31 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Bright Star International School</title>
+    <title>Admin Panel - Bright Star International School</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#5d3a1a',
-                        secondary: '#d4a574',
-                        accent: '#8b5a2b',
-                        dark: '#2c1810'
+                        sidebar: '#0f172a',
+                        'sidebar-hover': '#1e293b',
+                        'sidebar-active': '#3b82f6',
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8'
+                        }
                     }
                 }
             }
         }
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Poppins', sans-serif; }
-        .sidebar { width: 260px; }
-        .sidebar.closed { width: 70px; }
+        body { font-family: 'Inter', sans-serif; }
+        .sidebar { width: 260px; transition: all 0.3s ease; }
+        .sidebar.closed { width: 72px; }
         .sidebar.closed .sidebar-text { display: none; }
-        .sidebar.closed + .main-content { margin-left: 70px; }
-        .nav-item.active { background: rgba(245, 158, 11, 0.1); border-right: 3px solid #f59e0b; }
+        .sidebar.closed + .main-content { margin-left: 72px; }
+        .nav-item { border-left: 3px solid transparent; }
+        .nav-item.active { background: rgba(59, 130, 246, 0.15); border-left-color: #3b82f6; color: #60a5fa; }
+        .nav-item:hover { background: rgba(255, 255, 255, 0.05); }
+        .stat-card { border-left: 4px solid; }
+        .table-row:hover { background: #f8fafc; }
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); position: fixed; z-index: 50; }
             .sidebar.open { transform: translateX(0); }
@@ -35,67 +48,87 @@
         }
     </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-slate-100">
     <!-- Sidebar -->
-    <aside id="sidebar" class="sidebar bg-primary text-white h-screen fixed left-0 top-0 overflow-y-auto transition-all duration-300">
+    <aside id="sidebar" class="sidebar bg-sidebar text-slate-300 h-screen fixed left-0 top-0 overflow-y-auto z-50">
         <div class="p-4">
-            <div class="flex items-center space-x-3 mb-8">
-                <img src="/images/logo.jpeg" alt="Bright Star Logo" class="w-10 h-10 rounded-full object-cover">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3 mb-8 pb-4 border-b border-slate-700">
+                <img src="/images/logo.jpeg" alt="Logo" class="w-10 h-10 rounded-lg object-cover">
                 <div class="sidebar-text">
-                    <h2 class="font-bold text-sm">BRIGHT STAR</h2>
-                    <p class="text-xs text-gray-300">Admin Portal</p>
+                    <h2 class="font-bold text-white text-sm tracking-wide">BRIGHT STAR</h2>
+                    <p class="text-xs text-slate-400">Admin Panel</p>
                 </div>
             </div>
-            <nav class="space-y-2">
-                <a href="#" onclick="showSection('dashboard')" class="nav-item active flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
-                    <i class="fas fa-home w-5"></i><span class="sidebar-text">Dashboard</span>
+            
+            <!-- Navigation -->
+            <nav class="space-y-1">
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 px-3 sidebar-text">Main Menu</p>
+                <a href="#" onclick="showSection('dashboard')" class="nav-item active flex items-center space-x-3 px-3 py-2.5 rounded-lg transition">
+                    <i class="fas fa-th-large w-5 text-center"></i><span class="sidebar-text">Dashboard</span>
                 </a>
-                <a href="#" onclick="showSection('students')" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
-                    <i class="fas fa-user-graduate w-5"></i><span class="sidebar-text">Students</span>
+                <a href="#" onclick="showSection('students')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg transition">
+                    <i class="fas fa-user-graduate w-5 text-center"></i><span class="sidebar-text">Students</span>
                 </a>
-                <a href="#" onclick="showSection('teachers')" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
-                    <i class="fas fa-chalkboard-teacher w-5"></i><span class="sidebar-text">Teachers</span>
+                <a href="#" onclick="showSection('teachers')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg transition">
+                    <i class="fas fa-chalkboard-teacher w-5 text-center"></i><span class="sidebar-text">Teachers</span>
                 </a>
-                <a href="#" onclick="showSection('results')" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
-                    <i class="fas fa-file-alt w-5"></i><span class="sidebar-text">Results</span>
+                <a href="#" onclick="showSection('results')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg transition">
+                    <i class="fas fa-chart-bar w-5 text-center"></i><span class="sidebar-text">Results</span>
                 </a>
-                <a href="#" onclick="showSection('announcements')" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
-                    <i class="fas fa-bullhorn w-5"></i><span class="sidebar-text">Announcements</span>
+                
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 mt-6 px-3 sidebar-text">Management</p>
+                <a href="#" onclick="showSection('announcements')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg transition">
+                    <i class="fas fa-bullhorn w-5 text-center"></i><span class="sidebar-text">Announcements</span>
                 </a>
-                <a href="#" onclick="showSection('fees')" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
-                    <i class="fas fa-money-bill w-5"></i><span class="sidebar-text">Fees</span>
+                <a href="#" onclick="showSection('fees')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg transition">
+                    <i class="fas fa-money-bill-wave w-5 text-center"></i><span class="sidebar-text">Fees</span>
                 </a>
-                <a href="#" onclick="showSection('sessions')" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
-                    <i class="fas fa-calendar w-5"></i><span class="sidebar-text">Sessions</span>
+                <a href="#" onclick="showSection('sessions')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg transition">
+                    <i class="fas fa-calendar-alt w-5 text-center"></i><span class="sidebar-text">Sessions</span>
                 </a>
-                <a href="#" onclick="showSection('settings')" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
-                    <i class="fas fa-cog w-5"></i><span class="sidebar-text">Settings</span>
+                
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 mt-6 px-3 sidebar-text">System</p>
+                <a href="#" onclick="showSection('settings')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg transition">
+                    <i class="fas fa-cog w-5 text-center"></i><span class="sidebar-text">Settings</span>
                 </a>
-                <div class="border-t border-gray-600 my-4"></div>
-                <a href="#" onclick="logout()" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-red-500/20 transition text-red-400">
-                    <i class="fas fa-sign-out-alt w-5"></i><span class="sidebar-text">Logout</span>
+                
+                <div class="border-t border-slate-700 my-4"></div>
+                <a href="#" onclick="logout()" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-red-500/10 transition text-red-400 hover:text-red-300">
+                    <i class="fas fa-sign-out-alt w-5 text-center"></i><span class="sidebar-text">Logout</span>
                 </a>
             </nav>
         </div>
     </aside>
 
     <!-- Main Content -->
-    <div class="main-content ml-0 md:ml-[260px] transition-all duration-300">
-        <!-- Top Bar -->
-        <header class="bg-white shadow-sm sticky top-0 z-40">
+    <div class="main-content ml-0 md:ml-[260px] transition-all duration-300 min-h-screen">
+        <!-- Top Header -->
+        <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
             <div class="flex items-center justify-between px-6 py-4">
-                <button onclick="toggleSidebar()" class="md:hidden text-primary text-xl"><i class="fas fa-bars"></i></button>
                 <div class="flex items-center space-x-4">
-                    <h1 class="text-xl font-bold text-primary">Admin Dashboard</h1>
+                    <button onclick="toggleSidebar()" class="md:hidden text-slate-500 hover:text-slate-700">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <div>
+                        <h1 id="pageTitle" class="text-lg font-semibold text-slate-800">Dashboard</h1>
+                        <p class="text-xs text-slate-500">Welcome back, Admin</p>
+                    </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <div class="flex items-center space-x-2">
-                        <div class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center">
-                            <i class="fas fa-user-shield text-white"></i>
+                    <!-- Notifications -->
+                    <button class="relative p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition">
+                        <i class="fas fa-bell"></i>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+                    <!-- Profile -->
+                    <div class="flex items-center space-x-3 pl-4 border-l border-slate-200">
+                        <div class="w-9 h-9 bg-brand-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-user-shield text-white text-sm"></i>
                         </div>
                         <div class="sidebar-text">
-                            <p id="adminName" class="font-semibold text-sm">Admin</p>
-                            <p class="text-xs text-gray-500">Administrator</p>
+                            <p id="adminName" class="text-sm font-semibold text-slate-700">Admin</p>
+                            <p class="text-xs text-slate-400">Administrator</p>
                         </div>
                     </div>
                 </div>
@@ -105,79 +138,116 @@
         <main class="p-6">
             <!-- Dashboard Section -->
             <div id="dashboardSection" class="section">
-                <h2 class="text-2xl font-bold text-primary mb-6">Dashboard Overview</h2>
-                
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
+                    <div class="stat-card bg-white rounded-xl p-5 shadow-sm border-l-blue-500">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-gray-500 text-sm">Total Students</p>
-                                <p id="totalStudents" class="text-3xl font-bold text-primary">0</p>
+                                <p class="text-slate-500 text-sm font-medium">Total Students</p>
+                                <p id="totalStudents" class="text-3xl font-bold text-slate-800 mt-1">0</p>
                             </div>
-                            <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
-                                <i class="fas fa-user-graduate text-blue-600 text-xl"></i>
+                            <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-user-graduate text-brand-500"></i>
                             </div>
                         </div>
-                    </div>
-                    <div class="bg-white rounded-xl p-6 shadow-sm">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-gray-500 text-sm">Total Teachers</p>
-                                <p id="totalTeachers" class="text-3xl font-bold text-primary">0</p>
-                            </div>
-                            <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
-                                <i class="fas fa-chalkboard-teacher text-green-600 text-xl"></i>
-                            </div>
+                        <div class="mt-3 flex items-center text-sm">
+                            <span class="text-green-500 font-medium"><i class="fas fa-arrow-up mr-1"></i>12%</span>
+                            <span class="text-slate-400 ml-2">from last month</span>
                         </div>
                     </div>
-                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                    
+                    <div class="stat-card bg-white rounded-xl p-5 shadow-sm border-l-emerald-500">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-gray-500 text-sm">Active Sessions</p>
-                                <p id="activeSession" class="text-3xl font-bold text-primary">1</p>
+                                <p class="text-slate-500 text-sm font-medium">Total Teachers</p>
+                                <p id="totalTeachers" class="text-3xl font-bold text-slate-800 mt-1">0</p>
                             </div>
-                            <div class="w-14 h-14 bg-yellow-100 rounded-xl flex items-center justify-center">
-                                <i class="fas fa-calendar text-yellow-600 text-xl"></i>
+                            <div class="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-chalkboard-teacher text-emerald-500"></i>
                             </div>
                         </div>
+                        <div class="mt-3 flex items-center text-sm">
+                            <span class="text-green-500 font-medium"><i class="fas fa-arrow-up mr-1"></i>5%</span>
+                            <span class="text-slate-400 ml-2">from last month</span>
+                        </div>
                     </div>
-                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                    
+                    <div class="stat-card bg-white rounded-xl p-5 shadow-sm border-l-amber-500">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-gray-500 text-sm">Announcements</p>
-                                <p id="totalAnnouncements" class="text-3xl font-bold text-primary">0</p>
+                                <p class="text-slate-500 text-sm font-medium">Active Session</p>
+                                <p class="text-3xl font-bold text-slate-800 mt-1">1</p>
                             </div>
-                            <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center">
-                                <i class="fas fa-bullhorn text-purple-600 text-xl"></i>
+                            <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-calendar-check text-amber-500"></i>
                             </div>
+                        </div>
+                        <div class="mt-3 flex items-center text-sm">
+                            <span class="text-slate-500 font-medium">2025/2026</span>
+                            <span class="text-slate-400 ml-2">Second Term</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card bg-white rounded-xl p-5 shadow-sm border-l-violet-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-slate-500 text-sm font-medium">Announcements</p>
+                                <p id="totalAnnouncements" class="text-3xl font-bold text-slate-800 mt-1">0</p>
+                            </div>
+                            <div class="w-12 h-12 bg-violet-50 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-bullhorn text-violet-500"></i>
+                            </div>
+                        </div>
+                        <div class="mt-3 flex items-center text-sm">
+                            <span class="text-slate-500 font-medium">Active</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Quick Actions -->
-                <div class="grid md:grid-cols-3 gap-6 mb-6">
-                    <div onclick="showSection('students')" class="bg-gradient-to-r from-primary to-accent rounded-xl p-6 text-white cursor-pointer hover:shadow-lg transition">
-                        <i class="fas fa-user-plus text-3xl mb-3"></i>
-                        <h3 class="font-bold text-lg">Add New Student</h3>
-                        <p class="text-white/80 text-sm">Create a new student account</p>
+                <div class="grid md:grid-cols-3 gap-5 mb-6">
+                    <div onclick="showSection('students')" class="bg-gradient-to-br from-brand-500 to-brand-600 rounded-xl p-5 text-white cursor-pointer hover:shadow-lg transition group">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <i class="fas fa-user-plus text-2xl mb-3 opacity-80 group-hover:opacity-100 transition"></i>
+                                <h3 class="font-semibold">Add New Student</h3>
+                                <p class="text-white/70 text-sm mt-1">Create student account</p>
+                            </div>
+                            <i class="fas fa-arrow-right text-white/50 group-hover:text-white group-hover:translate-x-1 transition"></i>
+                        </div>
                     </div>
-                    <div onclick="showSection('teachers')" class="bg-gradient-to-r from-secondary to-orange-500 rounded-xl p-6 text-white cursor-pointer hover:shadow-lg transition">
-                        <i class="fas fa-user-tie text-3xl mb-3"></i>
-                        <h3 class="font-bold text-lg">Add New Teacher</h3>
-                        <p class="text-white/80 text-sm">Create a new teacher account</p>
+                    <div onclick="showSection('teachers')" class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl p-5 text-white cursor-pointer hover:shadow-lg transition group">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <i class="fas fa-user-tie text-2xl mb-3 opacity-80 group-hover:opacity-100 transition"></i>
+                                <h3 class="font-semibold">Add New Teacher</h3>
+                                <p class="text-white/70 text-sm mt-1">Create teacher account</p>
+                            </div>
+                            <i class="fas fa-arrow-right text-white/50 group-hover:text-white group-hover:translate-x-1 transition"></i>
+                        </div>
                     </div>
-                    <div onclick="showSection('announcements')" class="bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl p-6 text-white cursor-pointer hover:shadow-lg transition">
-                        <i class="fas fa-bullhorn text-3xl mb-3"></i>
-                        <h3 class="font-bold text-lg">Post Announcement</h3>
-                        <p class="text-white/80 text-sm">Share news with students and staff</p>
+                    <div onclick="showSection('announcements')" class="bg-gradient-to-br from-violet-500 to-violet-600 rounded-xl p-5 text-white cursor-pointer hover:shadow-lg transition group">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <i class="fas fa-bullhorn text-2xl mb-3 opacity-80 group-hover:opacity-100 transition"></i>
+                                <h3 class="font-semibold">Post Announcement</h3>
+                                <p class="text-white/70 text-sm mt-1">Share school news</p>
+                            </div>
+                            <i class="fas fa-arrow-right text-white/50 group-hover:text-white group-hover:translate-x-1 transition"></i>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Recent Students -->
-                <div class="bg-white rounded-xl shadow-sm p-6">
-                    <h3 class="text-lg font-bold text-primary mb-4">Recent Students</h3>
-                    <div id="recentStudents" class="overflow-x-auto">
-                        <p class="text-gray-500 text-center py-4">Loading...</p>
+                <!-- Recent Students Table -->
+                <div class="bg-white rounded-xl shadow-sm">
+                    <div class="p-5 border-b border-slate-100">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-semibold text-slate-800">Recent Students</h3>
+                            <button onclick="showSection('students')" class="text-brand-500 text-sm font-medium hover:text-brand-600">View All <i class="fas fa-arrow-right ml-1"></i></button>
+                        </div>
+                    </div>
+                    <div id="recentStudents" class="p-5">
+                        <p class="text-slate-400 text-center py-4">Loading...</p>
                     </div>
                 </div>
             </div>
@@ -185,119 +255,160 @@
             <!-- Students Section -->
             <div id="studentsSection" class="section hidden">
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl font-bold text-primary">Manage Students</h2>
-                    <button onclick="openModal('addStudentModal')" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">Manage Students</h2>
+                        <p class="text-slate-500 text-sm">View and manage all students</p>
+                    </div>
+                    <button onclick="openModal('addStudentModal')" class="bg-brand-500 text-white px-4 py-2.5 rounded-lg hover:bg-brand-600 transition font-medium text-sm">
                         <i class="fas fa-plus mr-2"></i>Add Student
                     </button>
                 </div>
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-                    <table class="w-full">
-                        <thead class="bg-primary text-white">
-                            <tr>
-                                <th class="px-6 py-3 text-left">Name</th>
-                                <th class="px-6 py-3 text-left">Admission No</th>
-                                <th class="px-6 py-3 text-left">Class</th>
-                                <th class="px-6 py-3 text-center">Status</th>
-                                <th class="px-6 py-3 text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="studentsTable" class="divide-y divide-gray-100">
-                            <tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">Loading students...</td></tr>
-                        </tbody>
-                    </table>
+                    <div class="p-4 border-b border-slate-100">
+                        <input type="text" placeholder="Search students..." class="w-full md:w-80 border border-slate-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none">
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Name</th>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Admission No</th>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Class</th>
+                                    <th class="px-6 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTable" class="divide-y divide-slate-100">
+                                <tr><td colspan="5" class="px-6 py-8 text-center text-slate-400">Loading students...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
             <!-- Teachers Section -->
             <div id="teachersSection" class="section hidden">
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl font-bold text-primary">Manage Teachers</h2>
-                    <button onclick="openModal('addTeacherModal')" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">Manage Teachers</h2>
+                        <p class="text-slate-500 text-sm">View and manage all teachers</p>
+                    </div>
+                    <button onclick="openModal('addTeacherModal')" class="bg-brand-500 text-white px-4 py-2.5 rounded-lg hover:bg-brand-600 transition font-medium text-sm">
                         <i class="fas fa-plus mr-2"></i>Add Teacher
                     </button>
                 </div>
                 <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-                    <table class="w-full">
-                        <thead class="bg-primary text-white">
-                            <tr>
-                                <th class="px-6 py-3 text-left">Name</th>
-                                <th class="px-6 py-3 text-left">Staff ID</th>
-                                <th class="px-6 py-3 text-left">Department</th>
-                                <th class="px-6 py-3 text-center">Status</th>
-                                <th class="px-6 py-3 text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="teachersTable" class="divide-y divide-gray-100">
-                            <tr><td colspan="5" class="px-6 py-8 text-center text-gray-500">Loading teachers...</td></tr>
-                        </tbody>
-                    </table>
+                    <div class="p-4 border-b border-slate-100">
+                        <input type="text" placeholder="Search teachers..." class="w-full md:w-80 border border-slate-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none">
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-slate-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Name</th>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Staff ID</th>
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Department</th>
+                                    <th class="px-6 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
+                                    <th class="px-6 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="teachersTable" class="divide-y divide-slate-100">
+                                <tr><td colspan="5" class="px-6 py-8 text-center text-slate-400">Loading teachers...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
             <!-- Results Section -->
             <div id="resultsSection" class="section hidden">
-                <h2 class="text-2xl font-bold text-primary mb-6">Manage Results</h2>
-                <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
-                    <h3 class="font-bold text-primary mb-4">Pending Approvals</h3>
-                    <p class="text-gray-500">Results uploaded by teachers will appear here for approval.</p>
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold text-slate-800">Results Management</h2>
+                    <p class="text-slate-500 text-sm">View and manage student results</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="text-center py-8">
+                        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-chart-bar text-slate-400 text-2xl"></i>
+                        </div>
+                        <h3 class="font-semibold text-slate-700 mb-2">Results Dashboard</h3>
+                        <p class="text-slate-400 text-sm">Results uploaded by teachers will appear here for approval.</p>
+                    </div>
                 </div>
             </div>
 
             <!-- Announcements Section -->
             <div id="announcementsSection" class="section hidden">
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl font-bold text-primary">Manage Announcements</h2>
-                    <button onclick="openModal('addAnnouncementModal')" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">Announcements</h2>
+                        <p class="text-slate-500 text-sm">Manage school announcements</p>
+                    </div>
+                    <button onclick="openModal('addAnnouncementModal')" class="bg-brand-500 text-white px-4 py-2.5 rounded-lg hover:bg-brand-600 transition font-medium text-sm">
                         <i class="fas fa-plus mr-2"></i>New Announcement
                     </button>
                 </div>
                 <div id="announcementsList" class="space-y-4">
-                    <p class="text-gray-500 text-center py-4">Loading announcements...</p>
+                    <p class="text-slate-400 text-center py-4">Loading announcements...</p>
                 </div>
             </div>
 
             <!-- Fees Section -->
             <div id="feesSection" class="section hidden">
-                <h2 class="text-2xl font-bold text-primary mb-6">Manage Fees</h2>
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold text-slate-800">Fee Management</h2>
+                    <p class="text-slate-500 text-sm">View and manage student fee payments</p>
+                </div>
                 <div class="bg-white rounded-xl shadow-sm p-6">
-                    <h3 class="font-bold text-primary mb-4">Fee Management</h3>
-                    <p class="text-gray-500">View and manage student fee payments.</p>
+                    <div class="text-center py-8">
+                        <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-money-bill-wave text-slate-400 text-2xl"></i>
+                        </div>
+                        <h3 class="font-semibold text-slate-700 mb-2">Fee Management</h3>
+                        <p class="text-slate-400 text-sm">View and manage student fee payments.</p>
+                    </div>
                 </div>
             </div>
 
             <!-- Sessions Section -->
             <div id="sessionsSection" class="section hidden">
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl font-bold text-primary">Academic Sessions</h2>
-                    <button onclick="openModal('addSessionModal')" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">Academic Sessions</h2>
+                        <p class="text-slate-500 text-sm">Manage academic sessions and terms</p>
+                    </div>
+                    <button class="bg-brand-500 text-white px-4 py-2.5 rounded-lg hover:bg-brand-600 transition font-medium text-sm">
                         <i class="fas fa-plus mr-2"></i>New Session
                     </button>
                 </div>
-                <div id="sessionsList" class="grid md:grid-cols-2 gap-6">
-                    <div class="bg-white rounded-xl shadow-sm p-6">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="font-bold text-primary">2025/2026</h3>
-                            <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">Active</span>
+                <div class="grid md:grid-cols-2 gap-5">
+                    <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-emerald-500">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="font-bold text-slate-800">2025/2026</h3>
+                            <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-semibold">Active</span>
                         </div>
-                        <p class="text-gray-600 text-sm mb-2">September 2025 - July 2026</p>
-                        <p class="text-gray-500 text-sm">Current Term: Second Term</p>
+                        <p class="text-slate-500 text-sm">September 2025 - July 2026</p>
+                        <p class="text-slate-400 text-sm mt-1">Current Term: <span class="text-slate-600 font-medium">Second Term</span></p>
                     </div>
                 </div>
             </div>
 
             <!-- Settings Section -->
             <div id="settingsSection" class="section hidden">
-                <h2 class="text-2xl font-bold text-primary mb-6">Settings</h2>
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold text-slate-800">Settings</h2>
+                    <p class="text-slate-500 text-sm">Manage your account and system settings</p>
+                </div>
                 
                 <!-- Settings Tabs -->
-                <div class="flex mb-6 bg-gray-100 rounded-xl p-1 max-w-md">
-                    <button onclick="showSettingsTab('editStudents')" id="tabEditStudents" class="flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition bg-primary text-white">
+                <div class="flex mb-6 bg-slate-200 rounded-lg p-1 max-w-md">
+                    <button onclick="showSettingsTab('editStudents')" id="tabEditStudents" class="flex-1 py-2 px-4 rounded-md text-sm font-semibold transition bg-white text-brand-600 shadow-sm">
                         <i class="fas fa-user-graduate mr-1"></i> Students
                     </button>
-                    <button onclick="showSettingsTab('editTeachers')" id="tabEditTeachers" class="flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition text-gray-600">
+                    <button onclick="showSettingsTab('editTeachers')" id="tabEditTeachers" class="flex-1 py-2 px-4 rounded-md text-sm font-semibold transition text-slate-600 hover:text-slate-800">
                         <i class="fas fa-chalkboard-teacher mr-1"></i> Teachers
                     </button>
-                    <button onclick="showSettingsTab('adminProfile')" id="tabAdminProfile" class="flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition text-gray-600">
+                    <button onclick="showSettingsTab('adminProfile')" id="tabAdminProfile" class="flex-1 py-2 px-4 rounded-md text-sm font-semibold transition text-slate-600 hover:text-slate-800">
                         <i class="fas fa-user-shield mr-1"></i> Admin
                     </button>
                 </div>
@@ -305,86 +416,90 @@
                 <!-- Edit Students Tab -->
                 <div id="editStudentsTab">
                     <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-                        <div class="p-4 border-b flex justify-between items-center">
-                            <h3 class="font-bold text-primary">Edit Students</h3>
-                            <input type="text" id="searchStudents" placeholder="Search students..." class="border border-gray-300 rounded-lg px-4 py-2 text-sm" onkeyup="filterStudents()">
+                        <div class="p-4 border-b border-slate-100 flex justify-between items-center">
+                            <h3 class="font-semibold text-slate-700">Edit Students</h3>
+                            <input type="text" id="searchStudents" placeholder="Search by name or ID..." class="border border-slate-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" onkeyup="filterStudents()">
                         </div>
-                        <table class="w-full">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Name</th>
-                                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Admission No</th>
-                                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Class</th>
-                                    <th class="px-6 py-3 text-center text-sm font-semibold text-gray-600">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="editStudentsTable" class="divide-y divide-gray-100">
-                                <tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">Loading...</td></tr>
-                            </tbody>
-                        </table>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-slate-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Name</th>
+                                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Admission No</th>
+                                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Class</th>
+                                        <th class="px-6 py-3 text-center text-xs font-semibold text-slate-500 uppercase">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="editStudentsTable" class="divide-y divide-slate-100">
+                                    <tr><td colspan="4" class="px-6 py-4 text-center text-slate-400">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Edit Teachers Tab -->
                 <div id="editTeachersTab" class="hidden">
                     <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-                        <div class="p-4 border-b flex justify-between items-center">
-                            <h3 class="font-bold text-primary">Edit Teachers</h3>
-                            <input type="text" id="searchTeachers" placeholder="Search teachers..." class="border border-gray-300 rounded-lg px-4 py-2 text-sm" onkeyup="filterTeachers()">
+                        <div class="p-4 border-b border-slate-100 flex justify-between items-center">
+                            <h3 class="font-semibold text-slate-700">Edit Teachers</h3>
+                            <input type="text" id="searchTeachers" placeholder="Search by name or ID..." class="border border-slate-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" onkeyup="filterTeachers()">
                         </div>
-                        <table class="w-full">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Name</th>
-                                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Staff ID</th>
-                                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Department</th>
-                                    <th class="px-6 py-3 text-center text-sm font-semibold text-gray-600">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="editTeachersTable" class="divide-y divide-gray-100">
-                                <tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">Loading...</td></tr>
-                            </tbody>
-                        </table>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-slate-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Name</th>
+                                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Staff ID</th>
+                                        <th class="px-6 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Department</th>
+                                        <th class="px-6 py-3 text-center text-xs font-semibold text-slate-500 uppercase">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="editTeachersTable" class="divide-y divide-slate-100">
+                                    <tr><td colspan="4" class="px-6 py-4 text-center text-slate-400">Loading...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Admin Profile Tab -->
                 <div id="adminProfileTab" class="hidden">
                     <div class="bg-white rounded-xl shadow-sm p-6 max-w-lg">
-                        <h3 class="font-bold text-primary mb-6">Admin Profile</h3>
+                        <h3 class="font-semibold text-slate-700 mb-6">Admin Profile</h3>
                         <form id="adminProfileForm" onsubmit="updateAdminProfile(event)" class="space-y-4">
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-1">First Name</label>
-                                    <input type="text" id="adminFirstName" class="w-full border border-gray-300 rounded-lg px-4 py-2" value="Admin">
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">First Name</label>
+                                    <input type="text" id="adminFirstName" class="w-full border border-slate-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" value="Admin">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Last Name</label>
-                                    <input type="text" id="adminLastName" class="w-full border border-gray-300 rounded-lg px-4 py-2" value="User">
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">Last Name</label>
+                                    <input type="text" id="adminLastName" class="w-full border border-slate-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" value="User">
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
-                                <input type="email" id="adminEmail" class="w-full border border-gray-300 rounded-lg px-4 py-2" value="admin@brightstar.com">
+                                <label class="block text-sm font-medium text-slate-600 mb-1">Email</label>
+                                <input type="email" id="adminEmail" class="w-full border border-slate-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" value="admin@brightstar.com">
                             </div>
-                            <div class="border-t pt-4">
-                                <h4 class="font-semibold text-gray-700 mb-3">Change Password</h4>
+                            <div class="border-t border-slate-100 pt-4">
+                                <h4 class="font-medium text-slate-700 mb-3">Change Password</h4>
                                 <div class="space-y-3">
                                     <div>
-                                        <label class="block text-sm font-semibold text-gray-700 mb-1">Current Password</label>
-                                        <input type="password" id="adminCurrentPassword" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                                        <label class="block text-sm font-medium text-slate-600 mb-1">Current Password</label>
+                                        <input type="password" id="adminCurrentPassword" class="w-full border border-slate-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none">
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-semibold text-gray-700 mb-1">New Password</label>
-                                        <input type="password" id="adminNewPassword" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                                        <label class="block text-sm font-medium text-slate-600 mb-1">New Password</label>
+                                        <input type="password" id="adminNewPassword" class="w-full border border-slate-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none">
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-semibold text-gray-700 mb-1">Confirm New Password</label>
-                                        <input type="password" id="adminConfirmPassword" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                                        <label class="block text-sm font-medium text-slate-600 mb-1">Confirm New Password</label>
+                                        <input type="password" id="adminConfirmPassword" class="w-full border border-slate-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none">
                                     </div>
                                 </div>
                             </div>
-                            <button type="submit" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/90">
+                            <button type="submit" class="bg-brand-500 text-white px-6 py-2.5 rounded-lg hover:bg-brand-600 transition font-medium">
                                 <i class="fas fa-save mr-2"></i>Save Changes
                             </button>
                         </form>
@@ -395,12 +510,12 @@
     </div>
 
     <!-- Add Student Modal -->
-    <div id="addStudentModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-            <div class="p-6 border-b">
+    <div id="addStudentModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div class="p-6 border-b border-slate-100">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-xl font-bold text-primary">Add New Student</h3>
-                    <button onclick="closeModal('addStudentModal')" class="text-gray-400 hover:text-gray-600">
+                    <h3 class="text-xl font-bold text-slate-800">Add New Student</h3>
+                    <button onclick="closeModal('addStudentModal')" class="text-slate-400 hover:text-slate-600 p-1 hover:bg-slate-100 rounded-lg transition">
                         <i class="fas fa-times text-xl"></i>
                     </button>
                 </div>
@@ -408,56 +523,56 @@
             <form id="addStudentForm" onsubmit="addStudent(event)" class="p-6 space-y-4">
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">First Name</label>
-                        <input type="text" id="studentFirstName" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">First Name</label>
+                        <input type="text" id="studentFirstName" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Last Name</label>
-                        <input type="text" id="studentLastName" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Last Name</label>
+                        <input type="text" id="studentLastName" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
-                    <input type="email" id="studentEmail" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Email</label>
+                    <input type="email" id="studentEmail" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Admission Number</label>
-                    <input type="text" id="studentAdmissionNo" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Admission Number</label>
+                    <input type="text" id="studentAdmissionNo" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Class</label>
-                        <select id="studentClass" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Class</label>
+                        <select id="studentClass" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
                             <option>JSS1</option><option>JSS2</option><option>JSS3</option>
                             <option>SS1</option><option>SS2</option><option>SS3</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Gender</label>
-                        <select id="studentGender" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Gender</label>
+                        <select id="studentGender" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
                             <option>Male</option><option>Female</option>
                         </select>
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Password</label>
-                    <input type="password" id="studentPassword" class="w-full border border-gray-300 rounded-lg px-4 py-2" value="password123" required>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Password</label>
+                    <input type="password" id="studentPassword" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" value="password123" required>
                 </div>
-                <div class="flex justify-end space-x-3 pt-4">
-                    <button type="button" onclick="closeModal('addStudentModal')" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
-                    <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">Add Student</button>
+                <div class="flex justify-end space-x-3 pt-4 border-t border-slate-100">
+                    <button type="button" onclick="closeModal('addStudentModal')" class="px-5 py-2.5 border border-slate-200 rounded-lg hover:bg-slate-50 font-medium text-slate-600 transition">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 bg-brand-500 text-white rounded-lg hover:bg-brand-600 font-medium transition">Add Student</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Add Teacher Modal -->
-    <div id="addTeacherModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-            <div class="p-6 border-b">
+    <div id="addTeacherModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div class="p-6 border-b border-slate-100">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-xl font-bold text-primary">Add New Teacher</h3>
-                    <button onclick="closeModal('addTeacherModal')" class="text-gray-400 hover:text-gray-600">
+                    <h3 class="text-xl font-bold text-slate-800">Add New Teacher</h3>
+                    <button onclick="closeModal('addTeacherModal')" class="text-slate-400 hover:text-slate-600 p-1 hover:bg-slate-100 rounded-lg transition">
                         <i class="fas fa-times text-xl"></i>
                     </button>
                 </div>
@@ -465,57 +580,57 @@
             <form id="addTeacherForm" onsubmit="addTeacher(event)" class="p-6 space-y-4">
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">First Name</label>
-                        <input type="text" id="teacherFirstName" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">First Name</label>
+                        <input type="text" id="teacherFirstName" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Last Name</label>
-                        <input type="text" id="teacherLastName" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Last Name</label>
+                        <input type="text" id="teacherLastName" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
-                    <input type="email" id="teacherEmail" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Email</label>
+                    <input type="email" id="teacherEmail" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Staff ID</label>
-                    <input type="text" id="teacherStaffId" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Staff ID</label>
+                    <input type="text" id="teacherStaffId" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Department</label>
-                    <input type="text" id="teacherDepartment" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Department</label>
+                    <input type="text" id="teacherDepartment" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Password</label>
-                    <input type="password" id="teacherPassword" class="w-full border border-gray-300 rounded-lg px-4 py-2" value="password123" required>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Password</label>
+                    <input type="password" id="teacherPassword" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" value="password123" required>
                 </div>
-                <div class="flex justify-end space-x-3 pt-4">
-                    <button type="button" onclick="closeModal('addTeacherModal')" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
-                    <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">Add Teacher</button>
+                <div class="flex justify-end space-x-3 pt-4 border-t border-slate-100">
+                    <button type="button" onclick="closeModal('addTeacherModal')" class="px-5 py-2.5 border border-slate-200 rounded-lg hover:bg-slate-50 font-medium text-slate-600 transition">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 bg-brand-500 text-white rounded-lg hover:bg-brand-600 font-medium transition">Add Teacher</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Add Announcement Modal -->
-    <div id="addAnnouncementModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-            <div class="p-6 border-b">
+    <div id="addAnnouncementModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div class="p-6 border-b border-slate-100">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-xl font-bold text-primary">New Announcement</h3>
-                    <button onclick="closeModal('addAnnouncementModal')" class="text-gray-400 hover:text-gray-600">
+                    <h3 class="text-xl font-bold text-slate-800">New Announcement</h3>
+                    <button onclick="closeModal('addAnnouncementModal')" class="text-slate-400 hover:text-slate-600 p-1 hover:bg-slate-100 rounded-lg transition">
                         <i class="fas fa-times text-xl"></i>
                     </button>
                 </div>
             </div>
             <form id="addAnnouncementForm" onsubmit="addAnnouncement(event)" class="p-6 space-y-4">
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Title</label>
-                    <input type="text" id="announcementTitle" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Title</label>
+                    <input type="text" id="announcementTitle" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Category</label>
-                    <select id="announcementCategory" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Category</label>
+                    <select id="announcementCategory" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none">
                         <option value="general">General</option>
                         <option value="academic">Academic</option>
                         <option value="events">Events</option>
@@ -524,24 +639,24 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Content</label>
-                    <textarea id="announcementContent" rows="4" class="w-full border border-gray-300 rounded-lg px-4 py-2" required></textarea>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Content</label>
+                    <textarea id="announcementContent" rows="4" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none resize-none" required></textarea>
                 </div>
-                <div class="flex justify-end space-x-3 pt-4">
-                    <button type="button" onclick="closeModal('addAnnouncementModal')" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
-                    <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">Post Announcement</button>
+                <div class="flex justify-end space-x-3 pt-4 border-t border-slate-100">
+                    <button type="button" onclick="closeModal('addAnnouncementModal')" class="px-5 py-2.5 border border-slate-200 rounded-lg hover:bg-slate-50 font-medium text-slate-600 transition">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 bg-brand-500 text-white rounded-lg hover:bg-brand-600 font-medium transition">Post Announcement</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Edit Student Modal -->
-    <div id="editStudentModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-            <div class="p-6 border-b">
+    <div id="editStudentModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div class="p-6 border-b border-slate-100">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-xl font-bold text-primary">Edit Student</h3>
-                    <button onclick="closeModal('editStudentModal')" class="text-gray-400 hover:text-gray-600">
+                    <h3 class="text-xl font-bold text-slate-800">Edit Student</h3>
+                    <button onclick="closeModal('editStudentModal')" class="text-slate-400 hover:text-slate-600 p-1 hover:bg-slate-100 rounded-lg transition">
                         <i class="fas fa-times text-xl"></i>
                     </button>
                 </div>
@@ -550,64 +665,64 @@
                 <input type="hidden" id="editStudentId">
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">First Name</label>
-                        <input type="text" id="editStudentFirstName" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">First Name</label>
+                        <input type="text" id="editStudentFirstName" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Last Name</label>
-                        <input type="text" id="editStudentLastName" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Last Name</label>
+                        <input type="text" id="editStudentLastName" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
-                    <input type="email" id="editStudentEmail" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Email</label>
+                    <input type="email" id="editStudentEmail" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Admission Number</label>
-                    <input type="text" id="editStudentAdmissionNo" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Admission Number</label>
+                    <input type="text" id="editStudentAdmissionNo" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Class</label>
-                        <select id="editStudentClass" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Class</label>
+                        <select id="editStudentClass" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
                             <option>JSS1</option><option>JSS2</option><option>JSS3</option>
                             <option>SS1</option><option>SS2</option><option>SS3</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Gender</label>
-                        <select id="editStudentGender" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Gender</label>
+                        <select id="editStudentGender" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
                             <option>Male</option><option>Female</option>
                         </select>
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Parent Name</label>
-                    <input type="text" id="editStudentParent" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Parent Name</label>
+                    <input type="text" id="editStudentParent" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Parent Phone</label>
-                    <input type="text" id="editStudentParentPhone" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Parent Phone</label>
+                    <input type="text" id="editStudentParentPhone" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none">
                 </div>
-                <div class="border-t pt-4">
-                    <h4 class="font-semibold text-gray-700 mb-3">Change Password (leave blank to keep current)</h4>
-                    <input type="password" id="editStudentPassword" class="w-full border border-gray-300 rounded-lg px-4 py-2" placeholder="New password">
+                <div class="border-t border-slate-100 pt-4">
+                    <h4 class="font-medium text-slate-700 mb-3">Change Password (leave blank to keep current)</h4>
+                    <input type="password" id="editStudentPassword" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" placeholder="New password">
                 </div>
-                <div class="flex justify-end space-x-3 pt-4">
-                    <button type="button" onclick="closeModal('editStudentModal')" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
-                    <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">Save Changes</button>
+                <div class="flex justify-end space-x-3 pt-4 border-t border-slate-100">
+                    <button type="button" onclick="closeModal('editStudentModal')" class="px-5 py-2.5 border border-slate-200 rounded-lg hover:bg-slate-50 font-medium text-slate-600 transition">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 bg-brand-500 text-white rounded-lg hover:bg-brand-600 font-medium transition">Save Changes</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Edit Teacher Modal -->
-    <div id="editTeacherModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-            <div class="p-6 border-b">
+    <div id="editTeacherModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div class="p-6 border-b border-slate-100">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-xl font-bold text-primary">Edit Teacher</h3>
-                    <button onclick="closeModal('editTeacherModal')" class="text-gray-400 hover:text-gray-600">
+                    <h3 class="text-xl font-bold text-slate-800">Edit Teacher</h3>
+                    <button onclick="closeModal('editTeacherModal')" class="text-slate-400 hover:text-slate-600 p-1 hover:bg-slate-100 rounded-lg transition">
                         <i class="fas fa-times text-xl"></i>
                     </button>
                 </div>
@@ -616,37 +731,37 @@
                 <input type="hidden" id="editTeacherId">
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">First Name</label>
-                        <input type="text" id="editTeacherFirstName" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">First Name</label>
+                        <input type="text" id="editTeacherFirstName" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-1">Last Name</label>
-                        <input type="text" id="editTeacherLastName" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Last Name</label>
+                        <input type="text" id="editTeacherLastName" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
-                    <input type="email" id="editTeacherEmail" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Email</label>
+                    <input type="email" id="editTeacherEmail" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Staff ID</label>
-                    <input type="text" id="editTeacherStaffId" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Staff ID</label>
+                    <input type="text" id="editTeacherStaffId" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Department</label>
-                    <input type="text" id="editTeacherDepartment" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Department</label>
+                    <input type="text" id="editTeacherDepartment" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Qualification</label>
-                    <input type="text" id="editTeacherQualification" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Qualification</label>
+                    <input type="text" id="editTeacherQualification" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none">
                 </div>
-                <div class="border-t pt-4">
-                    <h4 class="font-semibold text-gray-700 mb-3">Change Password (leave blank to keep current)</h4>
-                    <input type="password" id="editTeacherPassword" class="w-full border border-gray-300 rounded-lg px-4 py-2" placeholder="New password">
+                <div class="border-t border-slate-100 pt-4">
+                    <h4 class="font-medium text-slate-700 mb-3">Change Password (leave blank to keep current)</h4>
+                    <input type="password" id="editTeacherPassword" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" placeholder="New password">
                 </div>
-                <div class="flex justify-end space-x-3 pt-4">
-                    <button type="button" onclick="closeModal('editTeacherModal')" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
-                    <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">Save Changes</button>
+                <div class="flex justify-end space-x-3 pt-4 border-t border-slate-100">
+                    <button type="button" onclick="closeModal('editTeacherModal')" class="px-5 py-2.5 border border-slate-200 rounded-lg hover:bg-slate-50 font-medium text-slate-600 transition">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 bg-brand-500 text-white rounded-lg hover:bg-brand-600 font-medium transition">Save Changes</button>
                 </div>
             </form>
         </div>
