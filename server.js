@@ -166,9 +166,268 @@ app.get('/api/students/all', (req, res) => {
     res.json({ success: true, count: demoStudents.length, students: demoStudents });
 });
 
+// Students - Create
+app.post('/api/students', (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
+    
+    try {
+        jwt.verify(token, JWT_SECRET);
+    } catch (err) {
+        return res.status(401).json({ success: false, message: 'Not authorized' });
+    }
+    
+    const { firstName, lastName, email, admissionNumber, class: studentClass, gender, password, session, term } = req.body;
+    
+    if (!firstName || !lastName || !admissionNumber) {
+        return res.status(400).json({ success: false, message: 'Missing required fields' });
+    }
+    
+    const exists = demoStudents.find(s => s.admissionNumber === admissionNumber);
+    if (exists) {
+        return res.status(400).json({ success: false, message: 'Admission number already exists' });
+    }
+    
+    const newId = String(demoStudents.length + 1);
+    const newStudent = {
+        _id: newId,
+        admissionNumber,
+        class: studentClass,
+        gender,
+        session,
+        term,
+        parentName: '',
+        parentPhone: '',
+        user: { firstName, lastName, email }
+    };
+    
+    demoStudents.push(newStudent);
+    demoUsers[admissionNumber] = {
+        id: newId,
+        email,
+        password: password || 'password123',
+        firstName,
+        lastName,
+        role: 'student',
+        admissionNumber,
+        class: studentClass,
+        session,
+        term
+    };
+    
+    res.status(201).json({ success: true, message: 'Student added successfully', student: newStudent });
+});
+
+// Students - Update
+app.put('/api/students/:id', (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
+    
+    try {
+        jwt.verify(token, JWT_SECRET);
+    } catch (err) {
+        return res.status(401).json({ success: false, message: 'Not authorized' });
+    }
+    
+    const student = demoStudents.find(s => s._id === req.params.id);
+    if (!student) return res.status(404).json({ success: false, message: 'Student not found' });
+    
+    const { firstName, lastName, email, admissionNumber, class: studentClass, gender, parentName, parentPhone, password } = req.body;
+    
+    if (firstName) student.user.firstName = firstName;
+    if (lastName) student.user.lastName = lastName;
+    if (email) student.user.email = email;
+    if (admissionNumber) student.admissionNumber = admissionNumber;
+    if (studentClass) student.class = studentClass;
+    if (gender) student.gender = gender;
+    if (parentName) student.parentName = parentName;
+    if (parentPhone) student.parentPhone = parentPhone;
+    
+    // Update demoUsers
+    const user = demoUsers[student.admissionNumber] || demoUsers[Object.keys(demoUsers).find(k => demoUsers[k].id === req.params.id)];
+    if (user) {
+        if (firstName) user.firstName = firstName;
+        if (lastName) user.lastName = lastName;
+        if (email) user.email = email;
+        if (password) user.password = password;
+        if (studentClass) user.class = studentClass;
+    }
+    
+    res.json({ success: true, message: 'Student updated successfully', student });
+});
+
+// Students - Delete
+app.delete('/api/students/:id', (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
+    
+    try {
+        jwt.verify(token, JWT_SECRET);
+    } catch (err) {
+        return res.status(401).json({ success: false, message: 'Not authorized' });
+    }
+    
+    const index = demoStudents.findIndex(s => s._id === req.params.id);
+    if (index === -1) return res.status(404).json({ success: false, message: 'Student not found' });
+    
+    const student = demoStudents[index];
+    delete demoUsers[student.admissionNumber];
+    demoStudents.splice(index, 1);
+    
+    res.json({ success: true, message: 'Student deleted successfully' });
+});
+
 // Teachers - Get all
 app.get('/api/teachers/all', (req, res) => {
     res.json({ success: true, count: demoTeachers.length, teachers: demoTeachers });
+});
+
+// Teachers - Create
+app.post('/api/teachers', (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
+    
+    try {
+        jwt.verify(token, JWT_SECRET);
+    } catch (err) {
+        return res.status(401).json({ success: false, message: 'Not authorized' });
+    }
+    
+    const { firstName, lastName, email, staffId, department, password } = req.body;
+    
+    if (!firstName || !lastName || !staffId) {
+        return res.status(400).json({ success: false, message: 'Missing required fields' });
+    }
+    
+    const exists = demoTeachers.find(t => t.staffId === staffId);
+    if (exists) {
+        return res.status(400).json({ success: false, message: 'Staff ID already exists' });
+    }
+    
+    const newId = String(demoTeachers.length + 10);
+    const newTeacher = {
+        _id: newId,
+        staffId,
+        department,
+        subjects: [],
+        qualification: '',
+        experience: 0,
+        status: 'active',
+        user: { firstName, lastName, email }
+    };
+    
+    demoTeachers.push(newTeacher);
+    demoUsers[staffId] = {
+        id: newId,
+        email,
+        password: password || 'password123',
+        firstName,
+        lastName,
+        role: 'teacher',
+        staffId
+    };
+    
+    res.status(201).json({ success: true, message: 'Teacher added successfully', teacher: newTeacher });
+});
+
+// Teachers - Update
+app.put('/api/teachers/:id', (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
+    
+    try {
+        jwt.verify(token, JWT_SECRET);
+    } catch (err) {
+        return res.status(401).json({ success: false, message: 'Not authorized' });
+    }
+    
+    const teacher = demoTeachers.find(t => t._id === req.params.id);
+    if (!teacher) return res.status(404).json({ success: false, message: 'Teacher not found' });
+    
+    const { firstName, lastName, email, staffId, department, qualification, password } = req.body;
+    
+    if (firstName) teacher.user.firstName = firstName;
+    if (lastName) teacher.user.lastName = lastName;
+    if (email) teacher.user.email = email;
+    if (staffId) teacher.staffId = staffId;
+    if (department) teacher.department = department;
+    if (qualification) teacher.qualification = qualification;
+    
+    // Update demoUsers
+    const user = demoUsers[teacher.staffId] || demoUsers[Object.keys(demoUsers).find(k => demoUsers[k].id === req.params.id)];
+    if (user) {
+        if (firstName) user.firstName = firstName;
+        if (lastName) user.lastName = lastName;
+        if (email) user.email = email;
+        if (password) user.password = password;
+    }
+    
+    res.json({ success: true, message: 'Teacher updated successfully', teacher });
+});
+
+// Teachers - Delete
+app.delete('/api/teachers/:id', (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
+    
+    try {
+        jwt.verify(token, JWT_SECRET);
+    } catch (err) {
+        return res.status(401).json({ success: false, message: 'Not authorized' });
+    }
+    
+    const index = demoTeachers.findIndex(t => t._id === req.params.id);
+    if (index === -1) return res.status(404).json({ success: false, message: 'Teacher not found' });
+    
+    const teacher = demoTeachers[index];
+    delete demoUsers[teacher.staffId];
+    demoTeachers.splice(index, 1);
+    
+    res.json({ success: true, message: 'Teacher deleted successfully' });
+});
+
+// Announcements - Create
+app.post('/api/announcements', (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
+    
+    try {
+        jwt.verify(token, JWT_SECRET);
+    } catch (err) {
+        return res.status(401).json({ success: false, message: 'Not authorized' });
+    }
+    
+    const { title, category, content } = req.body;
+    const newId = String(demoAnnouncements.length + 1);
+    
+    const announcement = {
+        _id: newId,
+        title,
+        category: category || 'general',
+        content,
+        createdAt: new Date()
+    };
+    
+    demoAnnouncements.unshift(announcement);
+    res.status(201).json({ success: true, announcement });
+});
+
+// Announcements - Delete
+app.delete('/api/announcements/:id', (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
+    
+    try {
+        jwt.verify(token, JWT_SECRET);
+    } catch (err) {
+        return res.status(401).json({ success: false, message: 'Not authorized' });
+    }
+    
+    const index = demoAnnouncements.findIndex(a => a._id === req.params.id);
+    if (index === -1) return res.status(404).json({ success: false, message: 'Announcement not found' });
+    
+    demoAnnouncements.splice(index, 1);
+    res.json({ success: true, message: 'Announcement deleted' });
 });
 
 // Results - Get student results

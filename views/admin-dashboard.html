@@ -68,6 +68,9 @@
                 <a href="#" onclick="showSection('sessions')" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
                     <i class="fas fa-calendar w-5"></i><span class="sidebar-text">Sessions</span>
                 </a>
+                <a href="#" onclick="showSection('settings')" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
+                    <i class="fas fa-cog w-5"></i><span class="sidebar-text">Settings</span>
+                </a>
                 <div class="border-t border-gray-600 my-4"></div>
                 <a href="#" onclick="logout()" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-red-500/20 transition text-red-400">
                     <i class="fas fa-sign-out-alt w-5"></i><span class="sidebar-text">Logout</span>
@@ -281,6 +284,113 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Settings Section -->
+            <div id="settingsSection" class="section hidden">
+                <h2 class="text-2xl font-bold text-primary mb-6">Settings</h2>
+                
+                <!-- Settings Tabs -->
+                <div class="flex mb-6 bg-gray-100 rounded-xl p-1 max-w-md">
+                    <button onclick="showSettingsTab('editStudents')" id="tabEditStudents" class="flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition bg-primary text-white">
+                        <i class="fas fa-user-graduate mr-1"></i> Students
+                    </button>
+                    <button onclick="showSettingsTab('editTeachers')" id="tabEditTeachers" class="flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition text-gray-600">
+                        <i class="fas fa-chalkboard-teacher mr-1"></i> Teachers
+                    </button>
+                    <button onclick="showSettingsTab('adminProfile')" id="tabAdminProfile" class="flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition text-gray-600">
+                        <i class="fas fa-user-shield mr-1"></i> Admin
+                    </button>
+                </div>
+
+                <!-- Edit Students Tab -->
+                <div id="editStudentsTab">
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                        <div class="p-4 border-b flex justify-between items-center">
+                            <h3 class="font-bold text-primary">Edit Students</h3>
+                            <input type="text" id="searchStudents" placeholder="Search students..." class="border border-gray-300 rounded-lg px-4 py-2 text-sm" onkeyup="filterStudents()">
+                        </div>
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Name</th>
+                                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Admission No</th>
+                                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Class</th>
+                                    <th class="px-6 py-3 text-center text-sm font-semibold text-gray-600">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="editStudentsTable" class="divide-y divide-gray-100">
+                                <tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Edit Teachers Tab -->
+                <div id="editTeachersTab" class="hidden">
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                        <div class="p-4 border-b flex justify-between items-center">
+                            <h3 class="font-bold text-primary">Edit Teachers</h3>
+                            <input type="text" id="searchTeachers" placeholder="Search teachers..." class="border border-gray-300 rounded-lg px-4 py-2 text-sm" onkeyup="filterTeachers()">
+                        </div>
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Name</th>
+                                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Staff ID</th>
+                                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-600">Department</th>
+                                    <th class="px-6 py-3 text-center text-sm font-semibold text-gray-600">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="editTeachersTable" class="divide-y divide-gray-100">
+                                <tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Admin Profile Tab -->
+                <div id="adminProfileTab" class="hidden">
+                    <div class="bg-white rounded-xl shadow-sm p-6 max-w-lg">
+                        <h3 class="font-bold text-primary mb-6">Admin Profile</h3>
+                        <form id="adminProfileForm" onsubmit="updateAdminProfile(event)" class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1">First Name</label>
+                                    <input type="text" id="adminFirstName" class="w-full border border-gray-300 rounded-lg px-4 py-2" value="Admin">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-1">Last Name</label>
+                                    <input type="text" id="adminLastName" class="w-full border border-gray-300 rounded-lg px-4 py-2" value="User">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+                                <input type="email" id="adminEmail" class="w-full border border-gray-300 rounded-lg px-4 py-2" value="admin@brightstar.com">
+                            </div>
+                            <div class="border-t pt-4">
+                                <h4 class="font-semibold text-gray-700 mb-3">Change Password</h4>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-1">Current Password</label>
+                                        <input type="password" id="adminCurrentPassword" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-1">New Password</label>
+                                        <input type="password" id="adminNewPassword" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-gray-700 mb-1">Confirm New Password</label>
+                                        <input type="password" id="adminConfirmPassword" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary/90">
+                                <i class="fas fa-save mr-2"></i>Save Changes
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 
@@ -420,6 +530,123 @@
                 <div class="flex justify-end space-x-3 pt-4">
                     <button type="button" onclick="closeModal('addAnnouncementModal')" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
                     <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">Post Announcement</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Student Modal -->
+    <div id="editStudentModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-primary">Edit Student</h3>
+                    <button onclick="closeModal('editStudentModal')" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <form id="editStudentForm" onsubmit="saveStudent(event)" class="p-6 space-y-4">
+                <input type="hidden" id="editStudentId">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">First Name</label>
+                        <input type="text" id="editStudentFirstName" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Last Name</label>
+                        <input type="text" id="editStudentLastName" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+                    <input type="email" id="editStudentEmail" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Admission Number</label>
+                    <input type="text" id="editStudentAdmissionNo" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Class</label>
+                        <select id="editStudentClass" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                            <option>JSS1</option><option>JSS2</option><option>JSS3</option>
+                            <option>SS1</option><option>SS2</option><option>SS3</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Gender</label>
+                        <select id="editStudentGender" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                            <option>Male</option><option>Female</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Parent Name</label>
+                    <input type="text" id="editStudentParent" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Parent Phone</label>
+                    <input type="text" id="editStudentParentPhone" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                </div>
+                <div class="border-t pt-4">
+                    <h4 class="font-semibold text-gray-700 mb-3">Change Password (leave blank to keep current)</h4>
+                    <input type="password" id="editStudentPassword" class="w-full border border-gray-300 rounded-lg px-4 py-2" placeholder="New password">
+                </div>
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" onclick="closeModal('editStudentModal')" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
+                    <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Teacher Modal -->
+    <div id="editTeacherModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-primary">Edit Teacher</h3>
+                    <button onclick="closeModal('editTeacherModal')" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <form id="editTeacherForm" onsubmit="saveTeacher(event)" class="p-6 space-y-4">
+                <input type="hidden" id="editTeacherId">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">First Name</label>
+                        <input type="text" id="editTeacherFirstName" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Last Name</label>
+                        <input type="text" id="editTeacherLastName" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+                    <input type="email" id="editTeacherEmail" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Staff ID</label>
+                    <input type="text" id="editTeacherStaffId" class="w-full border border-gray-300 rounded-lg px-4 py-2" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Department</label>
+                    <input type="text" id="editTeacherDepartment" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Qualification</label>
+                    <input type="text" id="editTeacherQualification" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                </div>
+                <div class="border-t pt-4">
+                    <h4 class="font-semibold text-gray-700 mb-3">Change Password (leave blank to keep current)</h4>
+                    <input type="password" id="editTeacherPassword" class="w-full border border-gray-300 rounded-lg px-4 py-2" placeholder="New password">
+                </div>
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button type="button" onclick="closeModal('editTeacherModal')" class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
+                    <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90">Save Changes</button>
                 </div>
             </form>
         </div>
