@@ -498,7 +498,7 @@ async function loadTeachers() {
                         </div>
                     </td>
                     <td class="px-6 py-4 text-slate-600">${t.staffId}</td>
-                    <td class="px-6 py-4 text-slate-600">${t.department || '-'}</td>
+                    <td class="px-6 py-4 text-slate-600">${t.subjects || '-'}</td>
                     <td class="px-6 py-4 text-center"><span class="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full text-xs font-semibold">${t.status || 'active'}</span></td>
                     <td class="px-6 py-4 text-center">
                         <button class="text-brand-500 hover:text-brand-700 mr-3 transition" title="Edit"><i class="fas fa-edit"></i></button>
