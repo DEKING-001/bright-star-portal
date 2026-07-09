@@ -3,374 +3,516 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bright Star International School - Home</title>
+    <title>Bright Star International School - Excellence in Education</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#1e3a5f',
-                        secondary: '#f59e0b',
-                        accent: '#0ea5e9',
-                        dark: '#0f172a',
-                        light: '#f8fafc'
+                        brown: {
+                            50: '#faf6f1',
+                            100: '#f0e6d8',
+                            200: '#e0ccb0',
+                            300: '#cda87a',
+                            400: '#b8844f',
+                            500: '#a67035',
+                            600: '#8b5a2b',
+                            700: '#6b4423',
+                            800: '#5d3a1a',
+                            900: '#3d2511',
+                            950: '#2c1810'
+                        },
+                        smoke: '#f5f5f5',
+                        cream: '#fdf8f3'
                     }
                 }
             }
         }
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Poppins', sans-serif; }
-        .hero-bg {
-            background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
-        }
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        }
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        body { font-family: 'Inter', sans-serif; }
+        .font-display { font-family: 'Playfair Display', serif; }
+        .hero-overlay { background: linear-gradient(135deg, rgba(44,24,16,0.85) 0%, rgba(93,58,26,0.7) 100%); }
+        .section-dark { background: linear-gradient(180deg, #2c1810 0%, #3d2511 100%); }
+        .section-brown { background: linear-gradient(180deg, #5d3a1a 0%, #6b4423 100%); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-8px); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+        .nav-scrolled { background: rgba(44,24,16,0.98) !important; backdrop-filter: blur(10px); }
+        .gradient-text { background: linear-gradient(135deg, #d4a574, #e8c9a0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .btn-gold { background: linear-gradient(135deg, #d4a574, #b8844f); }
+        .btn-gold:hover { background: linear-gradient(135deg, #b8844f, #a67035); }
+        .hero-bg { 
+            background: linear-gradient(rgba(44,24,16,0.8), rgba(44,24,16,0.7)), 
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><rect fill="%235d3a1a" width="1200" height="800"/><g fill="%236b4423" fill-opacity="0.3"><circle cx="200" cy="150" r="100"/><circle cx="800" cy="200" r="150"/><circle cx="400" cy="500" r="120"/><circle cx="1000" cy="450" r="80"/></g></svg>');
+            background-size: cover;
+            background-position: center;
         }
     </style>
 </head>
-<body class="bg-light">
+<body class="bg-smoke">
+    <!-- Top Bar -->
+    <div class="bg-brown-950 text-sm py-2">
+        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center space-x-6 text-brown-200">
+                <span><i class="fas fa-phone mr-2"></i>+234 801 234 5678</span>
+                <span class="hidden md:inline"><i class="fas fa-envelope mr-2"></i>info@brightstarschool.edu.ng</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="/login" class="text-brown-200 hover:text-white transition">
+                    <i class="fas fa-user-circle mr-1"></i> Portal Login
+                </a>
+                <span class="text-brown-600">|</span>
+                <a href="/contact" class="text-brown-200 hover:text-white transition">Contact</a>
+            </div>
+        </div>
+    </div>
+
     <!-- Navigation -->
-    <nav class="bg-primary text-white sticky top-0 z-50 shadow-lg">
+    <nav id="navbar" class="bg-brown-950/95 sticky top-0 z-50 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4">
             <div class="flex justify-between items-center py-4">
-                <div class="flex items-center space-x-3">
-                    <div class="w-12 h-12 bg-secondary rounded-full flex items-center justify-center">
+                <a href="/" class="flex items-center space-x-4">
+                    <div class="w-14 h-14 btn-gold rounded-full flex items-center justify-center shadow-lg">
                         <i class="fas fa-star text-white text-xl"></i>
                     </div>
                     <div>
-                        <h1 class="text-xl font-bold">BRIGHT STAR</h1>
-                        <p class="text-xs text-gray-300">International School</p>
+                        <h1 class="text-xl font-bold text-white tracking-wide font-display">BRIGHT STAR</h1>
+                        <p class="text-xs text-brown-300 tracking-widest">INTERNATIONAL SCHOOL</p>
                     </div>
+                </a>
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a href="/" class="text-white font-medium hover:text-brown-300 transition">Home</a>
+                    <a href="/about" class="text-brown-200 hover:text-white transition">About Us</a>
+                    <a href="/admissions" class="text-brown-200 hover:text-white transition">Admissions</a>
+                    <a href="/gallery" class="text-brown-200 hover:text-white transition">Gallery</a>
+                    <a href="/contact" class="text-brown-200 hover:text-white transition">Contact</a>
+                    <a href="/login" class="btn-gold text-white px-6 py-2.5 rounded-lg font-semibold hover:shadow-lg transition">
+                        Student Portal
+                    </a>
                 </div>
-                <div class="hidden md:flex space-x-6">
-                    <a href="/" class="hover:text-secondary transition">Home</a>
-                    <a href="/about" class="hover:text-secondary transition">About</a>
-                    <a href="/admissions" class="hover:text-secondary transition">Admissions</a>
-                    <a href="/gallery" class="hover:text-secondary transition">Gallery</a>
-                    <a href="/contact" class="hover:text-secondary transition">Contact</a>
-                    <a href="/login" class="bg-secondary px-4 py-2 rounded-lg hover:bg-yellow-600 transition">Login</a>
-                </div>
-                <button id="mobileMenuBtn" class="md:hidden text-2xl">
+                <button id="mobileMenuBtn" class="lg:hidden text-white text-2xl">
                     <i class="fas fa-bars"></i>
                 </button>
             </div>
         </div>
         <!-- Mobile Menu -->
-        <div id="mobileMenu" class="hidden md:hidden bg-primary border-t border-gray-600">
-            <div class="px-4 py-3 space-y-3">
-                <a href="/" class="block hover:text-secondary">Home</a>
-                <a href="/about" class="block hover:text-secondary">About</a>
-                <a href="/admissions" class="block hover:text-secondary">Admissions</a>
-                <a href="/gallery" class="block hover:text-secondary">Gallery</a>
-                <a href="/contact" class="block hover:text-secondary">Contact</a>
-                <a href="/login" class="block bg-secondary px-4 py-2 rounded-lg text-center">Login</a>
+        <div id="mobileMenu" class="hidden lg:hidden bg-brown-950 border-t border-brown-800">
+            <div class="px-4 py-4 space-y-3">
+                <a href="/" class="block text-white py-2">Home</a>
+                <a href="/about" class="block text-brown-200 py-2">About Us</a>
+                <a href="/admissions" class="block text-brown-200 py-2">Admissions</a>
+                <a href="/gallery" class="block text-brown-200 py-2">Gallery</a>
+                <a href="/contact" class="block text-brown-200 py-2">Contact</a>
+                <a href="/login" class="block btn-gold text-white px-4 py-2.5 rounded-lg text-center font-semibold">Student Portal</a>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero-bg text-white py-20 lg:py-32">
-        <div class="max-w-7xl mx-auto px-4">
+    <section class="hero-bg min-h-screen flex items-center relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-20 left-10 w-72 h-72 bg-brown-400 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-10 w-96 h-96 bg-brown-600 rounded-full blur-3xl"></div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 py-20 relative z-10">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
-                <div class="fade-in">
-                    <h1 class="text-4xl lg:text-6xl font-bold mb-6">
-                        Welcome to <span class="text-secondary">Bright Star</span> International School
+                <div>
+                    <span class="inline-block btn-gold text-white text-sm font-semibold px-4 py-2 rounded-full mb-6">
+                        Welcome to Excellence
+                    </span>
+                    <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 font-display leading-tight">
+                        Nurturing Future <span class="gradient-text">Leaders</span> Today
                     </h1>
-                    <p class="text-xl text-gray-300 mb-8">
-                        Nurturing Excellence, Building Future Leaders. Where every child shines bright.
+                    <p class="text-xl text-brown-200 mb-8 leading-relaxed">
+                        Bright Star International School provides world-class education that empowers students to excel academically, morally, and socially.
                     </p>
                     <div class="flex flex-wrap gap-4">
-                        <a href="/admissions" class="bg-secondary text-white px-8 py-3 rounded-lg font-semibold hover:bg-yellow-600 transition">
-                            Apply Now
+                        <a href="/admissions" class="btn-gold text-white px-8 py-4 rounded-lg font-semibold text-lg hover:shadow-xl transition inline-flex items-center">
+                            Apply Now <i class="fas fa-arrow-right ml-2"></i>
                         </a>
-                        <a href="/about" class="border-2 border-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary transition">
+                        <a href="/about" class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-brown-900 transition">
                             Learn More
                         </a>
                     </div>
                 </div>
-                <div class="hidden lg:block text-center">
-                    <div class="w-80 h-80 mx-auto bg-white/10 rounded-full flex items-center justify-center">
-                        <i class="fas fa-graduation-cap text-secondary text-9xl"></i>
+                <div class="hidden lg:block">
+                    <div class="relative">
+                        <div class="w-full h-96 btn-gold rounded-2xl flex items-center justify-center shadow-2xl transform rotate-3">
+                            <i class="fas fa-graduation-cap text-white text-8xl"></i>
+                        </div>
+                        <div class="absolute -bottom-6 -left-6 bg-white rounded-xl p-6 shadow-xl">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-14 h-14 bg-brown-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-trophy text-brown-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <p class="text-2xl font-bold text-brown-900">95%</p>
+                                    <p class="text-brown-600 text-sm">Pass Rate</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="absolute -top-6 -right-6 bg-white rounded-xl p-6 shadow-xl">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-14 h-14 bg-brown-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-users text-brown-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <p class="text-2xl font-bold text-brown-900">500+</p>
+                                    <p class="text-brown-600 text-sm">Students</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-
-    <!-- Stats Section -->
-    <section class="py-16 bg-white">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-8">
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-users text-primary text-2xl"></i>
-                    </div>
-                    <h3 class="text-3xl font-bold text-primary">500+</h3>
-                    <p class="text-gray-600">Students</p>
-                </div>
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-chalkboard-teacher text-secondary text-2xl"></i>
-                    </div>
-                    <h3 class="text-3xl font-bold text-primary">50+</h3>
-                    <p class="text-gray-600">Teachers</p>
-                </div>
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-book text-accent text-2xl"></i>
-                    </div>
-                    <h3 class="text-3xl font-bold text-primary">30+</h3>
-                    <p class="text-gray-600">Subjects</p>
-                </div>
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-trophy text-green-600 text-2xl"></i>
-                    </div>
-                    <h3 class="text-3xl font-bold text-primary">95%</h3>
-                    <p class="text-gray-600">Pass Rate</p>
-                </div>
-            </div>
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <a href="#schools" class="text-white/50 hover:text-white transition">
+                <i class="fas fa-chevron-down text-2xl"></i>
+            </a>
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="py-16 bg-gray-50">
+    <!-- Schools Section -->
+    <section id="schools" class="py-20 bg-cream">
         <div class="max-w-7xl mx-auto px-4">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-primary mb-4">Why Choose Bright Star?</h2>
-                <p class="text-gray-600 max-w-2xl mx-auto">We provide world-class education with modern facilities and experienced educators.</p>
+            <div class="text-center mb-16">
+                <span class="text-brown-500 font-semibold text-sm tracking-widest uppercase">Our Programs</span>
+                <h2 class="text-4xl font-bold text-brown-900 mt-3 font-display">Crèche, Nursery, Primary & Secondary</h2>
             </div>
             <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-white p-8 rounded-xl shadow-lg card-hover transition-all duration-300">
-                    <div class="w-14 h-14 bg-secondary/10 rounded-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-award text-secondary text-2xl"></i>
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover">
+                    <div class="h-48 bg-gradient-to-br from-brown-400 to-brown-600 flex items-center justify-center">
+                        <i class="fas fa-baby text-white text-6xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-primary mb-3">Academic Excellence</h3>
-                    <p class="text-gray-600">Consistently top results in national examinations with a 95% pass rate.</p>
+                    <div class="p-8">
+                        <h3 class="text-xl font-bold text-brown-900 mb-3">Nursery & Primary</h3>
+                        <p class="text-brown-600 mb-4">Building strong foundations for lifelong learning through play-based education.</p>
+                        <a href="/admissions" class="text-brown-600 font-semibold hover:text-brown-800 inline-flex items-center">
+                            Learn More <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
                 </div>
-                <div class="bg-white p-8 rounded-xl shadow-lg card-hover transition-all duration-300">
-                    <div class="w-14 h-14 bg-accent/10 rounded-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-laptop-code text-accent text-2xl"></i>
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover">
+                    <div class="h-48 bg-gradient-to-br from-brown-600 to-brown-800 flex items-center justify-center">
+                        <i class="fas fa-book-reader text-white text-6xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-primary mb-3">Modern Facilities</h3>
-                    <p class="text-gray-600">State-of-the-art laboratories, library, and ICT center for practical learning.</p>
+                    <div class="p-8">
+                        <h3 class="text-xl font-bold text-brown-900 mb-3">Junior Secondary</h3>
+                        <p class="text-brown-600 mb-4">Comprehensive curriculum preparing students for senior secondary education.</p>
+                        <a href="/admissions" class="text-brown-600 font-semibold hover:text-brown-800 inline-flex items-center">
+                            Learn More <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
                 </div>
-                <div class="bg-white p-8 rounded-xl shadow-lg card-hover transition-all duration-300">
-                    <div class="w-14 h-14 bg-green-100 rounded-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-users-cog text-green-600 text-2xl"></i>
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover">
+                    <div class="h-48 bg-gradient-to-br from-brown-800 to-brown-950 flex items-center justify-center">
+                        <i class="fas fa-graduation-cap text-white text-6xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-primary mb-3">Qualified Staff</h3>
-                    <p class="text-gray-600">Highly trained and experienced teachers dedicated to student success.</p>
-                </div>
-                <div class="bg-white p-8 rounded-xl shadow-lg card-hover transition-all duration-300">
-                    <div class="w-14 h-14 bg-purple-100 rounded-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-futbol text-purple-600 text-2xl"></i>
+                    <div class="p-8">
+                        <h3 class="text-xl font-bold text-brown-900 mb-3">Senior Secondary</h3>
+                        <p class="text-brown-600 mb-4">Exam-focused preparation for WAEC, NECO, and JAMB with excellent results.</p>
+                        <a href="/admissions" class="text-brown-600 font-semibold hover:text-brown-800 inline-flex items-center">
+                            Learn More <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
                     </div>
-                    <h3 class="text-xl font-bold text-primary mb-3">Sports & Activities</h3>
-                    <p class="text-gray-600">Wide range of extracurricular activities for holistic development.</p>
-                </div>
-                <div class="bg-white p-8 rounded-xl shadow-lg card-hover transition-all duration-300">
-                    <div class="w-14 h-14 bg-red-100 rounded-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-shield-alt text-red-600 text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-primary mb-3">Safe Environment</h3>
-                    <p class="text-gray-600">24/7 security and CCTV surveillance for student safety.</p>
-                </div>
-                <div class="bg-white p-8 rounded-xl shadow-lg card-hover transition-all duration-300">
-                    <div class="w-14 h-14 bg-yellow-100 rounded-lg flex items-center justify-center mb-6">
-                        <i class="fas fa-bus text-yellow-600 text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-primary mb-3">Transportation</h3>
-                    <p class="text-gray-600">Comfortable and safe school buses covering major routes.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Quick Access Portal Section -->
-    <section class="py-16 bg-primary">
+    <!-- Quality & Excellence Section -->
+    <section class="py-20 section-dark">
         <div class="max-w-7xl mx-auto px-4">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-white mb-4">Student Portal</h2>
-                <p class="text-gray-300 max-w-2xl mx-auto">Access your academic records, results, and school information online.</p>
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <span class="text-brown-400 font-semibold text-sm tracking-widest uppercase">Why Choose Us</span>
+                    <h2 class="text-4xl font-bold text-white mt-3 mb-8 font-display">Quality And Excellence</h2>
+                    <p class="text-brown-200 text-lg leading-relaxed mb-6">
+                        We are passionately devoted to the progress of humanity, achieved through high-quality education, dedicated service, and unwavering commitment.
+                    </p>
+                    <p class="text-brown-300 leading-relaxed mb-8">
+                        Our primary focus lies in illuminating the path forward, while nourishing our endeavors with love. In this era of heightened awareness, we firmly believe that a comprehensive education holds the key to overcoming life's myriad challenges.
+                    </p>
+                    <a href="/about" class="btn-gold text-white px-8 py-3 rounded-lg font-semibold inline-flex items-center hover:shadow-xl transition">
+                        Read More <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="bg-brown-900/50 rounded-2xl p-8 text-center border border-brown-700">
+                        <div class="w-16 h-16 btn-gold rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-award text-white text-2xl"></i>
+                        </div>
+                        <h4 class="text-3xl font-bold text-white mb-2">20+</h4>
+                        <p class="text-brown-300">Years of Excellence</p>
+                    </div>
+                    <div class="bg-brown-900/50 rounded-2xl p-8 text-center border border-brown-700">
+                        <div class="w-16 h-16 btn-gold rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-user-graduate text-white text-2xl"></i>
+                        </div>
+                        <h4 class="text-3xl font-bold text-white mb-2">5000+</h4>
+                        <p class="text-brown-300">Graduates</p>
+                    </div>
+                    <div class="bg-brown-900/50 rounded-2xl p-8 text-center border border-brown-700">
+                        <div class="w-16 h-16 btn-gold rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-chalkboard-teacher text-white text-2xl"></i>
+                        </div>
+                        <h4 class="text-3xl font-bold text-white mb-2">50+</h4>
+                        <p class="text-brown-300">Qualified Teachers</p>
+                    </div>
+                    <div class="bg-brown-900/50 rounded-2xl p-8 text-center border border-brown-700">
+                        <div class="w-16 h-16 btn-gold rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-trophy text-white text-2xl"></i>
+                        </div>
+                        <h4 class="text-3xl font-bold text-white mb-2">95%</h4>
+                        <p class="text-brown-300">Pass Rate</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portal Access Section -->
+    <section class="py-20 bg-cream">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <span class="text-brown-500 font-semibold text-sm tracking-widest uppercase">Student Portal</span>
+                <h2 class="text-4xl font-bold text-brown-900 mt-3 font-display">Access Your Academic Records</h2>
             </div>
             <div class="grid md:grid-cols-3 gap-8">
-                <a href="/login?role=student" class="bg-white/10 backdrop-blur p-8 rounded-xl text-center card-hover transition-all duration-300 hover:bg-white/20">
-                    <div class="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-user-graduate text-white text-2xl"></i>
+                <a href="/login?role=student" class="bg-white rounded-2xl p-10 text-center shadow-lg card-hover border-2 border-transparent hover:border-brown-400">
+                    <div class="w-20 h-20 btn-gold rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-user-graduate text-white text-3xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-2">Student Login</h3>
-                    <p class="text-gray-300 text-sm">View results, timetable, and assignments</p>
+                    <h3 class="text-xl font-bold text-brown-900 mb-3">Student Login</h3>
+                    <p class="text-brown-600">View results, timetable, assignments, and attendance</p>
                 </a>
-                <a href="/login?role=teacher" class="bg-white/10 backdrop-blur p-8 rounded-xl text-center card-hover transition-all duration-300 hover:bg-white/20">
-                    <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-chalkboard-teacher text-white text-2xl"></i>
+                <a href="/login?role=teacher" class="bg-white rounded-2xl p-10 text-center shadow-lg card-hover border-2 border-transparent hover:border-brown-400">
+                    <div class="w-20 h-20 bg-brown-700 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-chalkboard-teacher text-white text-3xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-2">Teacher Login</h3>
-                    <p class="text-gray-300 text-sm">Manage classes and upload results</p>
+                    <h3 class="text-xl font-bold text-brown-900 mb-3">Teacher Login</h3>
+                    <p class="text-brown-600">Manage classes, upload results, and track students</p>
                 </a>
-                <a href="/login?role=admin" class="bg-white/10 backdrop-blur p-8 rounded-xl text-center card-hover transition-all duration-300 hover:bg-white/20">
-                    <div class="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-user-shield text-white text-2xl"></i>
+                <a href="/login?role=admin" class="bg-white rounded-2xl p-10 text-center shadow-lg card-hover border-2 border-transparent hover:border-brown-400">
+                    <div class="w-20 h-20 bg-brown-900 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-user-shield text-white text-3xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-white mb-2">Admin Login</h3>
-                    <p class="text-gray-300 text-sm">Manage school portal and records</p>
+                    <h3 class="text-xl font-bold text-brown-900 mb-3">Admin Login</h3>
+                    <p class="text-brown-600">Manage school portal, students, and staff</p>
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- News Section -->
-    <section class="py-16 bg-white">
+    <!-- Founder's Note Section -->
+    <section class="py-20 section-brown">
         <div class="max-w-7xl mx-auto px-4">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-primary mb-4">Latest News & Events</h2>
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div class="bg-brown-800/50 rounded-2xl p-10 border border-brown-600">
+                    <i class="fas fa-quote-left text-brown-400 text-4xl mb-6"></i>
+                    <p class="text-brown-100 text-lg leading-relaxed mb-6 italic">
+                        "Education is the most powerful weapon which you can use to change the world. At Bright Star, we are committed to providing excellence in education that transforms lives and builds future leaders."
+                    </p>
+                    <div class="flex items-center">
+                        <div class="w-14 h-14 btn-gold rounded-full flex items-center justify-center mr-4">
+                            <i class="fas fa-user text-white"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-white">Founder's Note</h4>
+                            <p class="text-brown-300 text-sm">Bright Star International School</p>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <span class="text-brown-300 font-semibold text-sm tracking-widest uppercase">Our Vision</span>
+                    <h2 class="text-4xl font-bold text-white mt-3 mb-6 font-display">There Is A Place For Your Child</h2>
+                    <p class="text-brown-200 text-lg leading-relaxed mb-6">
+                        We envision a world where every child has access to quality education that prepares them for the challenges of the 21st century and beyond.
+                    </p>
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-8 h-8 btn-gold rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <i class="fas fa-check text-white text-sm"></i>
+                            </div>
+                            <p class="text-brown-200">Academic excellence with 95% pass rate in national exams</p>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <div class="w-8 h-8 btn-gold rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <i class="fas fa-check text-white text-sm"></i>
+                            </div>
+                            <p class="text-brown-200">Modern facilities including science labs and ICT center</p>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <div class="w-8 h-8 btn-gold rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <i class="fas fa-check text-white text-sm"></i>
+                            </div>
+                            <p class="text-brown-200">Qualified and experienced teaching staff</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div id="newsContainer" class="grid md:grid-cols-3 gap-8">
-                <div class="bg-gray-50 rounded-xl overflow-hidden shadow-lg">
-                    <div class="h-48 bg-gradient-to-r from-primary to-accent flex items-center justify-center">
+        </div>
+    </section>
+
+    <!-- News & Events -->
+    <section class="py-20 bg-smoke">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <span class="text-brown-500 font-semibold text-sm tracking-widest uppercase">Latest Updates</span>
+                <h2 class="text-4xl font-bold text-brown-900 mt-3 font-display">News & Events</h2>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover">
+                    <div class="h-48 bg-gradient-to-r from-brown-600 to-brown-800 flex items-center justify-center">
                         <i class="fas fa-calendar-alt text-white text-5xl"></i>
                     </div>
                     <div class="p-6">
-                        <span class="text-secondary text-sm font-semibold">EVENT</span>
-                        <h3 class="text-xl font-bold text-primary mt-2">Inter-House Sports Competition</h3>
-                        <p class="text-gray-600 mt-2">Annual sports competition between the four houses.</p>
-                        <p class="text-gray-500 text-sm mt-4"><i class="fas fa-clock mr-2"></i>July 15, 2026</p>
+                        <span class="text-brown-500 text-sm font-semibold">EVENT</span>
+                        <h3 class="text-lg font-bold text-brown-900 mt-2">Inter-House Sports Competition</h3>
+                        <p class="text-brown-600 mt-2 text-sm">Annual sports competition between the four houses.</p>
+                        <p class="text-brown-400 text-sm mt-4"><i class="fas fa-clock mr-2"></i>July 15, 2026</p>
                     </div>
                 </div>
-                <div class="bg-gray-50 rounded-xl overflow-hidden shadow-lg">
-                    <div class="h-48 bg-gradient-to-r from-secondary to-red-500 flex items-center justify-center">
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover">
+                    <div class="h-48 bg-gradient-to-r from-brown-700 to-brown-900 flex items-center justify-center">
                         <i class="fas fa-book-open text-white text-5xl"></i>
                     </div>
                     <div class="p-6">
-                        <span class="text-secondary text-sm font-semibold">ACADEMIC</span>
-                        <h3 class="text-xl font-bold text-primary mt-2">Second Term Examinations</h3>
-                        <p class="text-gray-600 mt-2">Examination period begins next week. Prepare well!</p>
-                        <p class="text-gray-500 text-sm mt-4"><i class="fas fa-clock mr-2"></i>July 20, 2026</p>
+                        <span class="text-brown-500 text-sm font-semibold">ACADEMIC</span>
+                        <h3 class="text-lg font-bold text-brown-900 mt-2">Second Term Examinations</h3>
+                        <p class="text-brown-600 mt-2 text-sm">Examination period begins next week. Prepare well!</p>
+                        <p class="text-brown-400 text-sm mt-4"><i class="fas fa-clock mr-2"></i>July 20, 2026</p>
                     </div>
                 </div>
-                <div class="bg-gray-50 rounded-xl overflow-hidden shadow-lg">
-                    <div class="h-48 bg-gradient-to-r from-green-500 to-accent flex items-center justify-center">
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover">
+                    <div class="h-48 bg-gradient-to-r from-brown-500 to-brown-700 flex items-center justify-center">
                         <i class="fas fa-graduation-cap text-white text-5xl"></i>
                     </div>
                     <div class="p-6">
-                        <span class="text-secondary text-sm font-semibold">CELEBRATION</span>
-                        <h3 class="text-xl font-bold text-primary mt-2">Graduation Ceremony 2026</h3>
-                        <p class="text-gray-600 mt-2">Celebrating our graduating class of 2026.</p>
-                        <p class="text-gray-500 text-sm mt-4"><i class="fas fa-clock mr-2"></i>August 5, 2026</p>
+                        <span class="text-brown-500 text-sm font-semibold">CELEBRATION</span>
+                        <h3 class="text-lg font-bold text-brown-900 mt-2">Graduation Ceremony 2026</h3>
+                        <p class="text-brown-600 mt-2 text-sm">Celebrating our graduating class of 2026.</p>
+                        <p class="text-brown-400 text-sm mt-4"><i class="fas fa-clock mr-2"></i>August 5, 2026</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Testimonials -->
-    <section class="py-16 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-primary mb-4">What People Say</h2>
-            </div>
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="bg-white p-8 rounded-xl shadow-lg">
-                    <div class="flex items-center mb-4">
-                        <i class="fas fa-quote-left text-secondary text-3xl"></i>
-                    </div>
-                    <p class="text-gray-600 italic mb-6">"Bright Star has transformed my child's academic performance. The teachers are dedicated and the environment is conducive for learning."</p>
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
-                            <i class="fas fa-user text-white"></i>
-                        </div>
-                        <div class="ml-4">
-                            <h4 class="font-bold text-primary">Mrs. Johnson</h4>
-                            <p class="text-gray-500 text-sm">Parent</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white p-8 rounded-xl shadow-lg">
-                    <div class="flex items-center mb-4">
-                        <i class="fas fa-quote-left text-secondary text-3xl"></i>
-                    </div>
-                    <p class="text-gray-600 italic mb-6">"I am proud to be a student of Bright Star. The school has given me opportunities to excel both academically and in sports."</p>
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 bg-accent rounded-full flex items-center justify-center">
-                            <i class="fas fa-user text-white"></i>
-                        </div>
-                        <div class="ml-4">
-                            <h4 class="font-bold text-primary">David Okonkwo</h4>
-                            <p class="text-gray-500 text-sm">Student, SS3</p>
-                        </div>
-                    </div>
-                </div>
+    <!-- CTA Section -->
+    <section class="py-20 bg-brown-950 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-5">
+            <div class="absolute top-10 left-10 w-64 h-64 bg-white rounded-full blur-3xl"></div>
+            <div class="absolute bottom-10 right-10 w-80 h-80 bg-white rounded-full blur-3xl"></div>
+        </div>
+        <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
+            <h2 class="text-4xl font-bold text-white mb-6 font-display">Ready to Join Our School?</h2>
+            <p class="text-brown-200 text-lg mb-8">Begin your child's journey to excellence today.</p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="/admissions" class="btn-gold text-white px-10 py-4 rounded-lg font-semibold text-lg hover:shadow-xl transition">
+                    Apply for Admission
+                </a>
+                <a href="/contact" class="border-2 border-white text-white px-10 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-brown-900 transition">
+                    Contact Us
+                </a>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-dark text-white py-12">
+    <footer class="bg-brown-950 pt-16 pb-8 border-t border-brown-800">
         <div class="max-w-7xl mx-auto px-4">
-            <div class="grid md:grid-cols-4 gap-8">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
                 <div>
-                    <div class="flex items-center space-x-3 mb-4">
-                        <div class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-12 h-12 btn-gold rounded-full flex items-center justify-center">
                             <i class="fas fa-star text-white"></i>
                         </div>
                         <div>
-                            <h3 class="font-bold">BRIGHT STAR</h3>
-                            <p class="text-xs text-gray-400">International School</p>
+                            <h3 class="font-bold text-white font-display">BRIGHT STAR</h3>
+                            <p class="text-xs text-brown-400 tracking-widest">INTERNATIONAL SCHOOL</p>
                         </div>
                     </div>
-                    <p class="text-gray-400 text-sm">Nurturing Excellence, Building Future Leaders since 2005.</p>
+                    <p class="text-brown-300 text-sm leading-relaxed">Nurturing Excellence, Building Future Leaders since 2005.</p>
                 </div>
                 <div>
-                    <h4 class="font-bold mb-4">Quick Links</h4>
-                    <ul class="space-y-2 text-gray-400 text-sm">
-                        <li><a href="/" class="hover:text-secondary">Home</a></li>
-                        <li><a href="/about" class="hover:text-secondary">About Us</a></li>
-                        <li><a href="/admissions" class="hover:text-secondary">Admissions</a></li>
-                        <li><a href="/gallery" class="hover:text-secondary">Gallery</a></li>
+                    <h4 class="font-bold text-white mb-4">Quick Links</h4>
+                    <ul class="space-y-3 text-brown-300 text-sm">
+                        <li><a href="/" class="hover:text-brown-200 transition">Home</a></li>
+                        <li><a href="/about" class="hover:text-brown-200 transition">About Us</a></li>
+                        <li><a href="/admissions" class="hover:text-brown-200 transition">Admissions</a></li>
+                        <li><a href="/gallery" class="hover:text-brown-200 transition">Gallery</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-bold mb-4">Portal</h4>
-                    <ul class="space-y-2 text-gray-400 text-sm">
-                        <li><a href="/login?role=student" class="hover:text-secondary">Student Portal</a></li>
-                        <li><a href="/login?role=teacher" class="hover:text-secondary">Teacher Portal</a></li>
-                        <li><a href="/login?role=admin" class="hover:text-secondary">Admin Portal</a></li>
+                    <h4 class="font-bold text-white mb-4">Portal</h4>
+                    <ul class="space-y-3 text-brown-300 text-sm">
+                        <li><a href="/login?role=student" class="hover:text-brown-200 transition">Student Portal</a></li>
+                        <li><a href="/login?role=teacher" class="hover:text-brown-200 transition">Teacher Portal</a></li>
+                        <li><a href="/login?role=admin" class="hover:text-brown-200 transition">Admin Portal</a></li>
+                        <li><a href="/results" class="hover:text-brown-200 transition">Check Results</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-bold mb-4">Contact Us</h4>
-                    <ul class="space-y-2 text-gray-400 text-sm">
-                        <li><i class="fas fa-map-marker-alt mr-2"></i>123 Education Avenue, Lagos</li>
-                        <li><i class="fas fa-phone mr-2"></i>+234 801 234 5678</li>
-                        <li><i class="fas fa-envelope mr-2"></i>info@brightstarschool.edu.ng</li>
+                    <h4 class="font-bold text-white mb-4">Contact Us</h4>
+                    <ul class="space-y-3 text-brown-300 text-sm">
+                        <li><i class="fas fa-map-marker-alt mr-2 text-brown-500"></i>123 Education Avenue, Lagos</li>
+                        <li><i class="fas fa-phone mr-2 text-brown-500"></i>+234 801 234 5678</li>
+                        <li><i class="fas fa-envelope mr-2 text-brown-500"></i>info@brightstarschool.edu.ng</li>
                     </ul>
-                    <div class="flex space-x-4 mt-4">
-                        <a href="#" class="text-gray-400 hover:text-secondary"><i class="fab fa-facebook text-xl"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-secondary"><i class="fab fa-twitter text-xl"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-secondary"><i class="fab fa-instagram text-xl"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-secondary"><i class="fab fa-youtube text-xl"></i></a>
+                    <div class="flex space-x-4 mt-6">
+                        <a href="#" class="w-10 h-10 bg-brown-800 rounded-full flex items-center justify-center text-brown-300 hover:bg-brown-700 transition">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-brown-800 rounded-full flex items-center justify-center text-brown-300 hover:bg-brown-700 transition">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-brown-800 rounded-full flex items-center justify-center text-brown-300 hover:bg-brown-700 transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-brown-800 rounded-full flex items-center justify-center text-brown-300 hover:bg-brown-700 transition">
+                            <i class="fab fa-youtube"></i>
+                        </a>
                     </div>
                 </div>
             </div>
-            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
-                <p>&copy; 2026 Bright Star International School. All rights reserved.</p>
+            <div class="border-t border-brown-800 pt-8 text-center">
+                <p class="text-brown-400 text-sm">&copy; 2026 Bright Star International School. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <script src="/js/main.js"></script>
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('nav-scrolled');
+            } else {
+                navbar.classList.remove('nav-scrolled');
+            }
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
 </body>
 </html>
