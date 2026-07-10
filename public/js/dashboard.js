@@ -271,7 +271,7 @@ async function loadFees() {
 // Display fees
 function displayFees(data) {
     if (data.summary) {
-        document.getElementById('totalFee').textContent = formatCurrency(350000);
+        document.getElementById('totalFee').textContent = formatCurrency(320000);
         document.getElementById('amountPaid').textContent = formatCurrency(data.summary.totalPaid);
         document.getElementById('balance').textContent = formatCurrency(data.summary.totalBalance);
     }

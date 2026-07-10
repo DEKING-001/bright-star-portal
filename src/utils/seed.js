@@ -147,11 +147,10 @@ async function seed() {
                 admissionNumber: student.admissionNumber,
                 session: '2025/2026',
                 term: 'Second Term',
-                totalFee: 350000,
-                amountPaid: Math.floor(Math.random() * 200000) + 150000,
+                totalFee: 320000,
+                amountPaid: Math.floor(Math.random() * 200000) + 100000,
                 paymentHistory: [
-                    { amount: 150000, method: 'bank_transfer', reference: 'TRF/2025/001' },
-                    { amount: 100000, method: 'cash', reference: 'CSH/2026/001' }
+                    { amount: 150000, method: 'bank_transfer', reference: 'TRF/2025/001' }
                 ]
             });
         }
