@@ -48,7 +48,12 @@ function showSection(section) {
         'announcements': 'Announcements',
         'fees': 'Fees',
         'sessions': 'Sessions',
-        'settings': 'Settings'
+        'settings': 'Settings',
+        'statistics': 'Statistics',
+        'report': 'Reports',
+        'chat': 'Chat',
+        'nextsession': 'Next Session',
+        'admission': 'Admission'
     };
     document.getElementById('pageTitle').textContent = titles[section] || 'Dashboard';
     

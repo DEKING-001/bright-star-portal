@@ -63,10 +63,29 @@
             
             <!-- Navigation -->
             <nav class="space-y-1">
-                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 px-3 sidebar-text">Main Menu</p>
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 px-3 sidebar-text">Admin Extra</p>
+                <a href="#" onclick="showSection('statistics')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg transition">
+                    <i class="fas fa-chart-pie w-5 text-center"></i><span class="sidebar-text">Statistics</span>
+                </a>
+                <a href="#" onclick="showSection('report')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg transition">
+                    <i class="fas fa-file-alt w-5 text-center"></i><span class="sidebar-text">Report</span>
+                </a>
+                <a href="#" onclick="showSection('chat')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg transition">
+                    <i class="fas fa-comments w-5 text-center"></i><span class="sidebar-text">Chat</span>
+                </a>
+                
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 mt-6 px-3 sidebar-text">Admin Control</p>
                 <a href="#" onclick="showSection('dashboard')" class="nav-item active flex items-center space-x-3 px-3 py-2.5 rounded-lg transition">
                     <i class="fas fa-th-large w-5 text-center"></i><span class="sidebar-text">Dashboard</span>
                 </a>
+                <a href="#" onclick="showSection('nextsession')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg transition">
+                    <i class="fas fa-calendar-plus w-5 text-center"></i><span class="sidebar-text">Next Session</span>
+                </a>
+                <a href="#" onclick="showSection('admission')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg transition">
+                    <i class="fas fa-user-plus w-5 text-center"></i><span class="sidebar-text">Admission</span>
+                </a>
+                
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 mt-6 px-3 sidebar-text">Management</p>
                 <a href="#" onclick="showSection('students')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg transition">
                     <i class="fas fa-user-graduate w-5 text-center"></i><span class="sidebar-text">Students</span>
                 </a>
@@ -76,16 +95,11 @@
                 <a href="#" onclick="showSection('results')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg transition">
                     <i class="fas fa-chart-bar w-5 text-center"></i><span class="sidebar-text">Results</span>
                 </a>
-                
-                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 mt-6 px-3 sidebar-text">Management</p>
                 <a href="#" onclick="showSection('announcements')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg transition">
                     <i class="fas fa-bullhorn w-5 text-center"></i><span class="sidebar-text">Announcements</span>
                 </a>
                 <a href="#" onclick="showSection('fees')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg transition">
                     <i class="fas fa-money-bill-wave w-5 text-center"></i><span class="sidebar-text">Fees</span>
-                </a>
-                <a href="#" onclick="showSection('sessions')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg transition">
-                    <i class="fas fa-calendar-alt w-5 text-center"></i><span class="sidebar-text">Sessions</span>
                 </a>
                 
                 <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3 mt-6 px-3 sidebar-text">System</p>
@@ -389,6 +403,217 @@
                         </div>
                         <p class="text-slate-500 text-sm">September 2025 - July 2026</p>
                         <p class="text-slate-400 text-sm mt-1">Current Term: <span class="text-slate-600 font-medium">Second Term</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Section -->
+            <div id="statisticsSection" class="section hidden">
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold text-slate-800">Statistics</h2>
+                    <p class="text-slate-500 text-sm">View detailed analytics and reports</p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
+                    <div class="bg-white rounded-xl p-5 shadow-sm border-l-4 border-blue-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-slate-500 text-sm">Total Students</p>
+                                <p class="text-2xl font-bold text-slate-800 mt-1">5</p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-user-graduate text-blue-500"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-5 shadow-sm border-l-4 border-emerald-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-slate-500 text-sm">Total Teachers</p>
+                                <p class="text-2xl font-bold text-slate-800 mt-1">3</p>
+                            </div>
+                            <div class="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-chalkboard-teacher text-emerald-500"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-5 shadow-sm border-l-4 border-amber-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-slate-500 text-sm">Pass Rate</p>
+                                <p class="text-2xl font-bold text-slate-800 mt-1">95%</p>
+                            </div>
+                            <div class="w-12 h-12 bg-amber-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-chart-line text-amber-500"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-5 shadow-sm border-l-4 border-violet-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-slate-500 text-sm">Revenue</p>
+                                <p class="text-2xl font-bold text-slate-800 mt-1">₦1.2M</p>
+                            </div>
+                            <div class="w-12 h-12 bg-violet-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-naira-sign text-violet-500"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h3 class="font-semibold text-slate-700 mb-4">Enrollment Trend</h3>
+                    <div class="h-64 flex items-center justify-center bg-slate-50 rounded-lg">
+                        <p class="text-slate-400"><i class="fas fa-chart-area text-4xl mb-2 block"></i>Chart will be displayed here</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Report Section -->
+            <div id="reportSection" class="section hidden">
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold text-slate-800">Reports</h2>
+                    <p class="text-slate-500 text-sm">Generate and view school reports</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-5 mb-6">
+                    <div class="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition cursor-pointer">
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                            <i class="fas fa-file-alt text-blue-600 text-xl"></i>
+                        </div>
+                        <h3 class="font-semibold text-slate-700 mb-2">Student Reports</h3>
+                        <p class="text-slate-400 text-sm">Academic performance reports</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition cursor-pointer">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mb-4">
+                            <i class="fas fa-chart-bar text-emerald-600 text-xl"></i>
+                        </div>
+                        <h3 class="font-semibold text-slate-700 mb-2">Financial Reports</h3>
+                        <p class="text-slate-400 text-sm">Fee collection and revenue</p>
+                    </div>
+                    <div class="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition cursor-pointer">
+                        <div class="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center mb-4">
+                            <i class="fas fa-users text-amber-600 text-xl"></i>
+                        </div>
+                        <h3 class="font-semibold text-slate-700 mb-2">Staff Reports</h3>
+                        <p class="text-slate-400 text-sm">Teacher attendance and performance</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Section -->
+            <div id="chatSection" class="section hidden">
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold text-slate-800">Chat</h2>
+                    <p class="text-slate-500 text-sm">Communicate with teachers and students</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm overflow-hidden" style="height: 500px;">
+                    <div class="flex h-full">
+                        <!-- Chat List -->
+                        <div class="w-80 border-r border-slate-200">
+                            <div class="p-4 border-b border-slate-200">
+                                <input type="text" placeholder="Search conversations..." class="w-full border border-slate-200 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
+                            </div>
+                            <div class="overflow-y-auto h-full">
+                                <div class="p-4 hover:bg-slate-50 cursor-pointer border-b border-slate-100">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                            <span class="text-blue-600 font-semibold text-sm">JO</span>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-slate-700 text-sm">John Owens</p>
+                                            <p class="text-slate-400 text-xs truncate">Hello, regarding the results...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-4 hover:bg-slate-50 cursor-pointer border-b border-slate-100">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
+                                            <span class="text-emerald-600 font-semibold text-sm">SA</span>
+                                        </div>
+                                        <div>
+                                            <p class="font-medium text-slate-700 text-sm">Sarah Adesanya</p>
+                                            <p class="text-slate-400 text-xs truncate">The class schedule is ready</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Chat Area -->
+                        <div class="flex-1 flex flex-col">
+                            <div class="p-4 border-b border-slate-200 bg-slate-50">
+                                <p class="font-semibold text-slate-700">Select a conversation</p>
+                            </div>
+                            <div class="flex-1 flex items-center justify-center">
+                                <p class="text-slate-400"><i class="fas fa-comments text-4xl mb-2 block"></i>Select a chat to start messaging</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Next Session Section -->
+            <div id="nextsessionSection" class="section hidden">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">Next Session</h2>
+                        <p class="text-slate-500 text-sm">Plan and manage upcoming academic session</p>
+                    </div>
+                    <button class="bg-brand-500 text-white px-4 py-2.5 rounded-lg hover:bg-brand-600 transition font-medium text-sm">
+                        <i class="fas fa-plus mr-2"></i>Create New Session
+                    </button>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-2">Session Year</label>
+                            <input type="text" value="2026/2027" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-2">Start Date</label>
+                            <input type="date" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-2">End Date</label>
+                            <input type="date" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-2">Terms</label>
+                            <select class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 outline-none">
+                                <option>3 Terms</option>
+                                <option>4 Terms</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="mt-6 bg-brand-500 text-white px-6 py-2.5 rounded-lg hover:bg-brand-600 transition font-medium">
+                        Save Session
+                    </button>
+                </div>
+            </div>
+
+            <!-- Admission Section -->
+            <div id="admissionSection" class="section hidden">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800">Admission Management</h2>
+                        <p class="text-slate-500 text-sm">Manage student admissions</p>
+                    </div>
+                    <button onclick="openModal('addStudentModal')" class="bg-brand-500 text-white px-4 py-2.5 rounded-lg hover:bg-brand-600 transition font-medium text-sm">
+                        <i class="fas fa-plus mr-2"></i>New Admission
+                    </button>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                    <h3 class="font-semibold text-slate-700 mb-4">Admission Statistics</h3>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="text-center p-4 bg-blue-50 rounded-lg">
+                            <p class="text-3xl font-bold text-blue-600">12</p>
+                            <p class="text-slate-500 text-sm">Pending Applications</p>
+                        </div>
+                        <div class="text-center p-4 bg-emerald-50 rounded-lg">
+                            <p class="text-3xl font-bold text-emerald-600">8</p>
+                            <p class="text-slate-500 text-sm">Approved This Month</p>
+                        </div>
+                        <div class="text-center p-4 bg-amber-50 rounded-lg">
+                            <p class="text-3xl font-bold text-amber-600">3</p>
+                            <p class="text-slate-500 text-sm">Awaiting Documents</p>
+                        </div>
                     </div>
                 </div>
             </div>
