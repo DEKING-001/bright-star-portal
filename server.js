@@ -464,6 +464,49 @@ app.get('/api/results/student', (req, res) => {
     });
 });
 
+// In-memory store for teacher-uploaded result batches
+let demoResultUploads = [];
+
+// Teacher uploads results (status: pending_verification)
+app.post('/api/results', (req, res) => {
+    const { class: cls, subject, session, term, students, status } = req.body;
+    if (!cls || !subject || !Array.isArray(students)) {
+        return res.status(400).json({ success: false, message: 'Class, subject and students are required' });
+    }
+    const upload = {
+        _id: 'RU' + (demoResultUploads.length + 1),
+        class: cls,
+        subject,
+        session: session || '2025/2026',
+        term: term || 'Second Term',
+        status: status || 'pending_verification',
+        students: students.map(s => ({
+            admissionNumber: s.admissionNumber,
+            ca1: Number(s.ca1) || 0,
+            ca2: Number(s.ca2) || 0,
+            exam: Number(s.exam) || 0,
+            total: (Number(s.ca1) || 0) + (Number(s.ca2) || 0) + (Number(s.exam) || 0)
+        })),
+        createdAt: new Date()
+    };
+    demoResultUploads.push(upload);
+    res.status(201).json({ success: true, upload });
+});
+
+// Admin: fetch only result records pending verification
+app.get('/api/results/pending', (req, res) => {
+    const pending = demoResultUploads.filter(r => r.status === 'pending_verification');
+    res.json({ success: true, results: pending });
+});
+
+// Admin: approve (verify) a result batch
+app.post('/api/results/:id/approve', (req, res) => {
+    const upload = demoResultUploads.find(r => r._id === req.params.id);
+    if (!upload) return res.status(404).json({ success: false, message: 'Result record not found' });
+    upload.status = 'verified';
+    res.json({ success: true, result: upload });
+});
+
 // Fees - Get student fees
 app.get('/api/fees/student', (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];

@@ -93,12 +93,124 @@ function renderMyClasses(classBreakdown, user) {
     }).join('');
 }
 
-// Populate the Upload Results class dropdown from the teacher's assigned classes
-function populateClassSelect(teacher) {
+// Populate the Upload Results class dropdown.
+// Display value is cleaned (numeric only); the option VALUE keeps the original
+// class key (e.g. "SS1") so backend lookups don't fail.
+function populateClassSelect(classKeys) {
     const select = document.getElementById('resultClassSelect');
     if (!select) return;
     select.innerHTML = '<option value="">Select Class</option>' +
-        Object.keys(teacher.classes || {}).map(c => `<option value="${c}">${cleanClassName(c)}</option>`).join('');
+        (classKeys || []).map(c => `<option value="${c}">${cleanClassName(c)}</option>`).join('');
+}
+
+// Load students for the selected class into the results table
+async function loadStudentsForResults() {
+    const cls = document.getElementById('resultClassSelect').value;
+    const tbody = document.getElementById('resultsTableBody');
+    if (!cls) {
+        tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-6 text-center text-slate-400 text-sm">Please select a class first.</td></tr>';
+        return;
+    }
+    try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`/api/students?class=${encodeURIComponent(cls)}`, {
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
+        const data = await res.json();
+        const students = data.success ? data.students : [];
+        if (students.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-6 text-center text-slate-400 text-sm">No students found in this class.</td></tr>';
+            return;
+        }
+        tbody.innerHTML = students.map(s => `
+            <tr class="hover:bg-slate-50 transition" data-admission="${s.admissionNumber}">
+                <td class="px-4 py-3 text-sm text-slate-700">${s.user.firstName} ${s.user.lastName}</td>
+                <td class="px-4 py-3 text-center"><input type="number" class="ca-input w-20 border border-slate-300 rounded px-2 py-1 text-center focus:ring-2 focus:ring-primary" min="0" max="20" data-field="ca1"></td>
+                <td class="px-4 py-3 text-center"><input type="number" class="ca-input w-20 border border-slate-300 rounded px-2 py-1 text-center focus:ring-2 focus:ring-primary" min="0" max="20" data-field="ca2"></td>
+                <td class="px-4 py-3 text-center"><input type="number" class="ca-input w-20 border border-slate-300 rounded px-2 py-1 text-center focus:ring-2 focus:ring-primary" min="0" max="60" data-field="exam"></td>
+                <td class="total-cell px-4 py-3 text-center font-bold text-slate-800">-</td>
+            </tr>`).join('');
+
+        // Requirement 1: auto-calculate Total = CA1 + CA2 + Exam in real time
+        tbody.querySelectorAll('.ca-input').forEach(input => {
+            input.addEventListener('input', function() {
+                const row = this.closest('tr');
+                const ca1 = parseFloat(row.querySelector('[data-field="ca1"]').value) || 0;
+                const ca2 = parseFloat(row.querySelector('[data-field="ca2"]').value) || 0;
+                const exam = parseFloat(row.querySelector('[data-field="exam"]').value) || 0;
+                row.querySelector('.total-cell').textContent = (ca1 + ca2 + exam).toFixed(0);
+            });
+        });
+    } catch (e) {
+        console.error(e);
+        tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-6 text-center text-red-500 text-sm">Failed to load students.</td></tr>';
+    }
+}
+
+// Requirement 2: Save results with status 'pending_verification' for admin approval
+async function saveResults() {
+    const cls = document.getElementById('resultClassSelect').value;
+    const subject = document.getElementById('resultSubjectSelect').value;
+    const session = document.getElementById('resultSessionSelect').value;
+    const term = document.getElementById('resultTermSelect').value;
+    const msg = document.getElementById('resultsSaveMsg');
+
+    if (!cls || !subject) {
+        showSaveMsg(msg, 'Please select a class and subject before saving.', false);
+        return;
+    }
+
+    const rows = document.querySelectorAll('#resultsTableBody tr[data-admission]');
+    if (rows.length === 0) {
+        showSaveMsg(msg, 'No student scores loaded. Click "Load Students" first.', false);
+        return;
+    }
+
+    const students = Array.from(rows).map(row => {
+        const ca1 = parseFloat(row.querySelector('[data-field="ca1"]').value) || 0;
+        const ca2 = parseFloat(row.querySelector('[data-field="ca2"]').value) || 0;
+        const exam = parseFloat(row.querySelector('[data-field="exam"]').value) || 0;
+        return {
+            admissionNumber: row.getAttribute('data-admission'),
+            ca1, ca2, exam,
+            total: ca1 + ca2 + exam
+        };
+    });
+
+    const payload = {
+        class: cls,            // original key kept for backend
+        subject,
+        session,
+        term,
+        status: 'pending_verification',
+        students
+    };
+
+    try {
+        const token = localStorage.getItem('token');
+        const res = await fetch('/api/results', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+            },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+            showSaveMsg(msg, 'Results saved and sent for admin verification.', true);
+        } else {
+            showSaveMsg(msg, data.message || 'Failed to save results.', false);
+        }
+    } catch (e) {
+        console.error(e);
+        showSaveMsg(msg, 'Upstream request failed. Please try again.', false);
+    }
+}
+
+function showSaveMsg(el, text, success) {
+    el.textContent = text;
+    el.className = 'mt-3 text-sm ' + (success ? 'text-green-600' : 'text-red-600');
 }
 
 // View students in a class (uses the ORIGINAL class key for the backend request)

@@ -202,24 +202,25 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-slate-700 mb-1">Subject</label>
-                                <select class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
-                                    <option>Mathematics</option><option>Further Mathematics</option>
+                                <select id="resultSubjectSelect" class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                    <option value="">Select Subject</option>
+                                    <option>Mathematics</option><option>Further Mathematics</option><option>English Language</option><option>Physics</option><option>Chemistry</option><option>Biology</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-slate-700 mb-1">Session</label>
-                                <select class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                <select id="resultSessionSelect" class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
                                     <option>2025/2026</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-slate-700 mb-1">Term</label>
-                                <select class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                <select id="resultTermSelect" class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
                                     <option>First Term</option><option selected>Second Term</option><option>Third Term</option>
                                 </select>
                             </div>
                         </div>
-                        <button type="button" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark transition">
+                        <button type="button" onclick="loadStudentsForResults()" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark transition">
                             <i class="fas fa-search mr-2"></i>Load Students
                         </button>
                     </form>
@@ -235,26 +236,14 @@
                                     <th class="px-4 py-3 text-center text-sm font-semibold text-slate-700">Total</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-100">
-                                <tr class="hover:bg-slate-50 transition">
-                                    <td class="px-4 py-3 text-sm text-slate-700">Chukwuemeka Okonkwo</td>
-                                    <td class="px-4 py-3 text-center"><input type="number" class="w-20 border border-slate-300 rounded px-2 py-1 text-center focus:ring-2 focus:ring-primary" min="0" max="20"></td>
-                                    <td class="px-4 py-3 text-center"><input type="number" class="w-20 border border-slate-300 rounded px-2 py-1 text-center focus:ring-2 focus:ring-primary" min="0" max="20"></td>
-                                    <td class="px-4 py-3 text-center"><input type="number" class="w-20 border border-slate-300 rounded px-2 py-1 text-center focus:ring-2 focus:ring-primary" min="0" max="60"></td>
-                                    <td class="px-4 py-3 text-center font-bold text-slate-800">-</td>
-                                </tr>
-                                <tr class="hover:bg-slate-50 transition">
-                                    <td class="px-4 py-3 text-sm text-slate-700">Amina Ibrahim</td>
-                                    <td class="px-4 py-3 text-center"><input type="number" class="w-20 border border-slate-300 rounded px-2 py-1 text-center focus:ring-2 focus:ring-primary" min="0" max="20"></td>
-                                    <td class="px-4 py-3 text-center"><input type="number" class="w-20 border border-slate-300 rounded px-2 py-1 text-center focus:ring-2 focus:ring-primary" min="0" max="20"></td>
-                                    <td class="px-4 py-3 text-center"><input type="number" class="w-20 border border-slate-300 rounded px-2 py-1 text-center focus:ring-2 focus:ring-primary" min="0" max="60"></td>
-                                    <td class="px-4 py-3 text-center font-bold text-slate-800">-</td>
-                                </tr>
+                            <tbody id="resultsTableBody" class="divide-y divide-slate-100">
+                                <tr><td colspan="5" class="px-4 py-6 text-center text-slate-400 text-sm">Select a class and click "Load Students" to begin.</td></tr>
                             </tbody>
                         </table>
                     </div>
+                    <div id="resultsSaveMsg" class="mt-3 text-sm hidden"></div>
                     <div class="mt-4 flex justify-end">
-                        <button class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark transition">
+                        <button onclick="saveResults()" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark transition">
                             <i class="fas fa-save mr-2"></i>Save Results
                         </button>
                     </div>

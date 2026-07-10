@@ -61,6 +61,7 @@ function showSection(section) {
     if (section === 'teachers') loadTeachers();
     if (section === 'announcements') loadAnnouncements();
     if (section === 'settings') loadSettings();
+    if (section === 'results') loadPendingResults();
 }
 
 function toggleSidebar() {
@@ -768,4 +769,76 @@ async function submitAdmission(event) {
 
 function resetAdmissionForm() {
     document.getElementById('admissionForm').reset();
+}
+
+// Requirement 3: fetch & display only result records with status 'pending_verification'
+async function loadPendingResults() {
+    const container = document.getElementById('pendingResultsContainer');
+    if (!container) return;
+    container.innerHTML = '<p class="text-slate-400 text-sm text-center py-6">Loading pending results...</p>';
+    try {
+        const response = await fetch('/api/results/pending');
+        const data = await response.json();
+        if (!data.success || data.results.length === 0) {
+            container.innerHTML = '<div class="bg-white rounded-xl shadow-sm p-6 text-center"><i class="fas fa-check-circle text-green-500 text-3xl mb-2"></i><p class="text-slate-500">No results pending verification. All caught up!</p></div>';
+            return;
+        }
+        container.innerHTML = data.results.map(r => `
+            <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-amber-500">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <h4 class="font-semibold text-slate-800">${r.class} &middot; ${r.subject}</h4>
+                        <p class="text-slate-400 text-xs">${r.session} &middot; ${r.term} &middot; ${r.students.length} student(s)</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">PENDING</span>
+                </div>
+                <div class="overflow-x-auto mb-3">
+                    <table class="w-full text-sm">
+                        <thead class="text-slate-400">
+                            <tr>
+                                <th class="text-left py-1 pr-3">Admission No</th>
+                                <th class="text-center py-1 px-2">CA1</th>
+                                <th class="text-center py-1 px-2">CA2</th>
+                                <th class="text-center py-1 px-2">Exam</th>
+                                <th class="text-center py-1 px-2">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-slate-700">
+                            ${r.students.map(s => `<tr>
+                                <td class="py-1 pr-3">${s.admissionNumber}</td>
+                                <td class="text-center px-2">${s.ca1}</td>
+                                <td class="text-center px-2">${s.ca2}</td>
+                                <td class="text-center px-2">${s.exam}</td>
+                                <td class="text-center px-2 font-semibold">${s.total}</td>
+                            </tr>`).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="flex justify-end">
+                    <button onclick="approveResult('${r._id}')" class="bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition text-sm font-medium">
+                        <i class="fas fa-check mr-1"></i>Approve
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Error loading pending results:', error);
+        container.innerHTML = '<p class="text-red-500 text-sm text-center py-6">Failed to load pending results.</p>';
+    }
+}
+
+// Approve a pending result batch (status -> verified)
+async function approveResult(id) {
+    try {
+        const response = await fetch(`/api/results/${id}/approve`, { method: 'POST' });
+        const data = await response.json();
+        if (data.success) {
+            loadPendingResults();
+        } else {
+            alert(data.message || 'Failed to approve result.');
+        }
+    } catch (error) {
+        console.error(error);
+        alert('Upstream request failed. Please try again.');
+    }
 }
