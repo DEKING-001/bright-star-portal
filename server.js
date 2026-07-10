@@ -467,30 +467,59 @@ app.get('/api/results/student', (req, res) => {
 // In-memory store for teacher-uploaded result batches
 let demoResultUploads = [];
 
-// Teacher uploads results (status: pending_verification)
+// Teacher uploads results (Single Batch: upsert into an existing 'pending' record)
 app.post('/api/results', (req, res) => {
     const { class: cls, subject, session, term, students, status } = req.body;
     if (!cls || !subject || !Array.isArray(students)) {
         return res.status(400).json({ success: false, message: 'Class, subject and students are required' });
     }
+
+    const normSession = session || '2025/2026';
+    const normTerm = term || 'Second Term';
+    const normalizedStudents = students.map(s => ({
+        admissionNumber: s.admissionNumber,
+        ca1: Number(s.ca1) || 0,
+        ca2: Number(s.ca2) || 0,
+        exam: Number(s.exam) || 0,
+        total: (Number(s.ca1) || 0) + (Number(s.ca2) || 0) + (Number(s.exam) || 0)
+    }));
+
+    // 1. Check for an existing PENDING record matching [Class, Subject, Term, Session]
+    const existing = demoResultUploads.find(r =>
+        r.class === cls &&
+        r.subject === subject &&
+        r.session === normSession &&
+        r.term === normTerm &&
+        r.status === 'pending_verification'
+    );
+
+    if (existing) {
+        // 2a. Found -> merge/upsert new student results into the existing record
+        normalizedStudents.forEach(ns => {
+            const idx = existing.students.findIndex(s => s.admissionNumber === ns.admissionNumber);
+            if (idx !== -1) {
+                existing.students[idx] = ns; // update existing student
+            } else {
+                existing.students.push(ns);  // add new student
+            }
+        });
+        existing.updatedAt = new Date();
+        return res.status(200).json({ success: true, updated: true, upload: existing });
+    }
+
+    // 2b. Not found -> create a NEW database entry
     const upload = {
         _id: 'RU' + (demoResultUploads.length + 1),
         class: cls,
         subject,
-        session: session || '2025/2026',
-        term: term || 'Second Term',
+        session: normSession,
+        term: normTerm,
         status: status || 'pending_verification',
-        students: students.map(s => ({
-            admissionNumber: s.admissionNumber,
-            ca1: Number(s.ca1) || 0,
-            ca2: Number(s.ca2) || 0,
-            exam: Number(s.exam) || 0,
-            total: (Number(s.ca1) || 0) + (Number(s.ca2) || 0) + (Number(s.exam) || 0)
-        })),
+        students: normalizedStudents,
         createdAt: new Date()
     };
     demoResultUploads.push(upload);
-    res.status(201).json({ success: true, upload });
+    res.status(201).json({ success: true, created: true, upload });
 });
 
 // Admin: fetch only result records pending verification
