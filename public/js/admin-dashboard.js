@@ -845,10 +845,43 @@ async function approveResult(id) {
 }
 
 // ============ Timetable management ============
-const TT_SLOTS = ['8:00 - 8:40', '8:45 - 9:25', '9:30 - 10:10', '10:40 - 11:20', '11:25 - 12:05'];
+// Full school-day slot definitions (used to build the dynamic grid).
+const ALL_SLOTS = [
+    { start: '08:00', end: '08:40', label: '8:00 - 8:40' },
+    { start: '08:45', end: '09:25', label: '8:45 - 9:25' },
+    { start: '09:30', end: '10:10', label: '9:30 - 10:10' },
+    { start: '10:40', end: '11:20', label: '10:40 - 11:20' },
+    { start: '11:25', end: '12:05', label: '11:25 - 12:05' },
+    { start: '12:10', end: '12:50', label: '12:10 - 12:50' },
+    { start: '13:00', end: '13:40', label: '1:00 - 1:40' },
+    { start: '13:45', end: '14:25', label: '1:45 - 2:25' },
+    { start: '14:30', end: '15:10', label: '2:30 - 3:10' },
+    { start: '15:15', end: '15:55', label: '3:15 - 3:55' }
+];
 const TT_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+const DEFAULT_DISMISSAL = { Monday: '16:00', Tuesday: '16:00', Wednesday: '16:00', Thursday: '16:00', Friday: '14:00' };
 
-function renderTimetableEditor(existing) {
+function toMins(t) { const [h, m] = t.split(':').map(Number); return h * 60 + m; }
+
+// Read the configured dismissal time for a day (from the admin selects).
+function getDismissal(day) {
+    const sel = document.querySelector(`.tt-dismissal[data-day="${day}"]`);
+    return sel ? sel.value : (DEFAULT_DISMISSAL[day] || '16:00');
+}
+
+// A slot is part of the day's schedule only if it ends on/before dismissal.
+function isSlotActive(day, slot) {
+    return toMins(slot.end) <= toMins(getDismissal(day));
+}
+
+function renderTimetableEditor(existing, dismissalTimes) {
+    // Apply stored dismissal config to the selects
+    const dt = dismissalTimes || DEFAULT_DISMISSAL;
+    TT_DAYS.forEach(day => {
+        const sel = document.querySelector(`.tt-dismissal[data-day="${day}"]`);
+        if (sel && dt[day]) sel.value = dt[day];
+    });
+
     const map = {};
     (existing && existing.schedule ? existing.schedule : []).forEach(d => {
         map[d.day] = {};
@@ -860,11 +893,17 @@ function renderTimetableEditor(existing) {
         TT_DAYS.map(d => `<th class="px-3 py-2 text-center text-xs font-semibold text-slate-600 uppercase">${d}</th>`).join('') +
         '</tr></thead><tbody class="divide-y divide-slate-100">';
 
-    TT_SLOTS.forEach((slot, i) => {
-        html += `<tr class="${i % 2 ? 'bg-slate-50/40' : ''}"><td class="px-3 py-2 font-medium text-sm text-slate-700">${slot}</td>`;
+    ALL_SLOTS.forEach((slot, i) => {
+        html += `<tr class="${i % 2 ? 'bg-slate-50/40' : ''}"><td class="px-3 py-2 font-medium text-sm text-slate-700">${slot.label}</td>`;
         TT_DAYS.forEach(day => {
-            const val = (map[day] && map[day][slot]) || '';
-            html += `<td class="px-2 py-1"><input data-day="${day}" data-time="${slot}" value="${val}" placeholder="-" class="tt-subject w-full border border-slate-200 rounded px-2 py-1 text-sm text-center focus:ring-2 focus:ring-brand-500 outline-none"></td>`;
+            const active = isSlotActive(day, slot);
+            const val = (map[day] && map[day][slot.label]) || '';
+            if (active) {
+                html += `<td class="px-2 py-1"><input data-day="${day}" data-time="${slot.label}" value="${val}" placeholder="-" class="tt-subject w-full border border-slate-200 rounded px-2 py-1 text-sm text-center focus:ring-2 focus:ring-brand-500 outline-none"></td>`;
+            } else {
+                // Greyed-out / disabled cell after dismissal time
+                html += `<td class="px-2 py-1 bg-slate-100 text-slate-300 text-center text-sm rounded">—</td>`;
+            }
         });
         html += '</tr>';
     });
@@ -879,7 +918,8 @@ async function loadTimetableForAdmin() {
     try {
         const res = await fetch(`/api/timetable?class=${encodeURIComponent(cls)}&session=${encodeURIComponent(session)}&term=${encodeURIComponent(term)}`);
         const data = await res.json();
-        renderTimetableEditor(data.timetable);
+        const tt = data.timetable;
+        renderTimetableEditor(tt, tt ? tt.dismissalTimes : null);
     } catch (e) {
         console.error(e);
         document.getElementById('timetableGrid').innerHTML = '<p class="text-red-500 text-sm">Failed to load timetable.</p>';
@@ -891,12 +931,19 @@ async function saveTimetable() {
     const session = document.getElementById('ttSession').value;
     const term = document.getElementById('ttTerm').value;
 
+    const dismissalTimes = {};
+    TT_DAYS.forEach(day => { dismissalTimes[day] = getDismissal(day); });
+
+    // Only include periods for ACTIVE slots (ending on/before dismissal).
     const schedule = TT_DAYS.map(day => {
-        const periods = TT_SLOTS.map(slot => {
-            const input = document.querySelector(`.tt-subject[data-day="${day}"][data-time="${slot}"]`);
-            const subject = input ? input.value.trim() : '';
-            return subject ? { time: slot, subject } : null;
-        }).filter(Boolean);
+        const periods = ALL_SLOTS
+            .filter(slot => isSlotActive(day, slot))
+            .map(slot => {
+                const input = document.querySelector(`.tt-subject[data-day="${day}"][data-time="${slot.label}"]`);
+                const subject = input ? input.value.trim() : '';
+                return subject ? { time: slot.label, subject } : null;
+            })
+            .filter(Boolean);
         return { day, periods };
     });
 
@@ -905,7 +952,7 @@ async function saveTimetable() {
         const res = await fetch('/api/timetable', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
-            body: JSON.stringify({ class: cls, session, term, schedule })
+            body: JSON.stringify({ class: cls, session, term, schedule, dismissalTimes })
         });
         const data = await res.json();
         if (data.success) alert('Timetable saved successfully.');

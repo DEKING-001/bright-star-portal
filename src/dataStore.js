@@ -37,6 +37,7 @@ const mem = {
     timetables: [
         {
             _id: '1', class: 'SS1', session: '2025/2026', term: 'Second Term', updatedAt: new Date('2026-07-01'),
+            dismissalTimes: { Monday: '16:00', Tuesday: '16:00', Wednesday: '16:00', Thursday: '16:00', Friday: '14:00' },
             schedule: [
                 { day: 'Monday', periods: [{ time: '8:00 - 8:40', subject: 'Mathematics' }, { time: '8:45 - 9:25', subject: 'English' }, { time: '9:30 - 10:10', subject: 'Physics' }, { time: '10:40 - 11:20', subject: 'Chemistry' }, { time: '11:25 - 12:05', subject: 'Biology' }] },
                 { day: 'Tuesday', periods: [{ time: '8:00 - 8:40', subject: 'English' }, { time: '8:45 - 9:25', subject: 'Mathematics' }, { time: '9:30 - 10:10', subject: 'Chemistry' }, { time: '10:40 - 11:20', subject: 'Biology' }, { time: '11:25 - 12:05', subject: 'Physics' }] },
@@ -164,28 +165,32 @@ async function getAllTimetables() {
     return mem.timetables;
 }
 
-async function upsertTimetable({ class: cls, session, term, schedule }) {
+async function upsertTimetable({ class: cls, session, term, schedule, dismissalTimes }) {
     const normSession = session || '2025/2026';
     const normTerm = term || 'Second Term';
     if (dbConnected) {
         const existing = await PortalTimetable.findOne({ class: cls, session: normSession, term: normTerm });
         if (existing) {
             existing.schedule = schedule;
+            if (dismissalTimes) existing.dismissalTimes = dismissalTimes;
             existing.updatedAt = new Date();
             await existing.save();
             return existing;
         }
         return await PortalTimetable.create({
-            class: cls, session: normSession, term: normTerm, schedule, updatedAt: new Date()
+            class: cls, session: normSession, term: normTerm, schedule,
+            dismissalTimes: dismissalTimes || undefined, updatedAt: new Date()
         });
     }
     const existing = mem.timetables.find(t => t.class === cls && t.session === normSession && t.term === normTerm);
     if (existing) {
         existing.schedule = schedule;
+        if (dismissalTimes) existing.dismissalTimes = dismissalTimes;
         existing.updatedAt = new Date();
         return existing;
     }
     const t = { _id: String(mem.timetables.length + 1), class: cls, session: normSession, term: normTerm, schedule, updatedAt: new Date() };
+    if (dismissalTimes) t.dismissalTimes = dismissalTimes;
     mem.timetables.push(t);
     return t;
 }

@@ -76,10 +76,16 @@ const portalFeeSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 // Class timetable (one per class/session/term)
+// dismissalTimes: per-day school end time (24h "HH:MM"). Slots ending after
+// this time are not part of that day's schedule (e.g. Friday ends at 14:00).
 const timetableSchema = new mongoose.Schema({
     class: String,
     session: String,
     term: String,
+    dismissalTimes: {
+        type: Object,
+        default: () => ({ Monday: '16:00', Tuesday: '16:00', Wednesday: '16:00', Thursday: '16:00', Friday: '14:00' })
+    },
     schedule: [{
         day: String,
         periods: [{

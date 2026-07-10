@@ -594,12 +594,12 @@ app.post('/api/timetable', async (req, res) => {
     } catch (err) {
         return res.status(401).json({ success: false, message: 'Not authorized' });
     }
-    const { class: cls, session, term, schedule } = req.body;
+    const { class: cls, session, term, schedule, dismissalTimes } = req.body;
     if (!cls || !Array.isArray(schedule)) {
         return res.status(400).json({ success: false, message: 'Class and schedule are required' });
     }
     try {
-        const timetable = await store.upsertTimetable({ class: cls, session, term, schedule });
+        const timetable = await store.upsertTimetable({ class: cls, session, term, schedule, dismissalTimes });
         res.status(200).json({ success: true, timetable });
     } catch (err) {
         console.error('Save timetable error:', err);
