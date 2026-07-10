@@ -64,7 +64,18 @@ function showSection(section) {
 }
 
 function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('open');
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.querySelector('.main-content');
+    
+    // Toggle collapsed state
+    sidebar.classList.toggle('collapsed');
+    
+    // Update main content margin
+    if (sidebar.classList.contains('collapsed')) {
+        mainContent.style.marginLeft = '72px';
+    } else {
+        mainContent.style.marginLeft = '260px';
+    }
 }
 
 // Settings Tabs
