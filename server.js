@@ -516,6 +516,32 @@ app.get('/api/attendance/student', (req, res) => {
     });
 });
 
+// Get all students
+app.get('/api/students', (req, res) => {
+    res.json({ success: true, students: demoStudents, total: demoStudents.length });
+});
+
+// Get all teachers
+app.get('/api/teachers', (req, res) => {
+    res.json({ success: true, teachers: demoTeachers, total: demoTeachers.length });
+});
+
+// Get statistics
+app.get('/api/statistics', (req, res) => {
+    const classStats = {};
+    demoStudents.forEach(s => {
+        classStats[s.class] = (classStats[s.class] || 0) + 1;
+    });
+    res.json({
+        success: true,
+        statistics: {
+            totalStudents: demoStudents.length,
+            totalTeachers: demoTeachers.length,
+            classBreakdown: classStats
+        }
+    });
+});
+
 // Admin - Dashboard stats
 app.get('/api/admin/dashboard', (req, res) => {
     res.json({
