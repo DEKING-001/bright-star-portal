@@ -3,11 +3,39 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 require('dotenv').config();
+
+const store = require('./src/dataStore');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'bright_star_secret';
+
+// ---------- MongoDB connection (optional; falls back to in-memory) ----------
+// Cache the connection promise so serverless warm invocations reuse it.
+let cachedConnection = null;
+async function connectDB() {
+    const uri = process.env.MONGODB_URI;
+    if (!uri) {
+        console.log('No MONGODB_URI set — using in-memory data store (data will not persist).');
+        return;
+    }
+    if (cachedConnection && mongoose.connection.readyState === 1) return cachedConnection;
+    try {
+        mongoose.set('strictQuery', true);
+        cachedConnection = mongoose.connect(uri, { serverSelectionTimeoutMS: 8000 });
+        await cachedConnection;
+        store.setDbConnected(true);
+        console.log('MongoDB connected.');
+        await store.seedIfEmpty();
+    } catch (err) {
+        cachedConnection = null;
+        console.error('MongoDB connection failed, falling back to in-memory store:', err.message);
+    }
+    return cachedConnection;
+}
+connectDB();
 
 // Middleware
 app.use(cors());
@@ -396,7 +424,7 @@ app.delete('/api/teachers/:id', (req, res) => {
 });
 
 // Announcements - Create
-app.post('/api/announcements', (req, res) => {
+app.post('/api/announcements', async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
     
@@ -407,22 +435,17 @@ app.post('/api/announcements', (req, res) => {
     }
     
     const { title, category, content } = req.body;
-    const newId = String(demoAnnouncements.length + 1);
-    
-    const announcement = {
-        _id: newId,
-        title,
-        category: category || 'general',
-        content,
-        createdAt: new Date()
-    };
-    
-    demoAnnouncements.unshift(announcement);
-    res.status(201).json({ success: true, announcement });
+    try {
+        const announcement = await store.createAnnouncement({ title, category, content });
+        res.status(201).json({ success: true, announcement });
+    } catch (err) {
+        console.error('Create announcement error:', err);
+        res.status(500).json({ success: false, message: 'Failed to create announcement' });
+    }
 });
 
 // Announcements - Delete
-app.delete('/api/announcements/:id', (req, res) => {
+app.delete('/api/announcements/:id', async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
     
@@ -432,11 +455,14 @@ app.delete('/api/announcements/:id', (req, res) => {
         return res.status(401).json({ success: false, message: 'Not authorized' });
     }
     
-    const index = demoAnnouncements.findIndex(a => a._id === req.params.id);
-    if (index === -1) return res.status(404).json({ success: false, message: 'Announcement not found' });
-    
-    demoAnnouncements.splice(index, 1);
-    res.json({ success: true, message: 'Announcement deleted' });
+    try {
+        const ok = await store.deleteAnnouncement(req.params.id);
+        if (!ok) return res.status(404).json({ success: false, message: 'Announcement not found' });
+        res.json({ success: true, message: 'Announcement deleted' });
+    } catch (err) {
+        console.error('Delete announcement error:', err);
+        res.status(500).json({ success: false, message: 'Failed to delete announcement' });
+    }
 });
 
 // Results - Get student results
@@ -464,80 +490,47 @@ app.get('/api/results/student', (req, res) => {
     });
 });
 
-// In-memory store for teacher-uploaded result batches
-let demoResultUploads = [];
-
 // Teacher uploads results (Single Batch: upsert into an existing 'pending' record)
-app.post('/api/results', (req, res) => {
+app.post('/api/results', async (req, res) => {
     const { class: cls, subject, session, term, students, status } = req.body;
     if (!cls || !subject || !Array.isArray(students)) {
         return res.status(400).json({ success: false, message: 'Class, subject and students are required' });
     }
-
-    const normSession = session || '2025/2026';
-    const normTerm = term || 'Second Term';
-    const normalizedStudents = students.map(s => ({
-        admissionNumber: s.admissionNumber,
-        ca1: Number(s.ca1) || 0,
-        ca2: Number(s.ca2) || 0,
-        exam: Number(s.exam) || 0,
-        total: (Number(s.ca1) || 0) + (Number(s.ca2) || 0) + (Number(s.exam) || 0)
-    }));
-
-    // 1. Check for an existing PENDING record matching [Class, Subject, Term, Session]
-    const existing = demoResultUploads.find(r =>
-        r.class === cls &&
-        r.subject === subject &&
-        r.session === normSession &&
-        r.term === normTerm &&
-        r.status === 'pending_verification'
-    );
-
-    if (existing) {
-        // 2a. Found -> merge/upsert new student results into the existing record
-        normalizedStudents.forEach(ns => {
-            const idx = existing.students.findIndex(s => s.admissionNumber === ns.admissionNumber);
-            if (idx !== -1) {
-                existing.students[idx] = ns; // update existing student
-            } else {
-                existing.students.push(ns);  // add new student
-            }
-        });
-        existing.updatedAt = new Date();
-        return res.status(200).json({ success: true, updated: true, upload: existing });
+    try {
+        const result = await store.upsertResultUpload({ class: cls, subject, session, term, students, status });
+        const statusCode = result.created ? 201 : 200;
+        res.status(statusCode).json({ success: true, ...result });
+    } catch (err) {
+        console.error('Result upload error:', err);
+        res.status(500).json({ success: false, message: 'Failed to save results' });
     }
-
-    // 2b. Not found -> create a NEW database entry
-    const upload = {
-        _id: 'RU' + (demoResultUploads.length + 1),
-        class: cls,
-        subject,
-        session: normSession,
-        term: normTerm,
-        status: status || 'pending_verification',
-        students: normalizedStudents,
-        createdAt: new Date()
-    };
-    demoResultUploads.push(upload);
-    res.status(201).json({ success: true, created: true, upload });
 });
 
 // Admin: fetch only result records pending verification
-app.get('/api/results/pending', (req, res) => {
-    const pending = demoResultUploads.filter(r => r.status === 'pending_verification');
-    res.json({ success: true, results: pending });
+app.get('/api/results/pending', async (req, res) => {
+    try {
+        const results = await store.getPendingResultUploads();
+        res.json({ success: true, results });
+    } catch (err) {
+        console.error('Pending results error:', err);
+        res.status(500).json({ success: false, message: 'Failed to load pending results' });
+    }
 });
 
 // Admin: approve (verify) a result batch
-app.post('/api/results/:id/approve', (req, res) => {
-    const upload = demoResultUploads.find(r => r._id === req.params.id);
-    if (!upload) return res.status(404).json({ success: false, message: 'Result record not found' });
-    upload.status = 'verified';
-    res.json({ success: true, result: upload });
+app.post('/api/results/:id/approve', async (req, res) => {
+    try {
+        const upload = await store.approveResultUpload(req.params.id);
+        if (!upload) return res.status(404).json({ success: false, message: 'Result record not found' });
+        res.json({ success: true, result: upload });
+    } catch (err) {
+        console.error('Approve result error:', err);
+        res.status(500).json({ success: false, message: 'Failed to approve result' });
+    }
 });
 
 // Fees - Get student fees
-app.get('/api/fees/student', (req, res) => {
+app.get('/api/fees/student', async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
     let admissionNumber = 'BSS/2026/001';
     
@@ -549,7 +542,7 @@ app.get('/api/fees/student', (req, res) => {
         } catch (err) {}
     }
     
-    const fees = demoFees.filter(f => f.admissionNumber === admissionNumber);
+    const fees = await store.getFeesByAdmission(admissionNumber);
     let totalPaid = 0, totalBalance = 0;
     fees.forEach(f => { totalPaid += f.amountPaid; totalBalance += f.balance; });
     
@@ -557,8 +550,14 @@ app.get('/api/fees/student', (req, res) => {
 });
 
 // Announcements - Get all
-app.get('/api/announcements', (req, res) => {
-    res.json({ success: true, announcements: demoAnnouncements });
+app.get('/api/announcements', async (req, res) => {
+    try {
+        const announcements = await store.getAnnouncements();
+        res.json({ success: true, announcements });
+    } catch (err) {
+        console.error('Get announcements error:', err);
+        res.status(500).json({ success: false, message: 'Failed to load announcements' });
+    }
 });
 
 // Attendance - Get student attendance
@@ -589,47 +588,56 @@ app.get('/api/attendance/student', (req, res) => {
 });
 
 // Get all students (optional ?class=SS1 filter)
-app.get('/api/students', (req, res) => {
-    let students = demoStudents;
-    if (req.query.class) {
-        students = students.filter(s => s.class === req.query.class);
+app.get('/api/students', async (req, res) => {
+    try {
+        const students = await store.getStudents(req.query.class ? { class: req.query.class } : {});
+        res.json({ success: true, students, total: students.length });
+    } catch (err) {
+        console.error('Get students error:', err);
+        res.status(500).json({ success: false, message: 'Failed to load students' });
     }
-    res.json({ success: true, students, total: students.length });
 });
 
 // Get all teachers
-app.get('/api/teachers', (req, res) => {
-    res.json({ success: true, teachers: demoTeachers, total: demoTeachers.length });
+app.get('/api/teachers', async (req, res) => {
+    try {
+        const teachers = await store.getTeachers();
+        res.json({ success: true, teachers, total: teachers.length });
+    } catch (err) {
+        console.error('Get teachers error:', err);
+        res.status(500).json({ success: false, message: 'Failed to load teachers' });
+    }
 });
 
 // Get statistics
-app.get('/api/statistics', (req, res) => {
-    const classStats = {};
-    demoStudents.forEach(s => {
-        classStats[s.class] = (classStats[s.class] || 0) + 1;
-    });
-    res.json({
-        success: true,
-        statistics: {
-            totalStudents: demoStudents.length,
-            totalTeachers: demoTeachers.length,
-            classBreakdown: classStats
-        }
-    });
+app.get('/api/statistics', async (req, res) => {
+    try {
+        const statistics = await store.getStatistics();
+        res.json({ success: true, statistics });
+    } catch (err) {
+        console.error('Get statistics error:', err);
+        res.status(500).json({ success: false, message: 'Failed to load statistics' });
+    }
 });
 
 // Admin - Dashboard stats
-app.get('/api/admin/dashboard', (req, res) => {
-    res.json({
-        success: true,
-        stats: {
-            totalStudents: demoStudents.length,
-            totalTeachers: demoTeachers.length,
-            totalAdmins: 1,
-            recentStudents: demoStudents.slice(0, 3),
-            activeSession: { name: '2025/2026', currentTerm: 'Second Term' }
-        }
-    });
+app.get('/api/admin/dashboard', async (req, res) => {
+    try {
+        const stats = await store.getStatistics();
+        res.json({
+            success: true,
+            stats: {
+                totalStudents: stats.totalStudents,
+                totalTeachers: stats.totalTeachers,
+                totalAdmins: 1,
+                recentStudents: (await store.getStudents()).slice(0, 3),
+                activeSession: { name: '2025/2026', currentTerm: 'Second Term' }
+            }
+        });
+    } catch (err) {
+        console.error('Admin dashboard error:', err);
+        res.status(500).json({ success: false, message: 'Failed to load dashboard' });
+    }
 });
 
 // ============ HTML PAGES ============
@@ -647,9 +655,12 @@ app.get('/results', (req, res) => res.sendFile(path.join(__dirname, 'views', 're
 app.get('/fees', (req, res) => res.sendFile(path.join(__dirname, 'views', 'fees.html')));
 app.get('/admission-form', (req, res) => res.sendFile(path.join(__dirname, 'views', 'admission-form.html')));
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
+// Start server (only when run directly, not when imported by Vercel serverless)
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+    });
+}
 
+// Export for serverless (Vercel @vercel/node) deployments
 module.exports = app;
