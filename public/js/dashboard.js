@@ -64,6 +64,9 @@ async function loadDashboardData() {
 // Update profile data
 function updateProfileData(student) {
     if (student) {
+        window.studentClass = student.class;
+        window.studentSession = student.session;
+        window.studentTerm = student.term;
         document.getElementById('dashClass').textContent = student.class || 'N/A';
         document.getElementById('dashSession').textContent = student.session || 'N/A';
         document.getElementById('dashTerm').textContent = student.term || 'N/A';
@@ -76,11 +79,16 @@ function updateProfileData(student) {
     }
 }
 
-// Display announcements
+// Display announcements (recent feed on dashboard + full list on announcements page)
 function displayAnnouncements(announcements) {
-    const container = document.getElementById('recentAnnouncements');
-    if (!announcements || announcements.length === 0) return;
-    
+    if (!announcements || announcements.length === 0) {
+        const recent = document.getElementById('recentAnnouncements');
+        if (recent) recent.innerHTML = '<p class="text-slate-400 text-sm">No announcements yet.</p>';
+        const all = document.getElementById('allAnnouncements');
+        if (all) all.innerHTML = '<p class="text-slate-400 text-center py-4">No announcements yet.</p>';
+        return;
+    }
+
     const colors = {
         'urgent': 'border-red-500',
         'academic': 'border-blue-500',
@@ -88,14 +96,37 @@ function displayAnnouncements(announcements) {
         'sports': 'border-purple-500',
         'general': 'border-yellow-500'
     };
-    
-    container.innerHTML = announcements.slice(0, 3).map(ann => `
-        <div class="border-l-4 ${colors[ann.category] || 'border-gray-500'} pl-4 py-2">
-            <p class="font-semibold text-gray-700">${ann.title}</p>
-            <p class="text-gray-500 text-sm">${ann.content.substring(0, 100)}...</p>
-            <p class="text-gray-400 text-xs mt-1"><i class="fas fa-clock mr-1"></i> ${formatDate(ann.createdAt)}</p>
-        </div>
-    `).join('');
+
+    const recent = document.getElementById('recentAnnouncements');
+    if (recent) {
+        recent.innerHTML = announcements.slice(0, 3).map(ann => `
+            <div class="border-l-4 ${colors[ann.category] || 'border-gray-500'} pl-4 py-2">
+                <p class="font-semibold text-gray-700">${ann.title}</p>
+                <p class="text-gray-500 text-sm">${ann.content.substring(0, 100)}...</p>
+                <p class="text-gray-400 text-xs mt-1"><i class="fas fa-clock mr-1"></i> ${formatDate(ann.createdAt)}</p>
+            </div>
+        `).join('');
+    }
+
+    const all = document.getElementById('allAnnouncements');
+    if (all) {
+        all.innerHTML = announcements.map(ann => `
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-100 hover:shadow-md transition">
+                <div class="flex items-start space-x-4">
+                    <div class="w-12 h-12 ${ann.category === 'urgent' ? 'bg-red-500' : 'bg-brand'} rounded-lg flex items-center justify-center flex-shrink-0">
+                        <i class="fas ${ann.category === 'sports' ? 'fa-futbol' : ann.category === 'urgent' ? 'fa-exclamation-triangle' : 'fa-bullhorn'} text-white"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded font-medium uppercase">${ann.category || 'general'}</span>
+                            <span class="text-slate-400 text-xs">${formatDate(ann.createdAt)}</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800">${ann.title}</h3>
+                        <p class="text-slate-600 mt-2 text-sm">${ann.content}</p>
+                    </div>
+                </div>
+            </div>`).join('');
+    }
 }
 
 // Show different sections
@@ -121,6 +152,103 @@ function showSection(section) {
         case 'fees':
             loadFees();
             break;
+        case 'timetable':
+            loadTimetable();
+            break;
+        case 'assignments':
+            loadAssignments();
+            break;
+        case 'announcements':
+            loadAnnouncements();
+            break;
+    }
+}
+
+// Load the student's class timetable from the shared DB
+async function loadTimetable() {
+    const container = document.getElementById('timetableBody');
+    if (!container) return;
+    try {
+        const cls = window.studentClass;
+        const session = window.studentSession;
+        const term = window.studentTerm;
+        const q = new URLSearchParams();
+        if (cls) q.set('class', cls);
+        if (session) q.set('session', session);
+        if (term) q.set('term', term);
+        const res = await fetch(`/api/timetable?${q.toString()}`);
+        const data = await res.json();
+        const tt = data.timetable;
+        if (!tt || !tt.schedule || tt.schedule.length === 0) {
+            container.innerHTML = '<tr><td colspan="6" class="px-4 py-6 text-center text-slate-400">No timetable published yet.</td></tr>';
+            return;
+        }
+        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+        const slots = [];
+        tt.schedule.forEach(d => d.periods.forEach(p => { if (!slots.includes(p.time)) slots.push(p.time); }));
+        const map = {};
+        tt.schedule.forEach(d => { map[d.day] = {}; d.periods.forEach(p => map[d.day][p.time] = p.subject); });
+
+        let html = '';
+        slots.forEach(slot => {
+            html += `<tr class="table-row"><td class="px-4 py-3 font-medium text-sm text-slate-700">${slot}</td>`;
+            days.forEach(day => {
+                const subj = (map[day] && map[day][slot]) || '-';
+                html += `<td class="px-4 py-3 text-center text-sm text-slate-600">${subj}</td>`;
+            });
+            html += '</tr>';
+        });
+        container.innerHTML = html;
+    } catch (e) {
+        console.error(e);
+        container.innerHTML = '<tr><td colspan="6" class="px-4 py-6 text-center text-red-500">Failed to load timetable.</td></tr>';
+    }
+}
+
+// Load assignments targeted at the student's class
+async function loadAssignments() {
+    const container = document.getElementById('assignmentsList');
+    if (!container) return;
+    try {
+        const cls = window.studentClass;
+        const q = new URLSearchParams();
+        if (cls) q.set('class', cls);
+        const res = await fetch(`/api/assignments?${q.toString()}`);
+        const data = await res.json();
+        const list = data.assignments || [];
+        if (list.length === 0) {
+            container.innerHTML = '<p class="text-slate-400 text-center py-4">No assignments for your class yet.</p>';
+            return;
+        }
+        container.innerHTML = list.map(a => `
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-100 hover:shadow-md transition">
+                <div class="flex items-start justify-between">
+                    <div class="flex-1">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded font-medium">${a.subject}</span>
+                            <span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded font-medium">${a.class}</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800">${a.title}</h3>
+                        <p class="text-slate-600 mt-2 text-sm">${a.description || ''}</p>
+                        <p class="text-sm text-slate-400 mt-3"><i class="fas fa-clock mr-1"></i> Due: ${a.dueDate ? new Date(a.dueDate).toLocaleDateString() : 'N/A'} | ${a.totalMarks} marks</p>
+                    </div>
+                    <button class="btn-primary px-4 py-2 rounded-lg text-sm"><i class="fas fa-upload mr-1"></i> Submit</button>
+                </div>
+            </div>`).join('');
+    } catch (e) {
+        console.error(e);
+        container.innerHTML = '<p class="text-red-500 text-center py-4">Failed to load assignments.</p>';
+    }
+}
+
+// Load all announcements (full list)
+async function loadAnnouncements() {
+    try {
+        const res = await fetch('/api/announcements');
+        const data = await res.json();
+        displayAnnouncements(data.announcements);
+    } catch (e) {
+        console.error(e);
     }
 }
 

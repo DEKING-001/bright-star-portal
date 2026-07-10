@@ -560,6 +560,127 @@ app.get('/api/announcements', async (req, res) => {
     }
 });
 
+// ============ TIMETABLES ============
+
+// Student/Teacher: get timetable for a class (shared, DB-driven)
+app.get('/api/timetable', async (req, res) => {
+    try {
+        const filter = { class: req.query.class, session: req.query.session, term: req.query.term };
+        const timetable = await store.getTimetable(filter);
+        res.json({ success: true, timetable: timetable || null });
+    } catch (err) {
+        console.error('Get timetable error:', err);
+        res.status(500).json({ success: false, message: 'Failed to load timetable' });
+    }
+});
+
+// Admin: get all timetables
+app.get('/api/timetables', async (req, res) => {
+    try {
+        const timetables = await store.getAllTimetables();
+        res.json({ success: true, timetables });
+    } catch (err) {
+        console.error('Get timetables error:', err);
+        res.status(500).json({ success: false, message: 'Failed to load timetables' });
+    }
+});
+
+// Admin: create/edit a class timetable (upsert by class+session+term)
+app.post('/api/timetable', async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
+    try {
+        jwt.verify(token, JWT_SECRET);
+    } catch (err) {
+        return res.status(401).json({ success: false, message: 'Not authorized' });
+    }
+    const { class: cls, session, term, schedule } = req.body;
+    if (!cls || !Array.isArray(schedule)) {
+        return res.status(400).json({ success: false, message: 'Class and schedule are required' });
+    }
+    try {
+        const timetable = await store.upsertTimetable({ class: cls, session, term, schedule });
+        res.status(200).json({ success: true, timetable });
+    } catch (err) {
+        console.error('Save timetable error:', err);
+        res.status(500).json({ success: false, message: 'Failed to save timetable' });
+    }
+});
+
+// ============ ASSIGNMENTS ============
+
+// Student/Teacher/Admin: get assignments (optionally filtered by class)
+app.get('/api/assignments', async (req, res) => {
+    try {
+        const filter = {};
+        if (req.query.class) filter.class = req.query.class;
+        if (req.query.session) filter.session = req.query.session;
+        if (req.query.term) filter.term = req.query.term;
+        const assignments = await store.getAssignments(filter);
+        res.json({ success: true, assignments });
+    } catch (err) {
+        console.error('Get assignments error:', err);
+        res.status(500).json({ success: false, message: 'Failed to load assignments' });
+    }
+});
+
+// Admin: get all assignments (including inactive)
+app.get('/api/assignments/all', async (req, res) => {
+    try {
+        const assignments = await store.getAllAssignments();
+        res.json({ success: true, assignments });
+    } catch (err) {
+        console.error('Get all assignments error:', err);
+        res.status(500).json({ success: false, message: 'Failed to load assignments' });
+    }
+});
+
+// Teacher: post a new assignment
+app.post('/api/assignments', async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
+    let user = null;
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        user = Object.values(demoUsers).find(u => u.id === decoded.id);
+    } catch (err) {
+        return res.status(401).json({ success: false, message: 'Not authorized' });
+    }
+    const { title, description, subject, class: cls, session, term, dueDate, totalMarks } = req.body;
+    if (!title || !subject || !cls) {
+        return res.status(400).json({ success: false, message: 'Title, subject and class are required' });
+    }
+    try {
+        const assignment = await store.createAssignment({
+            title, description, subject, class: cls, session, term, dueDate, totalMarks,
+            postedBy: user ? `${user.firstName} ${user.lastName}` : 'Teacher'
+        });
+        res.status(201).json({ success: true, assignment });
+    } catch (err) {
+        console.error('Create assignment error:', err);
+        res.status(500).json({ success: false, message: 'Failed to create assignment' });
+    }
+});
+
+// Teacher/Admin: delete an assignment
+app.delete('/api/assignments/:id', async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
+    try {
+        jwt.verify(token, JWT_SECRET);
+    } catch (err) {
+        return res.status(401).json({ success: false, message: 'Not authorized' });
+    }
+    try {
+        const ok = await store.deleteAssignment(req.params.id);
+        if (!ok) return res.status(404).json({ success: false, message: 'Assignment not found' });
+        res.json({ success: true, message: 'Assignment deleted' });
+    } catch (err) {
+        console.error('Delete assignment error:', err);
+        res.status(500).json({ success: false, message: 'Failed to delete assignment' });
+    }
+});
+
 // Attendance - Get student attendance
 app.get('/api/attendance/student', (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];

@@ -306,42 +306,21 @@
                         <i class="fas fa-plus mr-2"></i>New Assignment
                     </button>
                 </div>
-                <div class="space-y-4">
-                    <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-500">
-                        <div class="flex items-start justify-between">
-                            <div>
-                                <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded">Mathematics</span>
-                                <h3 class="text-lg font-bold text-slate-800 mt-2">Quadratic Equations Worksheet</h3>
-                                <p class="text-slate-600 mt-2">Solve all 20 problems on quadratic equations.</p>
-                                <p class="text-sm text-slate-500 mt-2">Class: SS1A | Due: July 15, 2026</p>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-slate-500 text-sm">15 submissions</span>
-                            </div>
-                        </div>
-                    </div>
+                <div id="teacherAssignmentsList" class="space-y-4">
+                    <p class="text-slate-400 text-center py-4">Loading assignments...</p>
                 </div>
             </div>
 
             <!-- Announcements Section -->
             <div id="announcementsSection" class="section hidden">
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl font-bold text-slate-800">Post Announcement</h2>
+                    <h2 class="text-2xl font-bold text-slate-800">Announcements</h2>
+                    <button onclick="loadTeacherAnnouncements()" class="text-sm text-primary hover:underline font-medium">
+                        <i class="fas fa-sync mr-1"></i>Refresh
+                    </button>
                 </div>
-                <div class="bg-white rounded-xl shadow-sm p-6">
-                    <form class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-1">Title</label>
-                            <input type="text" class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-1">Content</label>
-                            <textarea rows="4" class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary"></textarea>
-                        </div>
-                        <button type="button" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark transition">
-                            <i class="fas fa-paper-plane mr-2"></i>Post Announcement
-                        </button>
-                    </form>
+                <div id="teacherAnnouncementsList" class="space-y-4">
+                    <p class="text-slate-400 text-center py-4">Loading announcements...</p>
                 </div>
             </div>
 
@@ -392,6 +371,55 @@
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- Add Assignment Modal -->
+    <div id="addAssignmentModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div class="p-6 border-b border-slate-100 flex items-center justify-between">
+                <h3 class="text-xl font-bold text-slate-800">New Assignment</h3>
+                <button onclick="closeModal('addAssignmentModal')" class="text-slate-400 hover:text-slate-600 p-1 hover:bg-slate-100 rounded-lg transition">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <form id="addAssignmentForm" onsubmit="postAssignment(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Title</label>
+                    <input type="text" id="assignmentTitle" class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Description</label>
+                    <textarea id="assignmentDescription" rows="3" class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary"></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Subject</label>
+                        <input type="text" id="assignmentSubject" class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Target Class</label>
+                        <select id="assignmentClass" class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                            <option value="SS1">SS1</option><option value="SS2">SS2</option><option value="SS3">SS3</option>
+                            <option value="JSS1">JSS1</option><option value="JSS2">JSS2</option><option value="JSS3">JSS3</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Due Date</label>
+                        <input type="date" id="assignmentDueDate" class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Total Marks</label>
+                        <input type="number" id="assignmentTotalMarks" value="100" class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3 pt-4 border-t border-slate-100">
+                    <button type="button" onclick="closeModal('addAssignmentModal')" class="px-5 py-2.5 border border-slate-200 rounded-lg hover:bg-slate-50 font-medium text-slate-600 transition">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 bg-primary text-white rounded-lg hover:bg-primary-dark font-medium transition">Post Assignment</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script src="/js/teacher-dashboard.js"></script>

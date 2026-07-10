@@ -236,6 +236,9 @@ function showSection(section) {
     document.getElementById(section + 'Section').classList.remove('hidden');
     document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
     if (event && event.currentTarget) event.currentTarget.classList.add('active');
+
+    if (section === 'assignments') loadTeacherAssignments();
+    if (section === 'announcements') loadTeacherAnnouncements();
 }
 
 function toggleSidebar() {
@@ -254,4 +257,114 @@ function logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     window.location.href = '/login?role=teacher';
+}
+
+// Post a new assignment (shared with student portal)
+async function postAssignment(event) {
+    event.preventDefault();
+    const token = localStorage.getItem('token');
+    const payload = {
+        title: document.getElementById('assignmentTitle').value,
+        description: document.getElementById('assignmentDescription').value,
+        subject: document.getElementById('assignmentSubject').value,
+        class: document.getElementById('assignmentClass').value,
+        dueDate: document.getElementById('assignmentDueDate').value,
+        totalMarks: Number(document.getElementById('assignmentTotalMarks').value) || 100
+    };
+
+    try {
+        const res = await fetch('/api/assignments', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+            closeModal('addAssignmentModal');
+            document.getElementById('addAssignmentForm').reset();
+            loadTeacherAssignments();
+            alert('Assignment posted successfully.');
+        } else {
+            alert(data.message || 'Failed to post assignment.');
+        }
+    } catch (e) {
+        console.error(e);
+        alert('Upstream request failed. Please try again.');
+    }
+}
+
+// Load assignments posted by this teacher
+async function loadTeacherAssignments() {
+    const container = document.getElementById('teacherAssignmentsList');
+    if (!container) return;
+    try {
+        const token = localStorage.getItem('token');
+        const res = await fetch('/api/assignments/all', {
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
+        const data = await res.json();
+        const list = data.assignments || [];
+        if (list.length === 0) {
+            container.innerHTML = '<p class="text-slate-400 text-center py-4">No assignments posted yet.</p>';
+            return;
+        }
+        container.innerHTML = list.map(a => `
+            <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-500">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <span class="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded">${a.subject}</span>
+                        <span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded ml-1">${a.class}</span>
+                        <h3 class="text-lg font-bold text-slate-800 mt-2">${a.title}</h3>
+                        <p class="text-slate-600 mt-2 text-sm">${a.description || ''}</p>
+                        <p class="text-sm text-slate-500 mt-2">Due: ${a.dueDate ? new Date(a.dueDate).toLocaleDateString() : 'N/A'} | ${a.totalMarks} marks</p>
+                    </div>
+                    <button onclick="deleteAssignment('${a._id}')" class="text-slate-400 hover:text-red-500 p-2"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>`).join('');
+    } catch (e) {
+        console.error(e);
+        container.innerHTML = '<p class="text-red-500 text-center py-4">Failed to load assignments.</p>';
+    }
+}
+
+async function deleteAssignment(id) {
+    if (!confirm('Delete this assignment?')) return;
+    try {
+        const token = localStorage.getItem('token');
+        await fetch(`/api/assignments/${id}`, {
+            method: 'DELETE',
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
+        loadTeacherAssignments();
+    } catch (e) {
+        console.error(e);
+        alert('Failed to delete assignment.');
+    }
+}
+
+// Load announcements shared from admin
+async function loadTeacherAnnouncements() {
+    const container = document.getElementById('teacherAnnouncementsList');
+    if (!container) return;
+    try {
+        const res = await fetch('/api/announcements');
+        const data = await res.json();
+        const list = data.announcements || [];
+        if (list.length === 0) {
+            container.innerHTML = '<p class="text-slate-400 text-center py-4">No announcements yet.</p>';
+            return;
+        }
+        container.innerHTML = list.map(a => `
+            <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 ${a.category === 'urgent' ? 'border-red-500' : a.category === 'academic' ? 'border-blue-500' : 'border-emerald-500'}">
+                <div class="flex items-center space-x-2 mb-1">
+                    <span class="text-xs px-2 py-0.5 rounded-full font-semibold uppercase bg-slate-100 text-slate-600">${a.category || 'general'}</span>
+                    <span class="text-slate-400 text-xs">${a.createdAt ? new Date(a.createdAt).toLocaleDateString() : ''}</span>
+                </div>
+                <h3 class="font-semibold text-slate-800">${a.title}</h3>
+                <p class="text-slate-500 mt-1 text-sm">${a.content}</p>
+            </div>`).join('');
+    } catch (e) {
+        console.error(e);
+        container.innerHTML = '<p class="text-red-500 text-center py-4">Failed to load announcements.</p>';
+    }
 }

@@ -75,10 +75,44 @@ const portalFeeSchema = new mongoose.Schema({
     }]
 }, { timestamps: true });
 
+// Class timetable (one per class/session/term)
+const timetableSchema = new mongoose.Schema({
+    class: String,
+    session: String,
+    term: String,
+    schedule: [{
+        day: String,
+        periods: [{
+            time: String,
+            subject: String,
+            teacherName: String,
+            room: String
+        }]
+    }],
+    updatedAt: Date
+}, { timestamps: true });
+
+// Assignment posted by a teacher, visible to a target class
+const assignmentSchema = new mongoose.Schema({
+    title: String,
+    description: String,
+    subject: String,
+    class: String,
+    session: String,
+    term: String,
+    dueDate: Date,
+    totalMarks: Number,
+    postedBy: String,
+    postedAt: Date,
+    isActive: { type: Boolean, default: true }
+}, { timestamps: true });
+
 module.exports = {
     PortalStudent: mongoose.model('PortalStudent', portalStudentSchema),
     PortalTeacher: mongoose.model('PortalTeacher', portalTeacherSchema),
     ResultUpload: mongoose.model('ResultUpload', resultUploadSchema),
     PortalAnnouncement: mongoose.model('PortalAnnouncement', portalAnnouncementSchema),
-    PortalFee: mongoose.model('PortalFee', portalFeeSchema)
+    PortalFee: mongoose.model('PortalFee', portalFeeSchema),
+    PortalTimetable: mongoose.model('PortalTimetable', timetableSchema),
+    PortalAssignment: mongoose.model('PortalAssignment', assignmentSchema)
 };

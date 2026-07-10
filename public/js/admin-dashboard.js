@@ -62,6 +62,7 @@ function showSection(section) {
     if (section === 'announcements') loadAnnouncements();
     if (section === 'settings') loadSettings();
     if (section === 'results') loadPendingResults();
+    if (section === 'timetable') loadTimetableForAdmin();
 }
 
 function toggleSidebar() {
@@ -839,6 +840,78 @@ async function approveResult(id) {
         }
     } catch (error) {
         console.error(error);
+        alert('Upstream request failed. Please try again.');
+    }
+}
+
+// ============ Timetable management ============
+const TT_SLOTS = ['8:00 - 8:40', '8:45 - 9:25', '9:30 - 10:10', '10:40 - 11:20', '11:25 - 12:05'];
+const TT_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
+function renderTimetableEditor(existing) {
+    const map = {};
+    (existing && existing.schedule ? existing.schedule : []).forEach(d => {
+        map[d.day] = {};
+        (d.periods || []).forEach(p => { map[d.day][p.time] = p.subject; });
+    });
+
+    let html = '<table class="w-full border-collapse"><thead class="bg-slate-50"><tr>' +
+        '<th class="px-3 py-2 text-left text-xs font-semibold text-slate-600 uppercase">Time</th>' +
+        TT_DAYS.map(d => `<th class="px-3 py-2 text-center text-xs font-semibold text-slate-600 uppercase">${d}</th>`).join('') +
+        '</tr></thead><tbody class="divide-y divide-slate-100">';
+
+    TT_SLOTS.forEach((slot, i) => {
+        html += `<tr class="${i % 2 ? 'bg-slate-50/40' : ''}"><td class="px-3 py-2 font-medium text-sm text-slate-700">${slot}</td>`;
+        TT_DAYS.forEach(day => {
+            const val = (map[day] && map[day][slot]) || '';
+            html += `<td class="px-2 py-1"><input data-day="${day}" data-time="${slot}" value="${val}" placeholder="-" class="tt-subject w-full border border-slate-200 rounded px-2 py-1 text-sm text-center focus:ring-2 focus:ring-brand-500 outline-none"></td>`;
+        });
+        html += '</tr>';
+    });
+    html += '</tbody></table>';
+    document.getElementById('timetableGrid').innerHTML = html;
+}
+
+async function loadTimetableForAdmin() {
+    const cls = document.getElementById('ttClass').value;
+    const session = document.getElementById('ttSession').value;
+    const term = document.getElementById('ttTerm').value;
+    try {
+        const res = await fetch(`/api/timetable?class=${encodeURIComponent(cls)}&session=${encodeURIComponent(session)}&term=${encodeURIComponent(term)}`);
+        const data = await res.json();
+        renderTimetableEditor(data.timetable);
+    } catch (e) {
+        console.error(e);
+        document.getElementById('timetableGrid').innerHTML = '<p class="text-red-500 text-sm">Failed to load timetable.</p>';
+    }
+}
+
+async function saveTimetable() {
+    const cls = document.getElementById('ttClass').value;
+    const session = document.getElementById('ttSession').value;
+    const term = document.getElementById('ttTerm').value;
+
+    const schedule = TT_DAYS.map(day => {
+        const periods = TT_SLOTS.map(slot => {
+            const input = document.querySelector(`.tt-subject[data-day="${day}"][data-time="${slot}"]`);
+            const subject = input ? input.value.trim() : '';
+            return subject ? { time: slot, subject } : null;
+        }).filter(Boolean);
+        return { day, periods };
+    });
+
+    try {
+        const token = localStorage.getItem('token');
+        const res = await fetch('/api/timetable', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
+            body: JSON.stringify({ class: cls, session, term, schedule })
+        });
+        const data = await res.json();
+        if (data.success) alert('Timetable saved successfully.');
+        else alert(data.message || 'Failed to save timetable.');
+    } catch (e) {
+        console.error(e);
         alert('Upstream request failed. Please try again.');
     }
 }

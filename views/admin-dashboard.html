@@ -100,6 +100,9 @@
                 <a href="#" onclick="showSection('announcements')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg transition">
                     <i class="fas fa-bullhorn w-5 text-center"></i><span class="sidebar-text">Announcements</span>
                 </a>
+                <a href="#" onclick="showSection('timetable')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg transition">
+                    <i class="fas fa-calendar-alt w-5 text-center"></i><span class="sidebar-text">Timetable</span>
+                </a>
                 <a href="#" onclick="showSection('fees')" class="nav-item flex items-center space-x-3 px-3 py-2.5 rounded-lg transition">
                     <i class="fas fa-money-bill-wave w-5 text-center"></i><span class="sidebar-text">Fees</span>
                 </a>
@@ -413,6 +416,48 @@
                 </div>
                 <div id="announcementsList" class="space-y-4">
                     <p class="text-slate-400 text-center py-4">Loading announcements...</p>
+                </div>
+            </div>
+
+            <!-- Timetable Section -->
+            <div id="timetableSection" class="section hidden">
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold text-slate-800">Class Timetable</h2>
+                    <p class="text-slate-500 text-sm">Create and publish class schedules (shared with student & teacher portals)</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                    <div class="grid md:grid-cols-4 gap-4 items-end">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1">Class</label>
+                            <select id="ttClass" class="w-full border border-slate-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-brand-500 outline-none">
+                                <option value="SS1">SS1</option><option value="SS2">SS2</option><option value="SS3">SS3</option>
+                                <option value="JSS1">JSS1</option><option value="JSS2">JSS2</option><option value="JSS3">JSS3</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1">Session</label>
+                            <select id="ttSession" class="w-full border border-slate-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-brand-500 outline-none">
+                                <option>2025/2026</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1">Term</label>
+                            <select id="ttTerm" class="w-full border border-slate-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-brand-500 outline-none">
+                                <option>First Term</option><option selected>Second Term</option><option>Third Term</option>
+                            </select>
+                        </div>
+                        <button onclick="loadTimetableForAdmin()" class="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-200 transition font-medium text-sm">
+                            <i class="fas fa-search mr-1"></i>Load
+                        </button>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-6 overflow-x-auto">
+                    <div id="timetableGrid" class="text-slate-400 text-sm">Select a class and click "Load" to edit its timetable.</div>
+                </div>
+                <div class="mt-4 flex justify-end">
+                    <button onclick="saveTimetable()" class="bg-brand-500 text-white px-6 py-2.5 rounded-lg hover:bg-brand-600 transition font-medium">
+                        <i class="fas fa-save mr-2"></i>Save Timetable
+                    </button>
                 </div>
             </div>
 
