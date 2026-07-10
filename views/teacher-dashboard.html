@@ -185,25 +185,8 @@
             <!-- My Classes Section -->
             <div id="myclassesSection" class="section hidden">
                 <h2 class="text-2xl font-bold text-slate-800 mb-6">My Classes</h2>
-                <div class="grid md:grid-cols-3 gap-6">
-                    <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-500">
-                        <h3 class="font-bold text-slate-800 text-lg mb-2">SS1A</h3>
-                        <p class="text-slate-600 mb-4">30 Students</p>
-                        <p class="text-sm text-slate-500"><i class="fas fa-book mr-1"></i> Mathematics</p>
-                        <button class="mt-4 text-primary hover:underline text-sm">View Students <i class="fas fa-arrow-right ml-1"></i></button>
-                    </div>
-                    <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-green-500">
-                        <h3 class="font-bold text-slate-800 text-lg mb-2">SS1B</h3>
-                        <p class="text-slate-600 mb-4">28 Students</p>
-                        <p class="text-sm text-slate-500"><i class="fas fa-book mr-1"></i> Mathematics</p>
-                        <button class="mt-4 text-primary hover:underline text-sm">View Students <i class="fas fa-arrow-right ml-1"></i></button>
-                    </div>
-                    <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-amber-500">
-                        <h3 class="font-bold text-slate-800 text-lg mb-2">SS2A</h3>
-                        <p class="text-slate-600 mb-4">32 Students</p>
-                        <p class="text-sm text-slate-500"><i class="fas fa-book mr-1"></i> Further Mathematics</p>
-                        <button class="mt-4 text-primary hover:underline text-sm">View Students <i class="fas fa-arrow-right ml-1"></i></button>
-                    </div>
+                <div id="myClassesContainer" class="grid md:grid-cols-3 gap-6">
+                    <p class="text-slate-400 col-span-3">Loading classes...</p>
                 </div>
             </div>
 
@@ -215,9 +198,7 @@
                         <div class="grid md:grid-cols-4 gap-4">
                             <div>
                                 <label class="block text-sm font-semibold text-slate-700 mb-1">Class</label>
-                                <select class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
-                                    <option>SS1A</option><option>SS1B</option><option>SS2A</option>
-                                </select>
+                                <select id="resultClassSelect" class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary"></select>
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-slate-700 mb-1">Subject</label>

@@ -516,9 +516,13 @@ app.get('/api/attendance/student', (req, res) => {
     });
 });
 
-// Get all students
+// Get all students (optional ?class=SS1 filter)
 app.get('/api/students', (req, res) => {
-    res.json({ success: true, students: demoStudents, total: demoStudents.length });
+    let students = demoStudents;
+    if (req.query.class) {
+        students = students.filter(s => s.class === req.query.class);
+    }
+    res.json({ success: true, students, total: students.length });
 });
 
 // Get all teachers
