@@ -592,31 +592,189 @@
 
             <!-- Admission Section -->
             <div id="admissionSection" class="section hidden">
-                <div class="flex items-center justify-between mb-6">
-                    <div>
-                        <h2 class="text-xl font-bold text-slate-800">Admission Management</h2>
-                        <p class="text-slate-500 text-sm">Manage student admissions</p>
-                    </div>
-                    <button onclick="openModal('addStudentModal')" class="bg-brand-500 text-white px-4 py-2.5 rounded-lg hover:bg-brand-600 transition font-medium text-sm">
-                        <i class="fas fa-plus mr-2"></i>New Admission
-                    </button>
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold text-slate-800">Admission Form</h2>
+                    <p class="text-slate-500 text-sm">Fill in the student admission details</p>
                 </div>
-                <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
-                    <h3 class="font-semibold text-slate-700 mb-4">Admission Statistics</h3>
-                    <div class="grid md:grid-cols-3 gap-4">
-                        <div class="text-center p-4 bg-blue-50 rounded-lg">
-                            <p class="text-3xl font-bold text-blue-600">12</p>
-                            <p class="text-slate-500 text-sm">Pending Applications</p>
+                
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <form id="admissionForm" onsubmit="submitAdmission(event)">
+                        <!-- Student Information -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-semibold text-slate-700 mb-4 pb-2 border-b border-slate-200">
+                                <i class="fas fa-user-graduate mr-2 text-brand-500"></i>Student Information
+                            </h3>
+                            <div class="grid md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-2">Last Name <span class="text-red-500">*</span></label>
+                                    <input type="text" id="admLastName" placeholder="ENTER LAST NAME" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-2">First Name <span class="text-red-500">*</span></label>
+                                    <input type="text" id="admFirstName" placeholder="ENTER FIRST NAME" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-2">Other Name</label>
+                                    <input type="text" id="admOtherName" placeholder="ENTER OTHER NAME" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none">
+                                </div>
+                            </div>
+                            <div class="grid md:grid-cols-3 gap-4 mt-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-2">Gender <span class="text-red-500">*</span></label>
+                                    <select id="admGender" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
+                                        <option value="">Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-2">Religion <span class="text-red-500">*</span></label>
+                                    <select id="admReligion" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
+                                        <option value="">Religion</option>
+                                        <option value="Christianity">Christianity</option>
+                                        <option value="Islam">Islam</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-2">Date of Birth <span class="text-red-500">*</span></label>
+                                    <input type="date" id="admDOB" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
+                                </div>
+                            </div>
                         </div>
-                        <div class="text-center p-4 bg-emerald-50 rounded-lg">
-                            <p class="text-3xl font-bold text-emerald-600">8</p>
-                            <p class="text-slate-500 text-sm">Approved This Month</p>
+
+                        <!-- Parent/Guardian Information -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-semibold text-slate-700 mb-4 pb-2 border-b border-slate-200">
+                                <i class="fas fa-users mr-2 text-brand-500"></i>Parent/Guardian Information
+                            </h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-2">Parent Name <span class="text-red-500">*</span></label>
+                                    <input type="text" id="admParentName" placeholder="ENTER PARENT NAME" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-2">Parent Phone <span class="text-red-500">*</span></label>
+                                    <input type="tel" id="admParentPhone" placeholder="ENTER PHONE NUMBER" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
+                                </div>
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-2">Parent Address <span class="text-red-500">*</span></label>
+                                    <input type="text" id="admParentAddress" placeholder="ENTER PARENT ADDRESS" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-2">Parent Occupation <span class="text-red-500">*</span></label>
+                                    <input type="text" id="admParentOccupation" placeholder="ENTER PARENT OCCUPATION" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
+                                </div>
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-2">Parent State of Origin <span class="text-red-500">*</span></label>
+                                    <select id="admParentState" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
+                                        <option value="">Select State</option>
+                                        <option value="Abia">Abia</option>
+                                        <option value="Adamawa">Adamawa</option>
+                                        <option value="Akwa Ibom">Akwa Ibom</option>
+                                        <option value="Anambra">Anambra</option>
+                                        <option value="Bauchi">Bauchi</option>
+                                        <option value="Bayelsa">Bayelsa</option>
+                                        <option value="Benue">Benue</option>
+                                        <option value="Borno">Borno</option>
+                                        <option value="Cross River">Cross River</option>
+                                        <option value="Delta">Delta</option>
+                                        <option value="Ebonyi">Ebonyi</option>
+                                        <option value="Edo">Edo</option>
+                                        <option value="Ekiti">Ekiti</option>
+                                        <option value="Enugu">Enugu</option>
+                                        <option value="FCT">FCT</option>
+                                        <option value="Gombe">Gombe</option>
+                                        <option value="Imo">Imo</option>
+                                        <option value="Jigawa">Jigawa</option>
+                                        <option value="Kaduna">Kaduna</option>
+                                        <option value="Kano">Kano</option>
+                                        <option value="Katsina">Katsina</option>
+                                        <option value="Kebbi">Kebbi</option>
+                                        <option value="Kogi">Kogi</option>
+                                        <option value="Kwara">Kwara</option>
+                                        <option value="Lagos">Lagos</option>
+                                        <option value="Nasarawa">Nasarawa</option>
+                                        <option value="Niger">Niger</option>
+                                        <option value="Ogun">Ogun</option>
+                                        <option value="Ondo">Ondo</option>
+                                        <option value="Osun">Osun</option>
+                                        <option value="Oyo">Oyo</option>
+                                        <option value="Plateau">Plateau</option>
+                                        <option value="Rivers">Rivers</option>
+                                        <option value="Sokoto">Sokoto</option>
+                                        <option value="Taraba">Taraba</option>
+                                        <option value="Yobe">Yobe</option>
+                                        <option value="Zamfara">Zamfara</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-2">Parent Religion <span class="text-red-500">*</span></label>
+                                    <select id="admParentReligion" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
+                                        <option value="">Religion</option>
+                                        <option value="Christianity">Christianity</option>
+                                        <option value="Islam">Islam</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
-                        <div class="text-center p-4 bg-amber-50 rounded-lg">
-                            <p class="text-3xl font-bold text-amber-600">3</p>
-                            <p class="text-slate-500 text-sm">Awaiting Documents</p>
+
+                        <!-- Class & Session -->
+                        <div class="mb-8">
+                            <h3 class="text-lg font-semibold text-slate-700 mb-4 pb-2 border-b border-slate-200">
+                                <i class="fas fa-school mr-2 text-brand-500"></i>Class & Session
+                            </h3>
+                            <div class="grid md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-2">Class Admitting Into <span class="text-red-500">*</span></label>
+                                    <select id="admClass" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
+                                        <option value="">Select Class</option>
+                                        <option value="Nursery 1">Nursery 1</option>
+                                        <option value="Nursery 2">Nursery 2</option>
+                                        <option value="Primary 1">Primary 1</option>
+                                        <option value="Primary 2">Primary 2</option>
+                                        <option value="Primary 3">Primary 3</option>
+                                        <option value="Primary 4">Primary 4</option>
+                                        <option value="Primary 5">Primary 5</option>
+                                        <option value="Primary 6">Primary 6</option>
+                                        <option value="JSS1">JSS1</option>
+                                        <option value="JSS2">JSS2</option>
+                                        <option value="JSS3">JSS3</option>
+                                        <option value="SS1">SS1</option>
+                                        <option value="SS2">SS2</option>
+                                        <option value="SS3">SS3</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-2">Session <span class="text-red-500">*</span></label>
+                                    <input type="text" id="admSession" value="2025/2026" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" readonly>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-2">Term <span class="text-red-500">*</span></label>
+                                    <select id="admTerm" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
+                                        <option value="First Term">First Term</option>
+                                        <option value="Second Term" selected>Second Term</option>
+                                        <option value="Third Term">Third Term</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+
+                        <!-- Submit Button -->
+                        <div class="flex justify-end space-x-4 pt-4 border-t border-slate-200">
+                            <button type="button" onclick="resetAdmissionForm()" class="px-6 py-2.5 border border-slate-200 rounded-lg hover:bg-slate-50 font-medium text-slate-600 transition">
+                                <i class="fas fa-redo mr-2"></i>Reset Form
+                            </button>
+                            <button type="submit" class="px-6 py-2.5 bg-brand-500 text-white rounded-lg hover:bg-brand-600 font-medium transition">
+                                <i class="fas fa-save mr-2"></i>Submit Admission
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
 

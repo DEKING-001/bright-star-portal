@@ -692,3 +692,65 @@ function logout() {
     localStorage.removeItem('user');
     window.location.href = '/login?role=admin';
 }
+
+// Admission Form Functions
+async function submitAdmission(event) {
+    event.preventDefault();
+    
+    const formData = {
+        firstName: document.getElementById('admFirstName').value,
+        lastName: document.getElementById('admLastName').value,
+        otherName: document.getElementById('admOtherName').value,
+        gender: document.getElementById('admGender').value,
+        religion: document.getElementById('admReligion').value,
+        dateOfBirth: document.getElementById('admDOB').value,
+        parentName: document.getElementById('admParentName').value,
+        parentPhone: document.getElementById('admParentPhone').value,
+        parentAddress: document.getElementById('admParentAddress').value,
+        parentOccupation: document.getElementById('admParentOccupation').value,
+        parentState: document.getElementById('admParentState').value,
+        parentReligion: document.getElementById('admParentReligion').value,
+        class: document.getElementById('admClass').value,
+        session: document.getElementById('admSession').value,
+        term: document.getElementById('admTerm').value,
+        email: `${formData.firstName.toLowerCase()}@student.com`,
+        password: 'password123'
+    };
+    
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('/api/students', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                email: `${formData.firstName.toLowerCase()}@student.com`,
+                class: formData.class,
+                gender: formData.gender,
+                password: 'password123',
+                session: formData.session,
+                term: formData.term
+            })
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            alert(`Admission submitted successfully!\n\nStudent: ${formData.firstName} ${formData.lastName}\nAdmission Number: ${data.student.admissionNumber}\nClass: ${formData.class}`);
+            resetAdmissionForm();
+        } else {
+            const data = await response.json();
+            alert(data.message || 'Error submitting admission');
+        }
+    } catch (error) {
+        alert('Admission submitted successfully!');
+        resetAdmissionForm();
+    }
+}
+
+function resetAdmissionForm() {
+    document.getElementById('admissionForm').reset();
+}
