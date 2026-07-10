@@ -49,7 +49,7 @@ async function loadDashboardData() {
                 const teacher = teachersData.teachers.find(t => t.staffId === user.staffId);
                 if (teacher && teacher.subjects) {
                     document.getElementById('mySubjects').textContent = teacher.subjects.length;
-                    populateClassSelect(Object.keys(classBreakdown));
+                    populateClassSelect();
                 }
             }
         }
@@ -96,11 +96,23 @@ function renderMyClasses(classBreakdown, user) {
 // Populate the Upload Results class dropdown.
 // Display value is cleaned (numeric only); the option VALUE keeps the original
 // class key (e.g. "SS1") so backend lookups don't fail.
-function populateClassSelect(classKeys) {
+// Fixed class options: label (clean display) mapped to the underlying
+// database class value (e.g. 'JSS 1' -> 'JSS1'). This avoids duplicate/
+// confusing labels and ensures the correct value is sent to the backend.
+const CLASS_OPTIONS = [
+    { label: 'JSS 1', value: 'JSS1' },
+    { label: 'JSS 2', value: 'JSS2' },
+    { label: 'JSS 3', value: 'JSS3' },
+    { label: 'SS 1', value: 'SS1' },
+    { label: 'SS 2', value: 'SS2' },
+    { label: 'SS 3', value: 'SS3' }
+];
+
+function populateClassSelect() {
     const select = document.getElementById('resultClassSelect');
     if (!select) return;
     select.innerHTML = '<option value="">Select Class</option>' +
-        (classKeys || []).map(c => `<option value="${c}">${cleanClassName(c)}</option>`).join('');
+        CLASS_OPTIONS.map(c => `<option value="${c.value}">${c.label}</option>`).join('');
 }
 
 // Load students for the selected class into the results table
