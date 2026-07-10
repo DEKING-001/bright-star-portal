@@ -81,6 +81,9 @@
                 <a href="#" onclick="showSection('announcements')" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
                     <i class="fas fa-bullhorn w-5"></i><span class="sidebar-text">Announcements</span>
                 </a>
+                <a href="#" onclick="showSection('settings')" class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-white/10 transition">
+                    <i class="fas fa-cog w-5"></i><span class="sidebar-text">Settings</span>
+                </a>
                 <div class="border-t border-slate-700 my-4"></div>
                 <a href="#" onclick="logout()" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-red-500/20 transition text-red-400">
                     <i class="fas fa-sign-out-alt w-5"></i><span class="sidebar-text">Logout</span>
@@ -367,6 +370,53 @@
                         </div>
                         <button type="button" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark transition">
                             <i class="fas fa-paper-plane mr-2"></i>Post Announcement
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Settings Section -->
+            <div id="settingsSection" class="section hidden">
+                <div class="mb-6">
+                    <h2 class="text-xl font-bold text-slate-800">Settings</h2>
+                    <p class="text-slate-500 text-sm">Manage your account settings</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-6 max-w-lg">
+                    <h3 class="font-semibold text-slate-700 mb-6">Profile Settings</h3>
+                    <form class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1">First Name</label>
+                                <input type="text" id="teacherFirstName" class="w-full border border-slate-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-1">Last Name</label>
+                                <input type="text" id="teacherLastName" class="w-full border border-slate-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary outline-none">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1">Email</label>
+                            <input type="email" id="teacherEmail" class="w-full border border-slate-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary outline-none">
+                        </div>
+                        <div class="border-t border-slate-100 pt-4">
+                            <h4 class="font-medium text-slate-700 mb-3">Change Password</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">Current Password</label>
+                                    <input type="password" class="w-full border border-slate-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">New Password</label>
+                                    <input type="password" class="w-full border border-slate-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-600 mb-1">Confirm New Password</label>
+                                    <input type="password" class="w-full border border-slate-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary outline-none">
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="bg-primary text-white px-6 py-2.5 rounded-lg hover:bg-primary-dark transition font-medium">
+                            <i class="fas fa-save mr-2"></i>Save Changes
                         </button>
                     </form>
                 </div>

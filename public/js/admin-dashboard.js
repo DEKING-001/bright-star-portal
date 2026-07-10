@@ -693,6 +693,21 @@ function logout() {
     window.location.href = '/login?role=admin';
 }
 
+// Notification Toggle
+function toggleNotifications() {
+    const dropdown = document.getElementById('notificationDropdown');
+    dropdown.classList.toggle('hidden');
+}
+
+// Close notifications when clicking outside
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('notificationDropdown');
+    const bellButton = event.target.closest('button[onclick="toggleNotifications()"]');
+    if (!bellButton && dropdown && !dropdown.contains(event.target)) {
+        dropdown.classList.add('hidden');
+    }
+});
+
 // Admission Form Functions
 async function submitAdmission(event) {
     event.preventDefault();

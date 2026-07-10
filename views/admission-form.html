@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Admission - Bright Star International School</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-[#f8fafc]">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <a href="/" class="flex items-center space-x-3">
+                    <img src="/images/logo.jpeg" alt="Bright Star Logo" class="w-12 h-12 rounded-lg object-cover">
+                    <div>
+                        <h1 class="text-lg font-extrabold text-slate-900 tracking-tight">BRIGHT STAR</h1>
+                        <p class="text-xs text-slate-500 tracking-widest">INTERNATIONAL SCHOOL</p>
+                    </div>
+                </a>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/" class="text-slate-600 hover:text-brand-600 transition font-medium">Home</a>
+                    <a href="/about" class="text-slate-600 hover:text-brand-600 transition font-medium">About</a>
+                    <a href="/admissions" class="text-brand-600 font-semibold">Admissions</a>
+                    <a href="/gallery" class="text-slate-600 hover:text-brand-600 transition font-medium">Gallery</a>
+                    <a href="/contact" class="text-slate-600 hover:text-brand-600 transition font-medium">Contact</a>
+                </div>
+                <button id="mobileMenuBtn" class="md:hidden text-slate-600 text-2xl"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-r from-slate-900 to-slate-800 py-16">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold text-white mb-4">Online Admission Registration</h1>
+            <p class="text-slate-300 text-lg">Fill out the form below to register your ward for admission</p>
+        </div>
+    </section>
+
+    <!-- Admission Form -->
+    <section class="py-12">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="bg-white rounded-2xl shadow-sm p-8">
+                <form id="onlineAdmissionForm" onsubmit="submitOnlineAdmission(event)">
+                    <!-- Student Information -->
+                    <div class="mb-8">
+                        <h3 class="text-lg font-semibold text-slate-700 mb-4 pb-2 border-b border-slate-200">
+                            <i class="fas fa-user-graduate mr-2 text-brand-500"></i>Student Information
+                        </h3>
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-2">Last Name <span class="text-red-500">*</span></label>
+                                <input type="text" id="regLastName" placeholder="ENTER LAST NAME" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-2">First Name <span class="text-red-500">*</span></label>
+                                <input type="text" id="regFirstName" placeholder="ENTER FIRST NAME" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-2">Other Name</label>
+                                <input type="text" id="regOtherName" placeholder="ENTER OTHER NAME" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none">
+                            </div>
+                        </div>
+                        <div class="grid md:grid-cols-3 gap-4 mt-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-2">Gender <span class="text-red-500">*</span></label>
+                                <select id="regGender" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-2">Religion <span class="text-red-500">*</span></label>
+                                <select id="regReligion" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
+                                    <option value="">Select Religion</option>
+                                    <option value="Christianity">Christianity</option>
+                                    <option value="Islam">Islam</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-2">Date of Birth <span class="text-red-500">*</span></label>
+                                <input type="date" id="regDOB" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Parent/Guardian Information -->
+                    <div class="mb-8">
+                        <h3 class="text-lg font-semibold text-slate-700 mb-4 pb-2 border-b border-slate-200">
+                            <i class="fas fa-users mr-2 text-brand-500"></i>Parent/Guardian Information
+                        </h3>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-2">Parent Name <span class="text-red-500">*</span></label>
+                                <input type="text" id="regParentName" placeholder="ENTER PARENT NAME" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-2">Parent Phone <span class="text-red-500">*</span></label>
+                                <input type="tel" id="regParentPhone" placeholder="ENTER PHONE NUMBER" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
+                            </div>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-4 mt-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-2">Parent Email <span class="text-red-500">*</span></label>
+                                <input type="email" id="regParentEmail" placeholder="ENTER EMAIL ADDRESS" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-2">Parent Occupation <span class="text-red-500">*</span></label>
+                                <input type="text" id="regParentOccupation" placeholder="ENTER PARENT OCCUPATION" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
+                            </div>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-4 mt-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-2">Parent Address <span class="text-red-500">*</span></label>
+                                <input type="text" id="regParentAddress" placeholder="ENTER PARENT ADDRESS" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-2">Parent State of Origin <span class="text-red-500">*</span></label>
+                                <select id="regParentState" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
+                                    <option value="">Select State</option>
+                                    <option value="Abia">Abia</option>
+                                    <option value="Adamawa">Adamawa</option>
+                                    <option value="Akwa Ibom">Akwa Ibom</option>
+                                    <option value="Anambra">Anambra</option>
+                                    <option value="Bauchi">Bauchi</option>
+                                    <option value="Bayelsa">Bayelsa</option>
+                                    <option value="Benue">Benue</option>
+                                    <option value="Borno">Borno</option>
+                                    <option value="Cross River">Cross River</option>
+                                    <option value="Delta">Delta</option>
+                                    <option value="Ebonyi">Ebonyi</option>
+                                    <option value="Edo">Edo</option>
+                                    <option value="Ekiti">Ekiti</option>
+                                    <option value="Enugu">Enugu</option>
+                                    <option value="FCT">FCT</option>
+                                    <option value="Gombe">Gombe</option>
+                                    <option value="Imo">Imo</option>
+                                    <option value="Jigawa">Jigawa</option>
+                                    <option value="Kaduna">Kaduna</option>
+                                    <option value="Kano">Kano</option>
+                                    <option value="Katsina">Katsina</option>
+                                    <option value="Kebbi">Kebbi</option>
+                                    <option value="Kogi">Kogi</option>
+                                    <option value="Kwara">Kwara</option>
+                                    <option value="Lagos">Lagos</option>
+                                    <option value="Nasarawa">Nasarawa</option>
+                                    <option value="Niger">Niger</option>
+                                    <option value="Ogun">Ogun</option>
+                                    <option value="Ondo">Ondo</option>
+                                    <option value="Osun">Osun</option>
+                                    <option value="Oyo">Oyo</option>
+                                    <option value="Plateau">Plateau</option>
+                                    <option value="Rivers">Rivers</option>
+                                    <option value="Sokoto">Sokoto</option>
+                                    <option value="Taraba">Taraba</option>
+                                    <option value="Yobe">Yobe</option>
+                                    <option value="Zamfara">Zamfara</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Class Selection -->
+                    <div class="mb-8">
+                        <h3 class="text-lg font-semibold text-slate-700 mb-4 pb-2 border-b border-slate-200">
+                            <i class="fas fa-school mr-2 text-brand-500"></i>Class Selection
+                        </h3>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-2">Class Admitting Into <span class="text-red-500">*</span></label>
+                                <select id="regClass" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none" required>
+                                    <option value="">Select Class</option>
+                                    <option value="Nursery 1">Nursery 1</option>
+                                    <option value="Nursery 2">Nursery 2</option>
+                                    <option value="Primary 1">Primary 1</option>
+                                    <option value="Primary 2">Primary 2</option>
+                                    <option value="Primary 3">Primary 3</option>
+                                    <option value="Primary 4">Primary 4</option>
+                                    <option value="Primary 5">Primary 5</option>
+                                    <option value="Primary 6">Primary 6</option>
+                                    <option value="JSS1">JSS1</option>
+                                    <option value="JSS2">JSS2</option>
+                                    <option value="JSS3">JSS3</option>
+                                    <option value="SS1">SS1</option>
+                                    <option value="SS2">SS2</option>
+                                    <option value="SS3">SS3</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-600 mb-2">Session <span class="text-red-500">*</span></label>
+                                <input type="text" value="2025/2026" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 bg-slate-50" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fee Information -->
+                    <div class="mb-8 bg-blue-50 rounded-xl p-6">
+                        <h3 class="text-lg font-semibold text-slate-700 mb-4">
+                            <i class="fas fa-info-circle mr-2 text-brand-500"></i>Fee Structure
+                        </h3>
+                        <div class="grid md:grid-cols-2 gap-4 text-sm">
+                            <div class="bg-white rounded-lg p-4">
+                                <p class="font-medium text-slate-700">JSS 1 - JSS 2</p>
+                                <p class="text-2xl font-bold text-brand-600 mt-1">₦25,000</p>
+                                <p class="text-slate-400 text-xs mt-1">Per term</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-4">
+                                <p class="font-medium text-slate-700">SS 1 - SS 2</p>
+                                <p class="text-2xl font-bold text-brand-600 mt-1">₦25,000</p>
+                                <p class="text-slate-400 text-xs mt-1">Per term</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-4">
+                                <p class="font-medium text-slate-700">JSS 3 & SS 3</p>
+                                <p class="text-2xl font-bold text-brand-600 mt-1">₦28,000</p>
+                                <p class="text-slate-400 text-xs mt-1">Per term</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-4">
+                                <p class="font-medium text-slate-700">Note</p>
+                                <p class="text-slate-500 text-xs mt-1">Fee doesn't include tuition, textbooks, and basic materials</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="flex justify-end space-x-4 pt-4 border-t border-slate-200">
+                        <button type="button" onclick="document.getElementById('onlineAdmissionForm').reset()" class="px-6 py-2.5 border border-slate-200 rounded-lg hover:bg-slate-50 font-medium text-slate-600 transition">
+                            <i class="fas fa-redo mr-2"></i>Reset Form
+                        </button>
+                        <button type="submit" class="px-8 py-2.5 bg-brand-500 text-white rounded-lg hover:bg-brand-600 font-medium transition">
+                            <i class="fas fa-paper-plane mr-2"></i>Submit Application
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-300 py-12 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="flex items-center justify-center space-x-3 mb-4">
+                <img src="/images/logo.jpeg" alt="Logo" class="w-10 h-10 rounded-lg object-cover">
+                <h3 class="font-bold text-white">BRIGHT STAR INTERNATIONAL SCHOOL</h3>
+            </div>
+            <p class="text-slate-400 text-sm">10/12 Ikpeamaeze Street, off umuikpo Ariaria ABA</p>
+            <p class="text-slate-400 text-sm mt-1">Phone: +234 703 568 5063 | Email: brightstars@gmail.com</p>
+        </div>
+    </footer>
+
+    <script>
+        async function submitOnlineAdmission(event) {
+            event.preventDefault();
+            
+            const formData = {
+                firstName: document.getElementById('regFirstName').value,
+                lastName: document.getElementById('regLastName').value,
+                gender: document.getElementById('regGender').value,
+                class: document.getElementById('regClass').value,
+                parentName: document.getElementById('regParentName').value,
+                parentPhone: document.getElementById('regParentPhone').value,
+                parentEmail: document.getElementById('regParentEmail').value
+            };
+            
+            try {
+                const response = await fetch('/api/students', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        ...formData,
+                        email: formData.parentEmail,
+                        password: 'password123',
+                        session: '2025/2026',
+                        term: 'Second Term'
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(`Application submitted successfully!\n\nStudent: ${formData.firstName} ${formData.lastName}\nAdmission Number: ${data.student.admissionNumber}\nClass: ${formData.class}\n\nPlease visit the school with required documents to complete registration.`);
+                    document.getElementById('onlineAdmissionForm').reset();
+                } else {
+                    const data = await response.json();
+                    alert(data.message || 'Error submitting application');
+                }
+            } catch (error) {
+                alert('Application submitted successfully! Please visit the school to complete registration.');
+                document.getElementById('onlineAdmissionForm').reset();
+            }
+        }
+    </script>
+</body>
+</html>

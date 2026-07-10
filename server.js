@@ -55,11 +55,11 @@ const demoAnnouncements = [
 
 // Demo Students
 const demoStudents = [
-    { _id: '1', admissionNumber: 'BSS/2026/001', class: 'SS1', classArm: 'A', session: '2025/2026', term: 'Second Term', gender: 'Male', parentName: 'Mr. Okonkwo', parentPhone: '+234 801 234 5678', user: { firstName: 'Chukwuemeka', lastName: 'Okonkwo', email: 'chukwuemeka@student.com' } },
-    { _id: '2', admissionNumber: 'BSS/2026/002', class: 'SS1', classArm: 'A', session: '2025/2026', term: 'Second Term', gender: 'Female', parentName: 'Mr. Ibrahim', parentPhone: '+234 802 345 6789', user: { firstName: 'Amina', lastName: 'Ibrahim', email: 'amina@student.com' } },
-    { _id: '3', admissionNumber: 'BSS/2026/003', class: 'SS1', classArm: 'B', session: '2025/2026', term: 'Second Term', gender: 'Male', parentName: 'Mrs. Adeyemi', parentPhone: '+234 803 456 7890', user: { firstName: 'David', lastName: 'Adeyemi', email: 'david@student.com' } },
-    { _id: '4', admissionNumber: 'BSS/2026/004', class: 'SS2', classArm: 'A', session: '2025/2026', term: 'Second Term', gender: 'Female', parentName: 'Alhaji Mohammed', parentPhone: '+234 804 567 8901', user: { firstName: 'Fatima', lastName: 'Mohammed', email: 'fatima@student.com' } },
-    { _id: '5', admissionNumber: 'BSS/2026/005', class: 'SS2', classArm: 'A', session: '2025/2026', term: 'Second Term', gender: 'Male', parentName: 'Dr. Okoro', parentPhone: '+234 805 678 9012', user: { firstName: 'Emmanuel', lastName: 'Okoro', email: 'emmanuel@student.com' } }
+    { _id: '1', admissionNumber: 'BSS/2026/001', class: 'SS1', session: '2025/2026', term: 'Second Term', gender: 'Male', parentName: 'Mr. Okonkwo', parentPhone: '+234 801 234 5678', user: { firstName: 'Chukwuemeka', lastName: 'Okonkwo', email: 'chukwuemeka@student.com' } },
+    { _id: '2', admissionNumber: 'BSS/2026/002', class: 'SS1', session: '2025/2026', term: 'Second Term', gender: 'Female', parentName: 'Mr. Ibrahim', parentPhone: '+234 802 345 6789', user: { firstName: 'Amina', lastName: 'Ibrahim', email: 'amina@student.com' } },
+    { _id: '3', admissionNumber: 'BSS/2026/003', class: 'JSS1', session: '2025/2026', term: 'Second Term', gender: 'Male', parentName: 'Mrs. Adeyemi', parentPhone: '+234 803 456 7890', user: { firstName: 'David', lastName: 'Adeyemi', email: 'david@student.com' } },
+    { _id: '4', admissionNumber: 'BSS/2026/004', class: 'SS2', session: '2025/2026', term: 'Second Term', gender: 'Female', parentName: 'Alhaji Mohammed', parentPhone: '+234 804 567 8901', user: { firstName: 'Fatima', lastName: 'Mohammed', email: 'fatima@student.com' } },
+    { _id: '5', admissionNumber: 'BSS/2026/005', class: 'JSS2', session: '2025/2026', term: 'Second Term', gender: 'Male', parentName: 'Dr. Okoro', parentPhone: '+234 805 678 9012', user: { firstName: 'Emmanuel', lastName: 'Okoro', email: 'emmanuel@student.com' } }
 ];
 
 // Demo Teachers
@@ -71,8 +71,8 @@ const demoTeachers = [
 
 // Demo Fees
 const demoFees = [
-    { _id: '1', admissionNumber: 'BSS/2026/001', session: '2025/2026', term: 'Second Term', totalFee: 350000, amountPaid: 250000, balance: 100000, status: 'partial', paymentHistory: [{ amount: 150000, date: new Date('2025-09-15'), method: 'bank_transfer', reference: 'TRF/2025/001' }, { amount: 100000, date: new Date('2026-01-10'), method: 'cash', reference: 'CSH/2026/001' }] },
-    { _id: '2', admissionNumber: 'BSS/2026/002', session: '2025/2026', term: 'Second Term', totalFee: 350000, amountPaid: 350000, balance: 0, status: 'paid', paymentHistory: [{ amount: 200000, date: new Date('2025-09-10'), method: 'bank_transfer', reference: 'TRF/2025/002' }, { amount: 150000, date: new Date('2025-12-05'), method: 'online', reference: 'ONL/2025/001' }] }
+    { _id: '1', admissionNumber: 'BSS/2026/001', session: '2025/2026', term: 'Second Term', totalFee: 25000, amountPaid: 15000, balance: 10000, status: 'partial', paymentHistory: [{ amount: 15000, date: new Date('2025-09-15'), method: 'bank_transfer', reference: 'TRF/2025/001' }] },
+    { _id: '2', admissionNumber: 'BSS/2026/002', session: '2025/2026', term: 'Second Term', totalFee: 25000, amountPaid: 25000, balance: 0, status: 'paid', paymentHistory: [{ amount: 25000, date: new Date('2025-09-10'), method: 'bank_transfer', reference: 'TRF/2025/002' }] }
 ];
 
 // Demo Attendance
@@ -543,6 +543,7 @@ app.get('/admin-dashboard', (req, res) => res.sendFile(path.join(__dirname, 'vie
 app.get('/teacher-dashboard', (req, res) => res.sendFile(path.join(__dirname, 'views', 'teacher-dashboard.html')));
 app.get('/results', (req, res) => res.sendFile(path.join(__dirname, 'views', 'results.html')));
 app.get('/fees', (req, res) => res.sendFile(path.join(__dirname, 'views', 'fees.html')));
+app.get('/admission-form', (req, res) => res.sendFile(path.join(__dirname, 'views', 'admission-form.html')));
 
 // Start server
 app.listen(PORT, () => {

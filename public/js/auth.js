@@ -27,9 +27,9 @@ function selectRole(role) {
     ['student', 'teacher', 'admin'].forEach(r => {
         const btn = document.getElementById(r + 'Btn');
         if (r === role) {
-            btn.className = 'flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition bg-primary text-white';
+            btn.className = 'flex-1 py-2.5 px-4 rounded-lg text-sm font-semibold transition bg-white text-brand-600 shadow-sm';
         } else {
-            btn.className = 'flex-1 py-2 px-4 rounded-lg text-sm font-semibold transition text-gray-600';
+            btn.className = 'flex-1 py-2.5 px-4 rounded-lg text-sm font-semibold transition text-slate-500 hover:text-slate-700';
         }
     });
     
