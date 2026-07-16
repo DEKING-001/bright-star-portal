@@ -31,7 +31,7 @@
 
         .gallery-item {
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(30px) scale(0.95);
             animation: fadeUp 0.6s ease forwards;
         }
         .gallery-item:nth-child(1) { animation-delay: 0.1s; }
@@ -45,23 +45,31 @@
         .gallery-item:nth-child(9) { animation-delay: 0.9s; }
 
         @keyframes fadeUp {
-            to { opacity: 1; transform: translateY(0); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         .gallery-item img {
             transition: transform 0.5s ease, filter 0.5s ease;
         }
         .gallery-item:hover img {
-            transform: scale(1.1);
-            filter: brightness(0.7);
+            transform: scale(1.08);
+            filter: brightness(0.85);
         }
         .gallery-item:hover .overlay { opacity: 1; }
         .gallery-item {
-            transition: box-shadow 0.3s ease, transform 0.3s ease;
+            transition: box-shadow 0.4s ease, transform 0.4s ease, border-color 0.4s ease;
         }
         .gallery-item:hover {
-            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
-            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            transform: translateY(-8px) scale(1.02);
+            border-color: #3b82f6;
+        }
+        .gallery-item .caption {
+            transition: color 0.3s ease, background-color 0.3s ease;
+        }
+        .gallery-item:hover .caption {
+            color: #3b82f6;
+            background-color: #f0f7ff;
         }
 
         .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #1a2332 100%); }
@@ -129,119 +137,89 @@
             <div id="galleryGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                 <!-- Campus -->
                 <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="campus">
-                    <div class="aspect-square">
+                    <div class="aspect-square overflow-hidden">
                         <img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&h=600&fit=crop" alt="School Building" class="w-full h-full object-cover">
                     </div>
-                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
-                        <div class="text-center text-white">
-                            <i class="fas fa-search-plus text-3xl mb-2"></i>
-                            <p class="font-semibold">School Building</p>
-                        </div>
+                    <div class="caption px-3 py-3 text-center">
+                        <p class="font-semibold text-slate-700 text-sm">School Building</p>
                     </div>
                 </div>
 
                 <!-- Classrooms -->
                 <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="classrooms">
-                    <div class="aspect-square">
+                    <div class="aspect-square overflow-hidden">
                         <img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&h=600&fit=crop" alt="Classroom" class="w-full h-full object-cover">
                     </div>
-                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
-                        <div class="text-center text-white">
-                            <i class="fas fa-search-plus text-3xl mb-2"></i>
-                            <p class="font-semibold">Classroom</p>
-                        </div>
+                    <div class="caption px-3 py-3 text-center">
+                        <p class="font-semibold text-slate-700 text-sm">Classroom</p>
                     </div>
                 </div>
                 <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="classrooms">
-                    <div class="aspect-square">
+                    <div class="aspect-square overflow-hidden">
                         <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=600&fit=crop" alt="Science Laboratory" class="w-full h-full object-cover">
                     </div>
-                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
-                        <div class="text-center text-white">
-                            <i class="fas fa-search-plus text-3xl mb-2"></i>
-                            <p class="font-semibold">Science Laboratory</p>
-                        </div>
+                    <div class="caption px-3 py-3 text-center">
+                        <p class="font-semibold text-slate-700 text-sm">Science Laboratory</p>
                     </div>
                 </div>
                 <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="classrooms">
-                    <div class="aspect-square">
+                    <div class="aspect-square overflow-hidden">
                         <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&h=600&fit=crop" alt="Computer Lab" class="w-full h-full object-cover">
                     </div>
-                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
-                        <div class="text-center text-white">
-                            <i class="fas fa-search-plus text-3xl mb-2"></i>
-                            <p class="font-semibold">Computer Lab</p>
-                        </div>
+                    <div class="caption px-3 py-3 text-center">
+                        <p class="font-semibold text-slate-700 text-sm">Computer Lab</p>
                     </div>
                 </div>
                 <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="classrooms">
-                    <div class="aspect-square">
+                    <div class="aspect-square overflow-hidden">
                         <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=600&h=600&fit=crop" alt="Library" class="w-full h-full object-cover">
                     </div>
-                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
-                        <div class="text-center text-white">
-                            <i class="fas fa-search-plus text-3xl mb-2"></i>
-                            <p class="font-semibold">Library</p>
-                        </div>
+                    <div class="caption px-3 py-3 text-center">
+                        <p class="font-semibold text-slate-700 text-sm">Library</p>
                     </div>
                 </div>
 
                 <!-- Events -->
                 <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="events">
-                    <div class="aspect-square">
+                    <div class="aspect-square overflow-hidden">
                         <img src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=600&h=600&fit=crop" alt="Graduation Day" class="w-full h-full object-cover">
                     </div>
-                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
-                        <div class="text-center text-white">
-                            <i class="fas fa-search-plus text-3xl mb-2"></i>
-                            <p class="font-semibold">Graduation Day</p>
-                        </div>
+                    <div class="caption px-3 py-3 text-center">
+                        <p class="font-semibold text-slate-700 text-sm">Graduation Day</p>
                     </div>
                 </div>
                 <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="events">
-                    <div class="aspect-square">
+                    <div class="aspect-square overflow-hidden">
                         <img src="https://images.unsplash.com/photo-1504173010664-32509aeebb62?w=600&h=600&fit=crop" alt="Cultural Day" class="w-full h-full object-cover">
                     </div>
-                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
-                        <div class="text-center text-white">
-                            <i class="fas fa-search-plus text-3xl mb-2"></i>
-                            <p class="font-semibold">Cultural Day</p>
-                        </div>
+                    <div class="caption px-3 py-3 text-center">
+                        <p class="font-semibold text-slate-700 text-sm">Cultural Day</p>
                     </div>
                 </div>
                 <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="events">
-                    <div class="aspect-square">
+                    <div class="aspect-square overflow-hidden">
                         <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&h=600&fit=crop" alt="Prize Giving Day" class="w-full h-full object-cover">
                     </div>
-                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
-                        <div class="text-center text-white">
-                            <i class="fas fa-search-plus text-3xl mb-2"></i>
-                            <p class="font-semibold">Prize Giving Day</p>
-                        </div>
+                    <div class="caption px-3 py-3 text-center">
+                        <p class="font-semibold text-slate-700 text-sm">Prize Giving Day</p>
                     </div>
                 </div>
                 <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="events">
-                    <div class="aspect-square">
+                    <div class="aspect-square overflow-hidden">
                         <img src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=600&h=600&fit=crop" alt="Inter-House Competition" class="w-full h-full object-cover">
                     </div>
-                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
-                        <div class="text-center text-white">
-                            <i class="fas fa-search-plus text-3xl mb-2"></i>
-                            <p class="font-semibold">Inter-House Competition</p>
-                        </div>
+                    <div class="caption px-3 py-3 text-center">
+                        <p class="font-semibold text-slate-700 text-sm">Inter-House Competition</p>
                     </div>
                 </div>
 
                 <!-- Sports -->
                 <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="sports">
-                    <div class="aspect-square">
+                    <div class="aspect-square overflow-hidden">
                         <img src="https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=600&h=600&fit=crop" alt="Football" class="w-full h-full object-cover">
                     </div>
-                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
-                        <div class="text-center text-white">
-                            <i class="fas fa-search-plus text-3xl mb-2"></i>
-                            <p class="font-semibold">Football</p>
-                        </div>
+                    <div class="caption px-3 py-3 text-center">
+                        <p class="font-semibold text-slate-700 text-sm">Football</p>
                     </div>
                 </div>
             </div>
