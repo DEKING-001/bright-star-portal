@@ -30,7 +30,91 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
-        .hero-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
+
+        /* Hero Background Slideshow */
+        .hero-section {
+            position: relative;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        .hero-bg .slide {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            animation: slideShow 18s infinite;
+        }
+        .hero-bg .slide:nth-child(1) {
+            background-image: url('https://images.unsplash.com/photo-1523050854058-8df90110c476?w=1920&h=1080&fit=crop');
+            animation-delay: 0s;
+        }
+        .hero-bg .slide:nth-child(2) {
+            background-image: url('https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1920&h=1080&fit=crop');
+            animation-delay: 6s;
+        }
+        .hero-bg .slide:nth-child(3) {
+            background-image: url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1920&h=1080&fit=crop');
+            animation-delay: 12s;
+        }
+        @keyframes slideShow {
+            0%, 28% { opacity: 1; }
+            33%, 95% { opacity: 0; }
+            100% { opacity: 0; }
+        }
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(15,23,42,0.88) 0%, rgba(30,41,59,0.80) 50%, rgba(15,23,42,0.92) 100%);
+            z-index: 1;
+        }
+
+        /* Text Animations */
+        .hero-content { position: relative; z-index: 2; }
+        .fade-in { opacity: 0; transform: translateY(30px); animation: fadeInUp 0.8s ease forwards; }
+        .fade-in-delay-1 { animation-delay: 0.2s; }
+        .fade-in-delay-2 { animation-delay: 0.4s; }
+        .fade-in-delay-3 { animation-delay: 0.6s; }
+        .fade-in-delay-4 { animation-delay: 0.8s; }
+        .fade-in-delay-5 { animation-delay: 1.0s; }
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Floating Stats */
+        .float-card {
+            animation: float 3s ease-in-out infinite;
+        }
+        .float-card:nth-child(2) {
+            animation-delay: 1.5s;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(3deg); }
+            50% { transform: translateY(-12px) rotate(3deg); }
+        }
+        .float-card-alt {
+            animation: floatAlt 3s ease-in-out infinite;
+        }
+        @keyframes floatAlt {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        /* Typing effect */
+        .typewriter {
+            display: inline-block;
+            border-right: 3px solid #60a5fa;
+            animation: blink 0.8s step-end infinite;
+        }
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+
         .card-hover { transition: all 0.3s ease; }
         .card-hover:hover { transform: translateY(-8px); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); }
         .gradient-text { background: linear-gradient(135deg, #3b82f6, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -81,56 +165,75 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero-gradient min-h-screen flex items-center relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10">
-            <div class="absolute top-20 left-10 w-72 h-72 bg-brand-500 rounded-full blur-3xl"></div>
-            <div class="absolute bottom-20 right-10 w-96 h-96 bg-brand-600 rounded-full blur-3xl"></div>
+    <section class="hero-section flex items-center">
+        <div class="hero-bg">
+            <div class="slide"></div>
+            <div class="slide"></div>
+            <div class="slide"></div>
         </div>
-        <div class="max-w-7xl mx-auto px-4 py-20 relative z-10">
+        <div class="hero-overlay"></div>
+        <div class="max-w-7xl mx-auto px-4 py-20 hero-content">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
                 <div>
-                    <span class="inline-block bg-brand-500/20 text-brand-400 text-sm font-semibold px-4 py-2 rounded-full mb-6 border border-brand-500/30">
-                        Welcome to Excellence
+                    <span class="fade-in inline-block bg-brand-500/20 text-brand-400 text-sm font-semibold px-4 py-2 rounded-full mb-6 border border-brand-500/30">
+                        <i class="fas fa-star mr-1"></i> Welcome to Excellence
                     </span>
-                    <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+                    <h1 class="fade-in fade-in-delay-1 text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
                         Nurturing Future <span class="gradient-text">Leaders</span> Today
                     </h1>
-                    <p class="text-xl text-slate-300 mb-8 leading-relaxed">
+                    <p class="fade-in fade-in-delay-2 text-xl text-slate-300 mb-4 leading-relaxed">
                         Bright Star International School provides world-class education that empowers students to excel academically, morally, and socially.
                     </p>
-                    <div class="flex flex-wrap gap-4">
+                    <p class="fade-in fade-in-delay-2 text-slate-400 mb-8 leading-relaxed">
+                        From Crèche to Senior Secondary, we offer a comprehensive British/Nigerian curriculum designed to unlock every child's potential. Our dedicated teachers, modern facilities, and nurturing environment ensure your child receives the best start in life.
+                    </p>
+                    <div class="fade-in fade-in-delay-3 flex flex-wrap gap-4 mb-10">
                         <a href="/admissions" class="btn-brand text-white px-8 py-4 rounded-lg font-semibold text-lg hover:shadow-xl transition inline-flex items-center">
                             Apply Now <i class="fas fa-arrow-right ml-2"></i>
                         </a>
-                        <a href="/about" class="border-2 border-slate-500 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-slate-900 transition">
+                        <a href="/about" class="border-2 border-slate-400 text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-white hover:text-slate-900 transition">
                             Learn More
                         </a>
+                    </div>
+                    <div class="fade-in fade-in-delay-4 flex items-center gap-8 text-slate-300">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-check-circle text-emerald-400"></i>
+                            <span class="text-sm">WAEC/NECO Accredited</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-check-circle text-emerald-400"></i>
+                            <span class="text-sm">Qualified Teachers</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-check-circle text-emerald-400"></i>
+                            <span class="text-sm">Safe Campus</span>
+                        </div>
                     </div>
                 </div>
                 <div class="hidden lg:block">
                     <div class="relative">
-                        <div class="w-full h-96 bg-gradient-to-br from-brand-500 to-brand-700 rounded-2xl flex items-center justify-center shadow-2xl transform rotate-3">
-                            <i class="fas fa-graduation-cap text-white text-8xl"></i>
+                        <div class="float-card w-full h-96 rounded-2xl overflow-hidden shadow-2xl">
+                            <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&h=600&fit=crop" alt="Students Learning" class="w-full h-full object-cover">
                         </div>
-                        <div class="absolute -bottom-6 -left-6 bg-white rounded-xl p-6 shadow-xl">
+                        <div class="float-card-alt absolute -bottom-6 -left-6 bg-white rounded-xl p-5 shadow-xl">
                             <div class="flex items-center space-x-4">
-                                <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-trophy text-brand-600 text-xl"></i>
+                                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-trophy text-brand-600"></i>
                                 </div>
                                 <div>
                                     <p class="text-2xl font-bold text-slate-800">95%</p>
-                                    <p class="text-slate-500 text-sm">Pass Rate</p>
+                                    <p class="text-slate-500 text-xs">Pass Rate</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="absolute -top-6 -right-6 bg-white rounded-xl p-6 shadow-xl">
+                        <div class="float-card absolute -top-6 -right-6 bg-white rounded-xl p-5 shadow-xl">
                             <div class="flex items-center space-x-4">
-                                <div class="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-users text-emerald-600 text-xl"></i>
+                                <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-users text-emerald-600"></i>
                                 </div>
                                 <div>
                                     <p class="text-2xl font-bold text-slate-800">500+</p>
-                                    <p class="text-slate-500 text-sm">Students</p>
+                                    <p class="text-slate-500 text-xs">Students</p>
                                 </div>
                             </div>
                         </div>
@@ -139,7 +242,7 @@
             </div>
         </div>
         <!-- Scroll indicator -->
-        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 animate-bounce">
             <a href="#schools" class="text-white/50 hover:text-white transition">
                 <i class="fas fa-chevron-down text-2xl"></i>
             </a>
