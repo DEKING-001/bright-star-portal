@@ -82,7 +82,6 @@
                 <button onclick="filterGallery('all')" class="gallery-filter active px-5 py-2 rounded-full bg-brand text-white font-medium transition text-sm">All</button>
                 <button onclick="filterGallery('campus')" class="gallery-filter px-5 py-2 rounded-full bg-slate-100 text-slate-600 font-medium hover:bg-brand hover:text-white transition text-sm">Campus</button>
                 <button onclick="filterGallery('classrooms')" class="gallery-filter px-5 py-2 rounded-full bg-slate-100 text-slate-600 font-medium hover:bg-brand hover:text-white transition text-sm">Classrooms</button>
-                <button onclick="filterGallery('activities')" class="gallery-filter px-5 py-2 rounded-full bg-slate-100 text-slate-600 font-medium hover:bg-brand hover:text-white transition text-sm">Activities</button>
                 <button onclick="filterGallery('events')" class="gallery-filter px-5 py-2 rounded-full bg-slate-100 text-slate-600 font-medium hover:bg-brand hover:text-white transition text-sm">Events</button>
                 <button onclick="filterGallery('sports')" class="gallery-filter px-5 py-2 rounded-full bg-slate-100 text-slate-600 font-medium hover:bg-brand hover:text-white transition text-sm">Sports</button>
             </div>
@@ -95,8 +94,8 @@
             <div id="galleryGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                 <!-- Campus -->
                 <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="campus">
-                    <div class="aspect-square bg-gradient-to-br from-brand to-indigo-500 flex items-center justify-center">
-                        <i class="fas fa-school text-white text-5xl"></i>
+                    <div class="aspect-square">
+                        <img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&h=600&fit=crop" alt="School Building" class="w-full h-full object-cover">
                     </div>
                     <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
@@ -105,44 +104,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="campus">
-                    <div class="aspect-square bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
-                        <i class="fas fa-tree text-white text-5xl"></i>
-                    </div>
-                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
-                        <div class="text-center text-white">
-                            <i class="fas fa-search-plus text-3xl mb-2"></i>
-                            <p class="font-semibold">School Garden</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="campus">
-                    <div class="aspect-square bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center">
-                        <i class="fas fa-swimming-pool text-white text-5xl"></i>
-                    </div>
-                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
-                        <div class="text-center text-white">
-                            <i class="fas fa-search-plus text-3xl mb-2"></i>
-                            <p class="font-semibold">Swimming Pool</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="campus">
-                    <div class="aspect-square bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center">
-                        <i class="fas fa-futbol text-white text-5xl"></i>
-                    </div>
-                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
-                        <div class="text-center text-white">
-                            <i class="fas fa-search-plus text-3xl mb-2"></i>
-                            <p class="font-semibold">Sports Field</p>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Classrooms -->
                 <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="classrooms">
-                    <div class="aspect-square bg-gradient-to-br from-blue-500 to-brand flex items-center justify-center">
-                        <i class="fas fa-chalkboard text-white text-5xl"></i>
+                    <div class="aspect-square">
+                        <img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&h=600&fit=crop" alt="Classroom" class="w-full h-full object-cover">
                     </div>
                     <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
@@ -152,8 +118,8 @@
                     </div>
                 </div>
                 <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="classrooms">
-                    <div class="aspect-square bg-gradient-to-br from-teal-500 to-emerald-500 flex items-center justify-center">
-                        <i class="fas fa-flask text-white text-5xl"></i>
+                    <div class="aspect-square">
+                        <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=600&fit=crop" alt="Science Laboratory" class="w-full h-full object-cover">
                     </div>
                     <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
@@ -163,8 +129,8 @@
                     </div>
                 </div>
                 <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="classrooms">
-                    <div class="aspect-square bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center">
-                        <i class="fas fa-laptop text-white text-5xl"></i>
+                    <div class="aspect-square">
+                        <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&h=600&fit=crop" alt="Computer Lab" class="w-full h-full object-cover">
                     </div>
                     <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
@@ -174,8 +140,8 @@
                     </div>
                 </div>
                 <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="classrooms">
-                    <div class="aspect-square bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center">
-                        <i class="fas fa-book text-white text-5xl"></i>
+                    <div class="aspect-square">
+                        <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=600&h=600&fit=crop" alt="Library" class="w-full h-full object-cover">
                     </div>
                     <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
@@ -185,56 +151,10 @@
                     </div>
                 </div>
 
-                <!-- Activities -->
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="activities">
-                    <div class="aspect-square bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center">
-                        <i class="fas fa-music text-white text-5xl"></i>
-                    </div>
-                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
-                        <div class="text-center text-white">
-                            <i class="fas fa-search-plus text-3xl mb-2"></i>
-                            <p class="font-semibold">Music Class</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="activities">
-                    <div class="aspect-square bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center">
-                        <i class="fas fa-palette text-white text-5xl"></i>
-                    </div>
-                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
-                        <div class="text-center text-white">
-                            <i class="fas fa-search-plus text-3xl mb-2"></i>
-                            <p class="font-semibold">Art Class</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="activities">
-                    <div class="aspect-square bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center">
-                        <i class="fas fa-robot text-white text-5xl"></i>
-                    </div>
-                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
-                        <div class="text-center text-white">
-                            <i class="fas fa-search-plus text-3xl mb-2"></i>
-                            <p class="font-semibold">Robotics Club</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="activities">
-                    <div class="aspect-square bg-gradient-to-br from-emerald-500 to-green-500 flex items-center justify-center">
-                        <i class="fas fa-seedling text-white text-5xl"></i>
-                    </div>
-                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
-                        <div class="text-center text-white">
-                            <i class="fas fa-search-plus text-3xl mb-2"></i>
-                            <p class="font-semibold">Agricultural Science</p>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Events -->
                 <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="events">
-                    <div class="aspect-square bg-gradient-to-br from-amber-500 to-yellow-500 flex items-center justify-center">
-                        <i class="fas fa-graduation-cap text-white text-5xl"></i>
+                    <div class="aspect-square">
+                        <img src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=600&h=600&fit=crop" alt="Graduation Day" class="w-full h-full object-cover">
                     </div>
                     <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
@@ -244,8 +164,8 @@
                     </div>
                 </div>
                 <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="events">
-                    <div class="aspect-square bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center">
-                        <i class="fas fa-microphone text-white text-5xl"></i>
+                    <div class="aspect-square">
+                        <img src="https://images.unsplash.com/photo-1504173010664-32509aeebb62?w=600&h=600&fit=crop" alt="Cultural Day" class="w-full h-full object-cover">
                     </div>
                     <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
@@ -255,8 +175,8 @@
                     </div>
                 </div>
                 <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="events">
-                    <div class="aspect-square bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center">
-                        <i class="fas fa-trophy text-white text-5xl"></i>
+                    <div class="aspect-square">
+                        <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&h=600&fit=crop" alt="Prize Giving Day" class="w-full h-full object-cover">
                     </div>
                     <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
@@ -266,8 +186,8 @@
                     </div>
                 </div>
                 <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="events">
-                    <div class="aspect-square bg-gradient-to-br from-fuchsia-500 to-pink-500 flex items-center justify-center">
-                        <i class="fas fa-hands text-white text-5xl"></i>
+                    <div class="aspect-square">
+                        <img src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=600&h=600&fit=crop" alt="Inter-House Competition" class="w-full h-full object-cover">
                     </div>
                     <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
@@ -279,41 +199,8 @@
 
                 <!-- Sports -->
                 <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="sports">
-                    <div class="aspect-square bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
-                        <i class="fas fa-running text-white text-5xl"></i>
-                    </div>
-                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
-                        <div class="text-center text-white">
-                            <i class="fas fa-search-plus text-3xl mb-2"></i>
-                            <p class="font-semibold">Athletics</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="sports">
-                    <div class="aspect-square bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center">
-                        <i class="fas fa-basketball-ball text-white text-5xl"></i>
-                    </div>
-                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
-                        <div class="text-center text-white">
-                            <i class="fas fa-search-plus text-3xl mb-2"></i>
-                            <p class="font-semibold">Basketball</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="sports">
-                    <div class="aspect-square bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center">
-                        <i class="fas fa-table-tennis text-white text-5xl"></i>
-                    </div>
-                    <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
-                        <div class="text-center text-white">
-                            <i class="fas fa-search-plus text-3xl mb-2"></i>
-                            <p class="font-semibold">Table Tennis</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="gallery-item relative rounded-xl overflow-hidden cursor-pointer bg-white border border-slate-200 shadow-sm" data-category="sports">
-                    <div class="aspect-square bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center">
-                        <i class="fas fa-futbol text-white text-5xl"></i>
+                    <div class="aspect-square">
+                        <img src="https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=600&h=600&fit=crop" alt="Football" class="w-full h-full object-cover">
                     </div>
                     <div class="overlay absolute inset-0 bg-slate-900/70 opacity-0 transition-opacity flex items-center justify-center">
                         <div class="text-center text-white">
