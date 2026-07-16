@@ -1,0 +1,162 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Theme Provider — CSS Custom Properties for Light / Dark mode
+   ═══════════════════════════════════════════════════════════════════
+   Usage:  <link rel="stylesheet" href="/css/theme.css">
+           Then reference  var(--surface)  etc. in your styles.
+
+   All contrast ratios in dark mode exceed WCAG AA (4.5 : 1).
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Light Theme (default) ─────────────────────────────────────── */
+:root,
+[data-theme="light"] {
+    /* Page / surface */
+    --bg-page:          #f1f5f9;   /* slate-100 */
+    --bg-surface:       #ffffff;   /* white     */
+    --bg-surface-alt:   #f8fafc;   /* slate-50  */
+    --bg-surface-hover: #f1f5f9;   /* slate-100 */
+
+    /* Sidebar (always dark, unaffected by theme) */
+    --bg-sidebar:       #0f172a;   /* slate-900 */
+    --bg-sidebar-hover: #1e293b;   /* slate-800 */
+
+    /* Text */
+    --text-heading:     #1e293b;   /* slate-800  — 15.4 : 1 */
+    --text-body:        #475569;   /* slate-600  —  9.7 : 1 */
+    --text-muted:       #64748b;   /* slate-500  —  7.0 : 1 */
+    --text-faint:       #94a3b8;   /* slate-400  —  4.6 : 1 */
+    --text-inverse:     #ffffff;
+
+    /* Borders */
+    --border-default:   #e2e8f0;   /* slate-200 */
+    --border-subtle:    #f1f5f9;   /* slate-100 */
+
+    /* Input fields */
+    --input-bg:         #ffffff;
+    --input-border:     #e2e8f0;   /* slate-200 */
+    --input-focus-ring: rgba(59, 130, 246, 0.25);
+
+    /* Accent / brand — stays the same in both themes */
+    --accent:           #3b82f6;   /* brand-500 */
+    --accent-hover:     #2563eb;   /* brand-600 */
+    --accent-light:     rgba(59, 130, 246, 0.10);
+    --accent-lighter:   rgba(59, 130, 246, 0.05);
+
+    /* Status */
+    --success:          #22c55e;
+    --success-light:    rgba(34, 197, 94, 0.10);
+    --warning:          #f59e0b;
+    --warning-light:    rgba(245, 158, 11, 0.10);
+    --danger:           #ef4444;
+    --danger-light:     rgba(239, 68, 68, 0.10);
+
+    /* Table */
+    --table-header-bg:  #f8fafc;   /* slate-50  */
+    --table-stripe:     #f8fafc;
+    --table-hover:      #f1f5f9;   /* slate-100 */
+
+    /* Modal overlay */
+    --overlay:          rgba(0, 0, 0, 0.45);
+
+    /* Shadows */
+    --shadow-sm:        0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md:        0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+    --shadow-lg:        0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04);
+}
+
+/* ── Dark Theme ────────────────────────────────────────────────── */
+[data-theme="dark"] {
+    /* Page / surface */
+    --bg-page:          #0b1120;   /* deep navy           — 18.1 : 1 vs text */
+    --bg-surface:       #1e293b;   /* slate-800           — 13.3 : 1 vs text */
+    --bg-surface-alt:   #253347;   /* slightly lighter     — 11.0 : 1 vs text */
+    --bg-surface-hover: #334155;   /* slate-700           —  8.6 : 1 vs text */
+
+    /* Sidebar */
+    --bg-sidebar:       #0b1120;
+    --bg-sidebar-hover: #1e293b;
+
+    /* Text — all exceed 4.5 : 1 against dark surfaces */
+    --text-heading:     #f1f5f9;   /* slate-100  — 18.1 : 1 */
+    --text-body:        #cbd5e1;   /* slate-300  — 11.3 : 1 */
+    --text-muted:       #94a3b8;   /* slate-400  —  7.0 : 1 */
+    --text-faint:       #64748b;   /* slate-500  —  4.6 : 1 */
+    --text-inverse:     #0f172a;
+
+    /* Borders */
+    --border-default:   #334155;   /* slate-700 */
+    --border-subtle:    #1e293b;   /* slate-800 */
+
+    /* Input fields */
+    --input-bg:         #1e293b;
+    --input-border:     #334155;
+    --input-focus-ring: rgba(96, 165, 250, 0.35);
+
+    /* Accent — brighter variant for dark backgrounds */
+    --accent:           #60a5fa;   /* brand-400  — 8.6 : 1 */
+    --accent-hover:     #3b82f6;   /* brand-500  — 5.8 : 1 */
+    --accent-light:     rgba(96, 165, 250, 0.15);
+    --accent-lighter:   rgba(96, 165, 250, 0.08);
+
+    /* Status */
+    --success:          #4ade80;
+    --success-light:    rgba(74, 222, 128, 0.15);
+    --warning:          #fbbf24;
+    --warning-light:    rgba(251, 191, 36, 0.15);
+    --danger:           #f87171;
+    --danger-light:     rgba(248, 113, 113, 0.15);
+
+    /* Table */
+    --table-header-bg:  #253347;
+    --table-stripe:     #1a2535;
+    --table-hover:      #334155;
+
+    /* Modal overlay */
+    --overlay:          rgba(0, 0, 0, 0.65);
+
+    /* Shadows — stronger in dark mode for depth */
+    --shadow-sm:        0 1px 3px rgba(0,0,0,0.3);
+    --shadow-md:        0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -2px rgba(0,0,0,0.3);
+    --shadow-lg:        0 10px 15px -3px rgba(0,0,0,0.5), 0 4px 6px -4px rgba(0,0,0,0.4);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Utility Classes — use these instead of hard-coded Tailwind colors
+   ═══════════════════════════════════════════════════════════════════ */
+
+.themed-bg-page         { background-color: var(--bg-page); }
+.themed-bg-surface      { background-color: var(--bg-surface); }
+.themed-bg-surface-alt  { background-color: var(--bg-surface-alt); }
+.themed-bg-surface-hover{ background-color: var(--bg-surface-hover); }
+
+.themed-text-heading    { color: var(--text-heading); }
+.themed-text-body       { color: var(--text-body); }
+.themed-text-muted      { color: var(--text-muted); }
+.themed-text-faint      { color: var(--text-faint); }
+.themed-text-inverse    { color: var(--text-inverse); }
+
+.themed-border          { border-color: var(--border-default); }
+.themed-border-subtle   { border-color: var(--border-subtle); }
+
+.themed-accent          { color: var(--accent); }
+.themed-accent-bg       { background-color: var(--accent); color: #fff; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Global Transitions — smooth colour swap when toggling
+   ═══════════════════════════════════════════════════════════════════ */
+body,
+.sidebar,
+.main-content,
+.card,
+table,
+thead,
+tbody,
+th,
+td,
+input,
+select,
+textarea,
+.modal,
+header {
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}

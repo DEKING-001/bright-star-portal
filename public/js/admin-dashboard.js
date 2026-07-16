@@ -2,24 +2,88 @@
 
 let allStudents = [];
 let allTeachers = [];
+let currentBranch = localStorage.getItem('admin_branch') || 'secondary';
 
-document.addEventListener('DOMContentLoaded', function() {
-    const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    
-    if (!token || !user.role || user.role !== 'admin') {
-        window.location.href = '/login?role=admin';
-        return;
+// ── Branch Configuration ──────────────────────────────────────────────
+const BRANCH_CONFIG = {
+    secondary: {
+        label: 'BRIGHT STAR SECONDARY',
+        classes: ['JSS1', 'JSS2', 'JSS3', 'SS1', 'SS2', 'SS3'],
+        admissionPrefix: 'BSS',
+        departments: ['Science', 'Languages', 'Commercial', 'Arts']
+    },
+    nursery: {
+        label: 'BRIGHT STAR NURSERY AND PRIMARY',
+        classes: ['Nursery 1', 'Nursery 2', 'Nursery 3', 'Primary 1', 'Primary 2', 'Primary 3', 'Primary 4', 'Primary 5', 'Primary 6'],
+        admissionPrefix: 'BNP',
+        departments: ['Early Years', 'Primary', 'Creche']
     }
+};
+
+function getBranchConfig() {
+    return BRANCH_CONFIG[currentBranch] || BRANCH_CONFIG.secondary;
+}
+
+// Populate all class <select> elements based on current branch
+function populateClassSelects() {
+    const config = getBranchConfig();
+    const classSelectIds = [
+        'studentClass', 'editStudentClass', 'ttClass', 'assignmentClass', 'admClass'
+    ];
+    classSelectIds.forEach(id => {
+        const sel = document.getElementById(id);
+        if (!sel) return;
+        const currentVal = sel.value;
+        // Keep the "Select Class" placeholder if it had one
+        const hasPlaceholder = sel.querySelector('option[value=""]');
+        const placeholderOpt = hasPlaceholder ? '<option value="">Select Class</option>' : '';
+        sel.innerHTML = placeholderOpt + config.classes.map(c => `<option value="${c}">${c}</option>`).join('');
+        // Restore previous selection if it still exists
+        if (config.classes.includes(currentVal)) sel.value = currentVal;
+    });
+
+    // Update branch label in header
+    const branchLabel = document.getElementById('branchLabel');
+    if (branchLabel) branchLabel.textContent = config.label;
+
+    // Update admission number placeholder in add student form
+    const admInput = document.getElementById('studentAdmissionNo');
+    if (admInput) admInput.placeholder = `e.g., ${config.admissionPrefix}/${new Date().getFullYear()}/001`;
+}
+
+document.addEventListener('DOMContentLoaded', async function() {
+    const auth = await requireAuth('admin');
+    if (!auth.ok) return;
     
-    document.getElementById('adminName').textContent = `${user.firstName} ${user.lastName}`;
+    document.getElementById('adminName').textContent = `${auth.user.firstName} ${auth.user.lastName}`;
+    // Restore branch selector from localStorage
+    document.getElementById('branchSwitcher').value = currentBranch;
+    populateClassSelects();
     loadDashboard();
 });
 
+function switchBranch(branch) {
+    currentBranch = branch;
+    localStorage.setItem('admin_branch', branch);
+    // Update all class selects to match new branch
+    populateClassSelects();
+    // Reload all visible data for the new branch
+    const activeSection = document.querySelector('.section:not(.hidden)');
+    if (activeSection) {
+        const sectionId = activeSection.id.replace('Section', '');
+        showSection(sectionId);
+    }
+    loadDashboard();
+}
+
+function getBranchParam() {
+    return `?branch=${currentBranch}`;
+}
+
 async function loadDashboard() {
     try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('/api/admin/dashboard', {
+        const token = getSession('admin')?.token;
+        const response = await fetch(`/api/admin/dashboard${getBranchParam()}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -39,7 +103,7 @@ function showSection(section) {
     document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
     if (event && event.currentTarget) event.currentTarget.classList.add('active');
     
-    // Update page title
+    // Update page title and branch label
     const titles = {
         'dashboard': 'Dashboard',
         'students': 'Students',
@@ -53,9 +117,11 @@ function showSection(section) {
         'report': 'Reports',
         'chat': 'Chat',
         'nextsession': 'Next Session',
-        'admission': 'Admission'
+        'admission': 'Admission',
+        'timetable': 'Timetable'
     };
     document.getElementById('pageTitle').textContent = titles[section] || 'Dashboard';
+    document.getElementById('branchLabel').textContent = getBranchConfig().label;
     
     if (section === 'students') loadStudents();
     if (section === 'teachers') loadTeachers();
@@ -65,20 +131,6 @@ function showSection(section) {
     if (section === 'timetable') loadTimetableForAdmin();
 }
 
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const mainContent = document.querySelector('.main-content');
-    
-    // Toggle collapsed state
-    sidebar.classList.toggle('collapsed');
-    
-    // Update main content margin
-    if (sidebar.classList.contains('collapsed')) {
-        mainContent.style.marginLeft = '72px';
-    } else {
-        mainContent.style.marginLeft = '260px';
-    }
-}
 
 // Settings Tabs
 function showSettingsTab(tab) {
@@ -110,8 +162,8 @@ function loadSettings() {
 
 async function loadSettingsStudents() {
     try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('/api/students/all', {
+        const token = getSession('admin')?.token;
+        const response = await fetch(`/api/students/all${getBranchParam()}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -207,7 +259,7 @@ async function saveStudent(event) {
     if (password) updateData.password = password;
     
     try {
-        const token = localStorage.getItem('token');
+        const token = getSession('admin')?.token;
         const response = await fetch(`/api/students/${id}`, {
             method: 'PUT',
             headers: {
@@ -220,6 +272,7 @@ async function saveStudent(event) {
         if (response.ok) {
             alert('Student updated successfully');
             closeModal('editStudentModal');
+            loadStudents();
             loadSettingsStudents();
         } else {
             const data = await response.json();
@@ -228,6 +281,7 @@ async function saveStudent(event) {
     } catch (error) {
         alert('Student updated successfully');
         closeModal('editStudentModal');
+        loadStudents();
         loadSettingsStudents();
     }
 }
@@ -237,7 +291,7 @@ async function resetStudentPassword(id) {
     if (!newPassword) return;
     
     try {
-        const token = localStorage.getItem('token');
+        const token = getSession('admin')?.token;
         await fetch(`/api/students/${id}`, {
             method: 'PUT',
             headers: {
@@ -256,15 +310,17 @@ async function deleteStudent(id) {
     if (!confirm('Are you sure you want to delete this student?')) return;
     
     try {
-        const token = localStorage.getItem('token');
+        const token = getSession('admin')?.token;
         await fetch(`/api/students/${id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
         alert('Student deleted');
+        loadStudents();
         loadSettingsStudents();
     } catch (error) {
         alert('Student deleted');
+        loadStudents();
         loadSettingsStudents();
     }
 }
@@ -272,8 +328,8 @@ async function deleteStudent(id) {
 // Teachers
 async function loadSettingsTeachers() {
     try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('/api/teachers/all', {
+        const token = getSession('admin')?.token;
+        const response = await fetch(`/api/teachers/all${getBranchParam()}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -365,7 +421,7 @@ async function saveTeacher(event) {
     if (password) updateData.password = password;
     
     try {
-        const token = localStorage.getItem('token');
+        const token = getSession('admin')?.token;
         const response = await fetch(`/api/teachers/${id}`, {
             method: 'PUT',
             headers: {
@@ -378,6 +434,7 @@ async function saveTeacher(event) {
         if (response.ok) {
             alert('Teacher updated successfully');
             closeModal('editTeacherModal');
+            loadTeachers();
             loadSettingsTeachers();
         } else {
             const data = await response.json();
@@ -386,6 +443,7 @@ async function saveTeacher(event) {
     } catch (error) {
         alert('Teacher updated successfully');
         closeModal('editTeacherModal');
+        loadTeachers();
         loadSettingsTeachers();
     }
 }
@@ -395,7 +453,7 @@ async function resetTeacherPassword(id) {
     if (!newPassword) return;
     
     try {
-        const token = localStorage.getItem('token');
+        const token = getSession('admin')?.token;
         await fetch(`/api/teachers/${id}`, {
             method: 'PUT',
             headers: {
@@ -414,15 +472,17 @@ async function deleteTeacher(id) {
     if (!confirm('Are you sure you want to delete this teacher?')) return;
     
     try {
-        const token = localStorage.getItem('token');
+        const token = getSession('admin')?.token;
         await fetch(`/api/teachers/${id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
         alert('Teacher deleted');
+        loadTeachers();
         loadSettingsTeachers();
     } catch (error) {
         alert('Teacher deleted');
+        loadTeachers();
         loadSettingsTeachers();
     }
 }
@@ -444,13 +504,14 @@ function updateAdminProfile(event) {
 // Existing functions
 async function loadStudents() {
     try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('/api/students/all', {
+        const token = getSession('admin')?.token;
+        const response = await fetch(`/api/students/all${getBranchParam()}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
         if (response.ok) {
             const data = await response.json();
+            allStudents = data.students;
             const tbody = document.getElementById('studentsTable');
             
             if (data.students.length === 0) {
@@ -475,8 +536,8 @@ async function loadStudents() {
                     <td class="px-6 py-4 text-slate-600">${s.class}</td>
                     <td class="px-6 py-4 text-center"><span class="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full text-xs font-semibold">${s.status || 'active'}</span></td>
                     <td class="px-6 py-4 text-center">
-                        <button class="text-brand-500 hover:text-brand-700 mr-3 transition" title="Edit"><i class="fas fa-edit"></i></button>
-                        <button class="text-red-500 hover:text-red-700 transition" title="Delete"><i class="fas fa-trash"></i></button>
+                        <button onclick="editStudent('${s._id}')" class="text-brand-500 hover:text-brand-700 mr-3 transition" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteStudent('${s._id}')" class="text-red-500 hover:text-red-700 transition" title="Delete"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
@@ -488,13 +549,14 @@ async function loadStudents() {
 
 async function loadTeachers() {
     try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('/api/teachers/all', {
+        const token = getSession('admin')?.token;
+        const response = await fetch(`/api/teachers/all${getBranchParam()}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
         if (response.ok) {
             const data = await response.json();
+            allTeachers = data.teachers;
             const tbody = document.getElementById('teachersTable');
             
             if (data.teachers.length === 0) {
@@ -519,8 +581,8 @@ async function loadTeachers() {
                     <td class="px-6 py-4 text-slate-600">${t.subjects || '-'}</td>
                     <td class="px-6 py-4 text-center"><span class="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full text-xs font-semibold">${t.status || 'active'}</span></td>
                     <td class="px-6 py-4 text-center">
-                        <button class="text-brand-500 hover:text-brand-700 mr-3 transition" title="Edit"><i class="fas fa-edit"></i></button>
-                        <button class="text-red-500 hover:text-red-700 transition" title="Delete"><i class="fas fa-trash"></i></button>
+                        <button onclick="editTeacher('${t._id}')" class="text-brand-500 hover:text-brand-700 mr-3 transition" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteTeacher('${t._id}')" class="text-red-500 hover:text-red-700 transition" title="Delete"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>
             `).join('');
@@ -566,7 +628,7 @@ async function loadAnnouncements() {
 async function addStudent(event) {
     event.preventDefault();
     try {
-        const token = localStorage.getItem('token');
+        const token = getSession('admin')?.token;
         const admissionNo = document.getElementById('studentAdmissionNo').value.trim();
         const response = await fetch('/api/students', {
             method: 'POST',
@@ -583,7 +645,8 @@ async function addStudent(event) {
                 gender: document.getElementById('studentGender').value,
                 password: document.getElementById('studentPassword').value,
                 session: '2025/2026',
-                term: 'Second Term'
+                term: 'Second Term',
+                branch: currentBranch
             })
         });
         
@@ -606,7 +669,7 @@ async function addStudent(event) {
 async function addTeacher(event) {
     event.preventDefault();
     try {
-        const token = localStorage.getItem('token');
+        const token = getSession('admin')?.token;
         const response = await fetch('/api/teachers', {
             method: 'POST',
             headers: {
@@ -619,7 +682,8 @@ async function addTeacher(event) {
                 email: document.getElementById('teacherEmail').value,
                 staffId: document.getElementById('teacherStaffId').value,
                 department: document.getElementById('teacherDepartment').value,
-                password: document.getElementById('teacherPassword').value
+                password: document.getElementById('teacherPassword').value,
+                branch: currentBranch
             })
         });
         
@@ -641,7 +705,7 @@ async function addTeacher(event) {
 async function addAnnouncement(event) {
     event.preventDefault();
     try {
-        const token = localStorage.getItem('token');
+        const token = getSession('admin')?.token;
         const response = await fetch('/api/announcements', {
             method: 'POST',
             headers: {
@@ -651,7 +715,8 @@ async function addAnnouncement(event) {
             body: JSON.stringify({
                 title: document.getElementById('announcementTitle').value,
                 category: document.getElementById('announcementCategory').value,
-                content: document.getElementById('announcementContent').value
+                content: document.getElementById('announcementContent').value,
+                branch: currentBranch
             })
         });
         
@@ -670,7 +735,7 @@ async function addAnnouncement(event) {
 async function deleteAnnouncement(id) {
     if (!confirm('Delete this announcement?')) return;
     try {
-        const token = localStorage.getItem('token');
+        const token = getSession('admin')?.token;
         await fetch(`/api/announcements/${id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
@@ -689,11 +754,6 @@ function closeModal(id) {
     document.getElementById(id).classList.add('hidden');
 }
 
-function logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    window.location.href = '/login?role=admin';
-}
 
 // Notification Toggle
 function toggleNotifications() {
@@ -735,7 +795,7 @@ async function submitAdmission(event) {
     };
     
     try {
-        const token = localStorage.getItem('token');
+        const token = getSession('admin')?.token;
         const response = await fetch('/api/students', {
             method: 'POST',
             headers: {
@@ -778,46 +838,31 @@ async function loadPendingResults() {
     if (!container) return;
     container.innerHTML = '<p class="text-slate-400 text-sm text-center py-6">Loading pending results...</p>';
     try {
-        const response = await fetch('/api/results/pending');
+        const token = getSession('admin')?.token;
+        const response = await fetch(`/api/v2/results/pending${getBranchParam()}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
         const data = await response.json();
-        if (!data.success || data.results.length === 0) {
+        if (!data.success || data.batches.length === 0) {
             container.innerHTML = '<div class="bg-white rounded-xl shadow-sm p-6 text-center"><i class="fas fa-check-circle text-green-500 text-3xl mb-2"></i><p class="text-slate-500">No results pending verification. All caught up!</p></div>';
             return;
         }
-        container.innerHTML = data.results.map(r => `
-            <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-amber-500">
+        container.innerHTML = data.batches.map(b => `
+            <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-amber-500 transition-all duration-300" data-batch-card="${b._id}">
                 <div class="flex items-center justify-between mb-3">
                     <div>
-                        <h4 class="font-semibold text-slate-800">${r.class} &middot; ${r.subject}</h4>
-                        <p class="text-slate-400 text-xs">${r.session} &middot; ${r.term} &middot; ${r.students.length} student(s)</p>
+                        <h4 class="font-semibold text-slate-800">${b.class} &middot; ${b.subject}</h4>
+                        <p class="text-slate-400 text-xs">${b.session} &middot; ${b.term} &middot; Uploaded by ${b.uploadedByName || 'Unknown'}</p>
+                        <p class="text-slate-400 text-xs">${new Date(b.createdAt).toLocaleDateString()}</p>
                     </div>
-                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">PENDING</span>
+                    <span class="status-badge px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">PENDING</span>
                 </div>
-                <div class="overflow-x-auto mb-3">
-                    <table class="w-full text-sm">
-                        <thead class="text-slate-400">
-                            <tr>
-                                <th class="text-left py-1 pr-3">Admission No</th>
-                                <th class="text-center py-1 px-2">CA1</th>
-                                <th class="text-center py-1 px-2">CA2</th>
-                                <th class="text-center py-1 px-2">Exam</th>
-                                <th class="text-center py-1 px-2">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-slate-700">
-                            ${r.students.map(s => `<tr>
-                                <td class="py-1 pr-3">${s.admissionNumber}</td>
-                                <td class="text-center px-2">${s.ca1}</td>
-                                <td class="text-center px-2">${s.ca2}</td>
-                                <td class="text-center px-2">${s.exam}</td>
-                                <td class="text-center px-2 font-semibold">${s.total}</td>
-                            </tr>`).join('')}
-                        </tbody>
-                    </table>
-                </div>
-                <div class="flex justify-end">
-                    <button onclick="approveResult('${r._id}')" class="bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition text-sm font-medium">
-                        <i class="fas fa-check mr-1"></i>Approve
+                <div class="flex justify-end space-x-2">
+                    <button onclick="previewBatch('${b._id}')" class="preview-btn bg-slate-100 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-200 transition text-sm font-medium">
+                        <i class="fas fa-eye mr-1"></i>Preview
+                    </button>
+                    <button onclick="approveResultBatch('${b._id}')" class="approve-btn bg-emerald-500 text-white px-4 py-2 rounded-lg hover:bg-emerald-600 transition text-sm font-medium">
+                        <i class="fas fa-check mr-1"></i>Approve & Rank
                     </button>
                 </div>
             </div>
@@ -828,20 +873,134 @@ async function loadPendingResults() {
     }
 }
 
-// Approve a pending result batch (status -> verified)
-async function approveResult(id) {
+// Preview a batch's student results before approval
+async function previewBatch(batchId) {
     try {
-        const response = await fetch(`/api/results/${id}/approve`, { method: 'POST' });
+        const token = getSession('admin')?.token;
+        const response = await fetch(`/api/v2/results/batch/${batchId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
         const data = await response.json();
+        if (!data.success) {
+            alert(data.message || 'Failed to load batch details.');
+            return;
+        }
+        const { batch, results } = data;
+        let html = `<h3 style="font-weight:bold;margin-bottom:8px">${batch.class} - ${batch.subject}</h3>`;
+        html += `<p style="margin-bottom:12px;color:#666">${batch.session} | ${batch.term} | ${results.length} student(s)</p>`;
+        html += '<table style="width:100%;border-collapse:collapse;font-size:14px">';
+        html += '<thead><tr style="background:#f1f5f9"><th style="padding:8px;text-align:left">Student</th><th style="padding:8px;text-align:center">CA1</th><th style="padding:8px;text-align:center">CA2</th><th style="padding:8px;text-align:center">Exam</th><th style="padding:8px;text-align:center">Total</th><th style="padding:8px;text-align:center">Grade</th></tr></thead><tbody>';
+        results.forEach(r => {
+            html += `<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:8px">${r.studentName || r.admissionNumber}</td><td style="padding:8px;text-align:center">${r.ca1}</td><td style="padding:8px;text-align:center">${r.ca2}</td><td style="padding:8px;text-align:center">${r.exam}</td><td style="padding:8px;text-align:center;font-weight:bold">${r.totalScore}</td><td style="padding:8px;text-align:center">${r.grade}</td></tr>`;
+        });
+        html += '</tbody></table>';
+
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4';
+        modal.innerHTML = `<div class="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto shadow-2xl p-6">
+            <div class="flex justify-between items-center mb-4"><h2 class="text-lg font-bold">Batch Preview</h2><button onclick="this.closest('.fixed').remove()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button></div>
+            ${html}</div>`;
+        document.body.appendChild(modal);
+    } catch (error) {
+        console.error(error);
+        alert('Failed to load batch preview.');
+    }
+}
+
+// Approve a batch and trigger ranking engine
+async function approveResultBatch(batchId) {
+    // ── Find the card and button for this batch ──
+    const card = document.querySelector(`[data-batch-card="${batchId}"]`);
+    const btn = card ? card.querySelector('.approve-btn') : null;
+    const previewBtn = card ? card.querySelector('.preview-btn') : null;
+
+    // ── Confirm via inline toast instead of blocking alert ──
+    if (!confirm('Approve these results and compute class rankings?')) return;
+
+    // ── Disable button + show spinner ──
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>Approving...';
+        btn.classList.add('opacity-60', 'cursor-not-allowed');
+    }
+    if (previewBtn) previewBtn.disabled = true;
+
+    try {
+        const token = getSession('admin')?.token;
+        const response = await fetch(`/api/v2/results/batch/${batchId}/approve`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+
         if (data.success) {
-            loadPendingResults();
+            // ── Option B (Manual Update): instantly flip the card to APPROVED state ──
+            if (card) {
+                const badge = card.querySelector('.status-badge');
+                if (badge) {
+                    badge.className = 'status-badge px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700';
+                    badge.textContent = 'APPROVED';
+                }
+                // Replace approve button with a success checkmark
+                if (btn) {
+                    btn.outerHTML = '<span class="inline-flex items-center text-emerald-600 text-sm font-medium"><i class="fas fa-check-circle mr-1"></i>Approved & Ranked</span>';
+                }
+                // Fade the card border to green
+                card.classList.remove('border-amber-500');
+                card.classList.add('border-emerald-500');
+            }
+
+            // ── Show inline success toast ──
+            showApprovalToast('Results approved and rankings computed!', 'success');
+
+            // ── After a short delay, refetch to clean up the list ──
+            setTimeout(() => loadPendingResults(), 2000);
         } else {
-            alert(data.message || 'Failed to approve result.');
+            showApprovalToast(data.message || 'Failed to approve results.', 'error');
+            resetApproveButton(btn, previewBtn);
         }
     } catch (error) {
         console.error(error);
-        alert('Upstream request failed. Please try again.');
+        showApprovalToast('Network error. Please try again.', 'error');
+        resetApproveButton(btn, previewBtn);
     }
+}
+
+// Reset the approve button to its original state
+function resetApproveButton(btn, previewBtn) {
+    if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check mr-1"></i>Approve & Rank';
+        btn.classList.remove('opacity-60', 'cursor-not-allowed');
+    }
+    if (previewBtn) previewBtn.disabled = false;
+}
+
+// Non-blocking toast notification
+function showApprovalToast(message, type) {
+    const existing = document.getElementById('approvalToast');
+    if (existing) existing.remove();
+
+    const colors = type === 'success'
+        ? 'bg-emerald-500 text-white'
+        : 'bg-red-500 text-white';
+    const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+
+    const toast = document.createElement('div');
+    toast.id = 'approvalToast';
+    toast.className = `fixed top-4 right-4 z-[60] ${colors} px-5 py-3 rounded-lg shadow-lg flex items-center space-x-2 transition-all duration-300`;
+    toast.style.transform = 'translateX(120%)';
+    toast.innerHTML = `<i class="fas ${icon}"></i><span class="font-medium text-sm">${message}</span>`;
+    document.body.appendChild(toast);
+
+    // Slide in
+    requestAnimationFrame(() => { toast.style.transform = 'translateX(0)'; });
+
+    // Slide out after 3s
+    setTimeout(() => {
+        toast.style.transform = 'translateX(120%)';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
 }
 
 // ============ Timetable management ============
@@ -916,7 +1075,7 @@ async function loadTimetableForAdmin() {
     const session = document.getElementById('ttSession').value;
     const term = document.getElementById('ttTerm').value;
     try {
-        const res = await fetch(`/api/timetable?class=${encodeURIComponent(cls)}&session=${encodeURIComponent(session)}&term=${encodeURIComponent(term)}`);
+        const res = await fetch(`/api/timetable?class=${encodeURIComponent(cls)}&session=${encodeURIComponent(session)}&term=${encodeURIComponent(term)}&branch=${currentBranch}`);
         const data = await res.json();
         const tt = data.timetable;
         renderTimetableEditor(tt, tt ? tt.dismissalTimes : null);
@@ -948,11 +1107,11 @@ async function saveTimetable() {
     });
 
     try {
-        const token = localStorage.getItem('token');
+        const token = getSession('admin')?.token;
         const res = await fetch('/api/timetable', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', ...(token ? { 'Authorization': `Bearer ${token}` } : {}) },
-            body: JSON.stringify({ class: cls, session, term, schedule, dismissalTimes })
+            body: JSON.stringify({ class: cls, session, term, schedule, dismissalTimes, branch: currentBranch })
         });
         const data = await res.json();
         if (data.success) alert('Timetable saved successfully.');

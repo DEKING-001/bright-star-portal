@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 
 const portalStudentSchema = new mongoose.Schema({
     admissionNumber: { type: String, required: true, unique: true },
+    password: { type: String, required: true, default: 'password123' },
+    branch: { type: String, enum: ['nursery', 'secondary'], default: 'secondary' },
     class: String,
     session: String,
     term: String,
@@ -20,6 +22,8 @@ const portalStudentSchema = new mongoose.Schema({
 
 const portalTeacherSchema = new mongoose.Schema({
     staffId: { type: String, required: true, unique: true },
+    password: { type: String, required: true, default: 'password123' },
+    branch: { type: String, enum: ['nursery', 'secondary'], default: 'secondary' },
     department: String,
     subjects: [String],
     qualification: String,
@@ -44,6 +48,7 @@ const studentResultSchema = new mongoose.Schema({
 const resultUploadSchema = new mongoose.Schema({
     class: String,
     subject: String,
+    branch: { type: String, enum: ['nursery', 'secondary'], default: 'secondary' },
     session: String,
     term: String,
     status: { type: String, default: 'pending_verification' },
@@ -56,11 +61,13 @@ const portalAnnouncementSchema = new mongoose.Schema({
     title: String,
     content: String,
     category: String,
+    branch: { type: String, enum: ['nursery', 'secondary'], default: 'secondary' },
     createdAt: Date
 }, { timestamps: true });
 
 const portalFeeSchema = new mongoose.Schema({
     admissionNumber: String,
+    branch: { type: String, enum: ['nursery', 'secondary'], default: 'secondary' },
     session: String,
     term: String,
     totalFee: Number,
@@ -80,6 +87,7 @@ const portalFeeSchema = new mongoose.Schema({
 // this time are not part of that day's schedule (e.g. Friday ends at 14:00).
 const timetableSchema = new mongoose.Schema({
     class: String,
+    branch: { type: String, enum: ['nursery', 'secondary'], default: 'secondary' },
     session: String,
     term: String,
     dismissalTimes: {
@@ -104,6 +112,7 @@ const assignmentSchema = new mongoose.Schema({
     description: String,
     subject: String,
     class: String,
+    branch: { type: String, enum: ['nursery', 'secondary'], default: 'secondary' },
     session: String,
     term: String,
     dueDate: Date,
@@ -113,6 +122,61 @@ const assignmentSchema = new mongoose.Schema({
     isActive: { type: Boolean, default: true }
 }, { timestamps: true });
 
+// ── Result Processing & Ranking System ──────────────────────────────────
+// A ResultBatch groups all student results uploaded together for one
+// class/subject/term/session. It tracks the overall approval status.
+const resultBatchSchema = new mongoose.Schema({
+    class: { type: String, required: true },
+    subject: { type: String, required: true },
+    branch: { type: String, enum: ['nursery', 'secondary'], default: 'secondary' },
+    session: { type: String, required: true },
+    term: { type: String, required: true },
+    status: { type: String, enum: ['Pending', 'Approved'], default: 'Pending' },
+    uploadedBy: String,
+    uploadedByName: String,
+    approvedAt: Date,
+    createdAt: { type: Date, default: Date.now }
+}, { timestamps: true });
+
+// Safety-net: only ONE Pending batch allowed per class/subject/term/session.
+// Partial unique index — does NOT block Approved batches (allows re-uploads).
+resultBatchSchema.index(
+    { class: 1, subject: 1, term: 1, session: 1 },
+    { unique: true, partialFilterExpression: { status: 'Pending' } }
+);
+
+// Individual per-subject result for each student.
+// averageScore and position are computed across ALL approved subjects for
+// that student in the same class/term/session when the batch is approved.
+const individualResultSchema = new mongoose.Schema({
+    batchId: { type: mongoose.Schema.Types.ObjectId, ref: 'ResultBatch', required: true },
+    admissionNumber: { type: String, required: true },
+    studentName: String,
+    class: { type: String, required: true },
+    branch: { type: String, enum: ['nursery', 'secondary'], default: 'secondary' },
+    session: { type: String, required: true },
+    term: { type: String, required: true },
+    subject: { type: String, required: true },
+    ca1: { type: Number, default: 0, min: 0, max: 20 },
+    ca2: { type: Number, default: 0, min: 0, max: 20 },
+    exam: { type: Number, default: 0, min: 0, max: 60 },
+    totalScore: { type: Number, default: 0 },
+    grade: String,
+    remark: String,
+    averageScore: { type: Number, default: 0 },
+    position: { type: Number, default: 0 },
+    totalSubjectsTaken: { type: Number, default: 0 },
+    status: { type: String, enum: ['Pending', 'Approved'], default: 'Pending' },
+    uploadedBy: String,
+    uploadedByName: String,
+    approvedAt: Date
+}, { timestamps: true });
+
+// Compound index for fast ranking queries
+individualResultSchema.index({ class: 1, session: 1, term: 1, admissionNumber: 1 });
+individualResultSchema.index({ batchId: 1 });
+individualResultSchema.index({ class: 1, session: 1, term: 1, status: 1 });
+
 module.exports = {
     PortalStudent: mongoose.model('PortalStudent', portalStudentSchema),
     PortalTeacher: mongoose.model('PortalTeacher', portalTeacherSchema),
@@ -120,5 +184,7 @@ module.exports = {
     PortalAnnouncement: mongoose.model('PortalAnnouncement', portalAnnouncementSchema),
     PortalFee: mongoose.model('PortalFee', portalFeeSchema),
     PortalTimetable: mongoose.model('PortalTimetable', timetableSchema),
-    PortalAssignment: mongoose.model('PortalAssignment', assignmentSchema)
+    PortalAssignment: mongoose.model('PortalAssignment', assignmentSchema),
+    StudentResult: mongoose.model('StudentResult', individualResultSchema),
+    ResultBatch: mongoose.model('ResultBatch', resultBatchSchema)
 };

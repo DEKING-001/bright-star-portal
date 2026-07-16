@@ -3,18 +3,25 @@
 let currentRole = 'student';
 
 // Check URL params for role
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     const params = new URLSearchParams(window.location.search);
     const role = params.get('role');
     if (role && ['student', 'teacher', 'admin'].includes(role)) {
         selectRole(role);
     }
     
-    // Check if already logged in
-    const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    if (token && user.role) {
-        redirectBasedOnRole(user.role);
+    // Check if already logged in (any role) — verify server-side
+    const active = getActiveSession();
+    if (active) {
+        try {
+            const result = await verifyTokenWithServer(active.token);
+            if (result.valid) {
+                redirectBasedOnRole(active.role);
+                return;
+            }
+        } catch (_) { /* network error — stay on login page */ }
+        // Token invalid/expired/blacklisted — clear all stale sessions
+        ['student', 'teacher', 'admin'].forEach(clearSession);
     }
 });
 
@@ -90,6 +97,17 @@ async function handleLogin(event) {
     loginBtn.disabled = true;
     errorMessage.classList.add('hidden');
     
+    // Get branch
+    const branch = document.getElementById('branch').value;
+    if (!branch) {
+        errorMessage.textContent = 'Please select a branch';
+        errorMessage.classList.remove('hidden');
+        loginText.textContent = `Login as ${currentRole.charAt(0).toUpperCase() + currentRole.slice(1)}`;
+        loginSpinner.classList.add('hidden');
+        loginBtn.disabled = false;
+        return;
+    }
+    
     // Get identifier based on role
     let identifier;
     if (currentRole === 'student') {
@@ -111,7 +129,8 @@ async function handleLogin(event) {
             body: JSON.stringify({
                 identifier,
                 password,
-                role: currentRole
+                role: currentRole,
+                branch
             })
         });
         
@@ -121,9 +140,8 @@ async function handleLogin(event) {
             throw new Error(data.message || 'Login failed');
         }
         
-        // Store token and user data
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('user', JSON.stringify(data.user));
+        // Store token and user data under the role-specific namespace
+        saveSession(data.user.role, data.token, data.user);
         
         // Redirect based on role
         redirectBasedOnRole(data.user.role);

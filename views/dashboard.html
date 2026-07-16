@@ -34,40 +34,77 @@
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/theme.css">
     <style>
         * { font-family: 'Inter', sans-serif; }
-        .sidebar { width: 260px; }
-        .sidebar.closed { width: 70px; }
-        .sidebar.closed .sidebar-text { display: none; }
-        .sidebar.closed + .main-content { margin-left: 70px; }
-        .nav-item.active { background: rgba(59, 130, 246, 0.1); color: #3b82f6; border-right: 3px solid #3b82f6; }
-        .nav-item:hover { background: rgba(59, 130, 246, 0.05); }
+        body { background: var(--bg-page); color: var(--text-body); }
+        /* ── Shared Sidebar Styles ─────────────────────────────── */
+        .sidebar { width: 260px; transition: width 0.3s ease; background: var(--bg-sidebar); }
+        .sidebar.collapsed { width: 72px; }
+        .sidebar.collapsed .sidebar-text,
+        .sidebar.collapsed .sidebar-logo-text { opacity: 0; width: 0; overflow: hidden; white-space: nowrap; }
+        .sidebar.collapsed .nav-item { justify-content: center; padding-left: 0; padding-right: 0; }
+        .sidebar.collapsed .sidebar-section-header { display: none; }
+        .nav-item { border-left: 3px solid transparent; transition: background 0.15s, border-color 0.15s; }
+        .nav-item.active { background: var(--accent-light); border-left-color: var(--accent); color: var(--accent); }
+        .nav-item:hover { background: var(--accent-lighter); }
+        .sidebar-transition { transition: width 0.3s ease, transform 0.3s ease; }
+        /* ── Mobile backdrop ───────────────────────────────────── */
+        .sidebar-backdrop {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5); z-index: 45;
+            opacity: 0; transition: opacity 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .sidebar-backdrop.active { display: block; opacity: 1; }
+        /* ── Themed surfaces ───────────────────────────────────── */
+        .main-content { background: var(--bg-page); }
+        header, .sticky { background: var(--bg-surface) !important; }
+        table thead { background: var(--table-header-bg); }
+        table th { color: var(--text-muted); }
+        table td { color: var(--text-body); border-color: var(--border-subtle); }
+        .table-row:hover { background: var(--table-hover) !important; }
+        .modal-bg { background: var(--overlay); }
+        .modal-content { background: var(--bg-surface); color: var(--text-heading); }
+        input, select, textarea { background: var(--input-bg); border-color: var(--input-border); color: var(--text-heading); }
+        input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--input-focus-ring); outline: none; }
+        /* ── Page-specific ─────────────────────────────────────── */
         .card-border-blue { border-left: 4px solid #3b82f6; }
         .card-border-green { border-left: 4px solid #10b981; }
         .card-border-amber { border-left: 4px solid #f59e0b; }
         .card-border-violet { border-left: 4px solid #8b5cf6; }
         .stat-card { transition: transform 0.2s, box-shadow 0.2s; }
-        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1); }
-        .table-row:hover { background-color: #f8fafc; }
-        @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); position: fixed; z-index: 50; }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+        .table-row:hover { background-color: var(--table-hover); }
+        .btn-primary { background: var(--accent); color: white; transition: background 0.2s; }
+        .btn-primary:hover { background: var(--accent-hover); }
+        .input-focus:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--input-focus-ring); }
+        @media (max-width: 1023px) {
+            .sidebar {
+                position: fixed; top: 0; left: 0; bottom: 0;
+                transform: translateX(-100%);
+                z-index: 50; width: 260px !important;
+                will-change: transform;
+            }
             .sidebar.open { transform: translateX(0); }
+            .sidebar .sidebar-text,
+            .sidebar .sidebar-logo-text { opacity: 1; width: auto; overflow: visible; }
+            .sidebar .nav-item { justify-content: flex-start; padding-left: 0.75rem; padding-right: 0.75rem; }
+            .sidebar .sidebar-section-header { display: block; }
             .main-content { margin-left: 0 !important; }
+            header, .sticky { z-index: 46 !important; }
         }
-        .btn-primary { background: #3b82f6; color: white; transition: background 0.2s; }
-        .btn-primary:hover { background: #2563eb; }
-        .input-focus:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
     </style>
 </head>
-<body class="bg-slate-100">
+<body class="themed-bg-page">
     <!-- Sidebar -->
     <aside id="sidebar" class="sidebar bg-navy text-white h-screen fixed left-0 top-0 overflow-y-auto transition-all duration-300 z-50">
         <div class="p-4">
             <div class="flex items-center space-x-3 mb-8 pb-4 border-b border-slate-700">
-                <img src="/images/logo.jpeg" alt="Bright Star Logo" class="w-10 h-10 rounded-lg object-cover">
-                <div class="sidebar-text">
+                <img src="/images/logo.jpeg" alt="Bright Star Logo" class="w-10 h-10 rounded-lg object-cover flex-shrink-0">
+                <div class="sidebar-logo-text">
                     <h2 class="font-bold text-sm tracking-wide">BRIGHT STAR</h2>
-                    <p class="text-xs text-slate-400">Login</p>
+                    <p class="text-xs text-slate-400">Student Portal</p>
                 </div>
             </div>
             <nav class="space-y-1">
@@ -108,7 +145,7 @@
                     <i class="fas fa-cog w-5 text-center"></i>
                     <span class="sidebar-text text-sm">Settings</span>
                 </a>
-                <a href="#" onclick="logout()" class="flex items-center space-x-3 p-3 rounded-lg transition text-red-400 hover:bg-red-500/10">
+                <a href="#" onclick="logout('student')" class="flex items-center space-x-3 p-3 rounded-lg transition text-red-400 hover:bg-red-500/10">
                     <i class="fas fa-sign-out-alt w-5 text-center"></i>
                     <span class="sidebar-text text-sm">Logout</span>
                 </a>
@@ -121,7 +158,7 @@
         <!-- Top Navigation -->
         <header class="bg-white shadow-sm sticky top-0 z-40 border-b border-slate-200">
             <div class="flex items-center justify-between px-6 py-4">
-                <button onclick="toggleSidebar()" class="md:hidden text-slate-600 text-xl">
+                <button id="sidebarToggle" class="text-slate-600 text-xl p-2 rounded-lg hover:bg-slate-100 transition">
                     <i class="fas fa-bars"></i>
                 </button>
                 <div class="flex items-center space-x-4">
@@ -130,7 +167,12 @@
                         <i class="fas fa-search absolute left-3 top-3 text-slate-400"></i>
                     </div>
                 </div>
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2">
+                    <!-- Theme Toggle -->
+                    <button class="theme-toggle-btn p-2 rounded-lg transition" aria-label="Switch to dark mode">
+                        <i class="fas fa-moon icon-moon text-slate-400 hover:text-slate-600 text-lg"></i>
+                        <i class="fas fa-sun icon-sun hidden text-amber-400 hover:text-amber-300 text-lg"></i>
+                    </button>
                     <button class="relative text-slate-500 hover:text-brand transition">
                         <i class="fas fa-bell text-xl"></i>
                         <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
@@ -721,7 +763,12 @@
         </main>
     </div>
 
-    <script src="/js/dashboard.js"></script>
+    <script src="/js/theme.js?v=2"></script>
+    <script src="/js/sidebar.js?v=2"></script>
+    <script src="/js/session.js?v=2"></script>
+    <script src="/vendor/js/jspdf.umd.min.js?v=1"></script>
+    <script src="/vendor/js/html2canvas.min.js?v=1"></script>
+    <script src="/js/dashboard.js?v=2"></script>
     <script>
         function updateDateTime() {
             const now = new Date();

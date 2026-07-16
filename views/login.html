@@ -30,6 +30,7 @@
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/theme.css">
     <style>
         body { font-family: 'Inter', sans-serif; }
         .login-bg {
@@ -49,7 +50,7 @@
         <div class="bg-white rounded-2xl card-shadow overflow-hidden">
             <!-- Logo & Header -->
             <div class="px-8 pt-8 pb-6 text-center border-b border-slate-100">
-                <a href="/" class="inline-flex items-center space-x-3 mb-4">
+                <a href="/" class="inline-flex items-center space-x-3 mb-4" id="logoLink">
                     <img src="/images/logo.jpeg" alt="Bright Star Logo" class="w-14 h-14 rounded-xl object-cover shadow-md">
                 </a>
                 <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Bright Star International School</h1>
@@ -65,15 +66,30 @@
                     <button id="teacherBtn" onclick="selectRole('teacher')" class="flex-1 py-2.5 px-4 rounded-lg text-sm font-semibold transition text-slate-500 hover:text-slate-700">
                         <i class="fas fa-chalkboard-teacher mr-1"></i> Teacher
                     </button>
-                    <button id="adminBtn" onclick="selectRole('admin')" class="flex-1 py-2.5 px-4 rounded-lg text-sm font-semibold transition text-slate-500 hover:text-slate-700">
-                        <i class="fas fa-user-shield mr-1"></i> Admin
-                    </button>
+                    <!-- Admin access: click logo 5 times or use hidden link -->
+                    <button id="adminBtn" onclick="selectRole('admin')" class="hidden"></button>
+                    <a href="#" id="adminBackdoor" onclick="event.preventDefault(); selectRole('admin');" class="hidden">Admin</a>
                 </div>
 
                 <!-- Login Form -->
                 <form id="loginForm" onsubmit="handleLogin(event)">
                     <input type="hidden" id="role" value="student">
                     
+                    <!-- Branch Selection -->
+                    <div class="mb-5">
+                        <label class="block text-slate-700 text-sm font-medium mb-2">Choose a Branch</label>
+                        <div class="relative">
+                            <span class="absolute left-3.5 top-3 text-slate-400"><i class="fas fa-building"></i></span>
+                            <select id="branch" required
+                                class="w-full pl-11 pr-4 py-3 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-brand-500 input-focus transition appearance-none bg-white">
+                                <option value="">-- Select Branch --</option>
+                                <option value="nursery">BRIGHT STAR NURSERY AND PRIMARY</option>
+                                <option value="secondary">BRIGHT STAR SECONDARY</option>
+                            </select>
+                            <span class="absolute right-3.5 top-3.5 text-slate-400 pointer-events-none"><i class="fas fa-chevron-down text-xs"></i></span>
+                        </div>
+                    </div>
+
                     <div id="studentFields">
                         <div class="mb-5">
                             <label class="block text-slate-700 text-sm font-medium mb-2">Admission Number</label>
@@ -148,14 +164,52 @@
         <!-- Demo Credentials -->
         <div class="mt-6 bg-white/5 backdrop-blur rounded-xl p-5 border border-white/10">
             <h4 class="text-white font-semibold mb-3 text-sm"><i class="fas fa-info-circle mr-2 text-brand-400"></i>Demo Credentials</h4>
-            <div class="text-slate-300 text-sm space-y-2">
-                <p><strong class="text-white">Student:</strong> BSS/2026/001 / password123</p>
-                <p><strong class="text-white">Teacher:</strong> TCH/001 / password123</p>
-                <p><strong class="text-white">Admin:</strong> admin@brightstar.com / admin123</p>
+            <div class="text-slate-300 text-sm space-y-3">
+                <div>
+                    <p class="text-white font-semibold text-xs uppercase mb-1">Secondary Branch</p>
+                    <p><strong class="text-white">Student:</strong> BSS/2026/001 / password123</p>
+                    <p><strong class="text-white">Teacher:</strong> TCH/001 / password123</p>
+                </div>
+                <div>
+                    <p class="text-white font-semibold text-xs uppercase mb-1">Nursery Branch</p>
+                    <p><strong class="text-white">Student:</strong> BNP/2026/001 / password123</p>
+                    <p><strong class="text-white">Teacher:</strong> TCH/N/001 / password123</p>
+                </div>
+                <div class="border-t border-white/10 pt-2">
+                    <p><strong class="text-white">Admin:</strong> admin@brightstar.com / admin123 (all branches)</p>
+                </div>
             </div>
         </div>
     </div>
 
+    <script src="/js/session.js"></script>
     <script src="/js/auth.js"></script>
+    <script>
+        // Admin backdoor: click logo 5 times or press Ctrl+Shift+A
+        let logoClicks = 0;
+        document.getElementById('logoLink')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            logoClicks++;
+            if (logoClicks >= 5) {
+                logoClicks = 0;
+                selectRole('admin');
+                showToast('Admin access enabled');
+            }
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+                e.preventDefault();
+                selectRole('admin');
+                showToast('Admin access enabled');
+            }
+        });
+        function showToast(msg) {
+            const t = document.createElement('div');
+            t.className = 'fixed bottom-4 right-4 bg-brand-600 text-white px-4 py-2 rounded-lg shadow-lg text-sm animate-fade-in';
+            t.textContent = msg;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
+    </script>
 </body>
 </html>

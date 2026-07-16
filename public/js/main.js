@@ -11,12 +11,26 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Check if user is logged in
-    const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    // Check if user is logged in (any role) — verify server-side
+    const active = getActiveSession();
     
-    if (token && user.role) {
-        updateNavigation(user);
+    if (active) {
+        // Quick client-side expiry check
+        if (!isTokenExpired(active.token)) {
+            verifyTokenWithServer(active.token).then(result => {
+                if (result.valid) {
+                    updateNavigation(active.user);
+                } else {
+                    // Token blacklisted or revoked — clear stale sessions
+                    ['student', 'teacher', 'admin'].forEach(clearSession);
+                }
+            }).catch(() => {
+                // Network error — show nav based on local data
+                updateNavigation(active.user);
+            });
+        } else {
+            ['student', 'teacher', 'admin'].forEach(clearSession);
+        }
     }
 });
 
@@ -61,15 +75,15 @@ document.querySelectorAll('.card-hover').forEach(card => {
     observer.observe(card);
 });
 
-// API helper function
-async function apiCall(url, method = 'GET', body = null) {
-    const token = localStorage.getItem('token');
+// API helper function — uses the active session's token automatically.
+async function apiCall(url, method = 'GET', body = null, role = null) {
+    const active = role ? getSession(role) : getActiveSession();
     const headers = {
         'Content-Type': 'application/json'
     };
     
-    if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
+    if (active && active.token) {
+        headers['Authorization'] = `Bearer ${active.token}`;
     }
     
     const options = {
@@ -84,6 +98,11 @@ async function apiCall(url, method = 'GET', body = null) {
     try {
         const response = await fetch(url, options);
         const data = await response.json();
+        
+        if (response.status === 401 && active) {
+            // Token invalidated — clear the stale session
+            clearSession(active.role || active.user?.role);
+        }
         
         if (!response.ok) {
             throw new Error(data.message || 'Something went wrong');

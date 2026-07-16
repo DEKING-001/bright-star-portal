@@ -1,6 +1,13 @@
-// Authentication Middleware - JWT verification
+// Authentication Middleware - JWT verification with blacklist support
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+
+// Shared blacklist reference — set via setBlacklist() so server.js can inject it.
+let tokenBlacklist = null;
+
+function setBlacklist(blacklistRef) {
+    tokenBlacklist = blacklistRef;
+}
 
 // Protect routes - verify JWT token
 const protect = async (req, res, next) => {
@@ -12,6 +19,11 @@ const protect = async (req, res, next) => {
     
     if (!token) {
         return res.status(401).json({ success: false, message: 'Not authorized to access this route' });
+    }
+
+    // Check blacklist
+    if (tokenBlacklist && tokenBlacklist.has(token)) {
+        return res.status(401).json({ success: false, message: 'Token has been invalidated. Please log in again.' });
     }
     
     try {
@@ -39,4 +51,4 @@ const authorize = (...roles) => {
     };
 };
 
-module.exports = { protect, authorize };
+module.exports = { protect, authorize, setBlacklist };

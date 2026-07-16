@@ -7,35 +7,68 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 const store = require('./src/dataStore');
+const { setBlacklist } = require('./src/middleware/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'bright_star_secret';
 
 // ---------- MongoDB connection (optional; falls back to in-memory) ----------
-// Cache the connection promise so serverless warm invocations reuse it.
 let cachedConnection = null;
+let dbReady = false;
+
 async function connectDB() {
+    if (dbReady && mongoose.connection.readyState === 1) return cachedConnection;
     const uri = process.env.MONGODB_URI;
     if (!uri) {
         console.log('No MONGODB_URI set — using in-memory data store (data will not persist).');
         return;
     }
-    if (cachedConnection && mongoose.connection.readyState === 1) return cachedConnection;
     try {
         mongoose.set('strictQuery', true);
         cachedConnection = mongoose.connect(uri, { serverSelectionTimeoutMS: 8000 });
         await cachedConnection;
         store.setDbConnected(true);
+        dbReady = true;
         console.log('MongoDB connected.');
-        await store.seedIfEmpty();
+        store.seedIfEmpty().catch(err => {
+            console.error('Seed error (non-fatal):', err.message);
+        });
     } catch (err) {
         cachedConnection = null;
+        dbReady = false;
         console.error('MongoDB connection failed, falling back to in-memory store:', err.message);
     }
     return cachedConnection;
 }
-connectDB();
+
+// Reset dbConnected when MongoDB disconnects
+mongoose.connection.on('disconnected', () => {
+    console.warn('MongoDB disconnected — falling back to in-memory store');
+    dbReady = false;
+    store.setDbConnected(false);
+});
+mongoose.connection.on('error', (err) => {
+    console.error('MongoDB connection error:', err.message);
+    dbReady = false;
+    store.setDbConnected(false);
+});
+
+// Start server immediately, connect to DB in background
+async function start() {
+    await connectDB().catch(() => {});
+    if (require.main === module) {
+        app.listen(PORT, '0.0.0.0', () => {
+            console.log(`Server running on http://localhost:${PORT}`);
+        });
+    }
+}
+start();
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Middleware
 app.use(cors());
@@ -45,15 +78,23 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static files
 app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/css', express.static(path.join(__dirname, 'public', 'css')));
-app.use('/js', express.static(path.join(__dirname, 'public', 'js')));
+app.use('/js', express.static(path.join(__dirname, 'public', 'js'), { maxAge: 0, etag: false }));
 app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
+app.use('/vendor/js', express.static(path.join(__dirname, 'node_modules', 'jspdf', 'dist'), { maxAge: 0, etag: false }));
+app.use('/vendor/js', express.static(path.join(__dirname, 'node_modules', 'html2canvas', 'dist'), { maxAge: 0, etag: false }));
 
 // Demo Users Database
 const demoUsers = {
-    'admin@brightstar.com': { id: '1', email: 'admin@brightstar.com', password: 'admin123', firstName: 'Admin', lastName: 'User', role: 'admin' },
-    'TCH/001': { id: '2', email: 'john.owens@brightstar.com', password: 'password123', firstName: 'John', lastName: 'Owens', role: 'teacher', staffId: 'TCH/001' },
-    'BSS/2026/001': { id: '3', email: 'chukwuemeka@student.com', password: 'password123', firstName: 'Chukwuemeka', lastName: 'Okonkwo', role: 'student', admissionNumber: 'BSS/2026/001', class: 'SS1', session: '2025/2026', term: 'Second Term' },
-    'BSS/2026/002': { id: '4', email: 'amina@student.com', password: 'password123', firstName: 'Amina', lastName: 'Ibrahim', role: 'student', admissionNumber: 'BSS/2026/002', class: 'SS1', session: '2025/2026', term: 'Second Term' }
+    // Admin — works for both branches (branch ignored for admin login)
+    'admin@brightstar.com': { id: '1', email: 'admin@brightstar.com', password: 'admin123', firstName: 'Admin', lastName: 'User', role: 'admin', branch: 'secondary' },
+    // Secondary branch
+    'TCH/001': { id: '2', email: 'john.owens@brightstar.com', password: 'password123', firstName: 'John', lastName: 'Owens', role: 'teacher', staffId: 'TCH/001', branch: 'secondary' },
+    'BSS/2026/001': { id: '3', email: 'chukwuemeka@student.com', password: 'password123', firstName: 'Chukwuemeka', lastName: 'Okonkwo', role: 'student', admissionNumber: 'BSS/2026/001', class: 'SS1', session: '2025/2026', term: 'Second Term', branch: 'secondary' },
+    'BSS/2026/002': { id: '4', email: 'amina@student.com', password: 'password123', firstName: 'Amina', lastName: 'Ibrahim', role: 'student', admissionNumber: 'BSS/2026/002', class: 'SS1', session: '2025/2026', term: 'Second Term', branch: 'secondary' },
+    // Nursery branch
+    'TCH/N/001': { id: '5', email: 'ngozi.okafor@brightstar.com', password: 'password123', firstName: 'Ngozi', lastName: 'Okafor', role: 'teacher', staffId: 'TCH/N/001', branch: 'nursery' },
+    'BNP/2026/001': { id: '6', email: 'chinedu@student.com', password: 'password123', firstName: 'Chinedu', lastName: 'Eze', role: 'student', admissionNumber: 'BNP/2026/001', class: 'Nursery 3', session: '2025/2026', term: 'Second Term', branch: 'nursery' },
+    'BNP/2026/002': { id: '7', email: 'zainab@student.com', password: 'password123', firstName: 'Zainab', lastName: 'Bello', role: 'student', admissionNumber: 'BNP/2026/002', class: 'Primary 1', session: '2025/2026', term: 'Second Term', branch: 'nursery' }
 };
 
 // Demo Results
@@ -112,18 +153,61 @@ const demoAttendance = [
     { _id: '5', admissionNumber: 'BSS/2026/001', date: new Date('2026-07-01'), status: 'absent' }
 ];
 
-// Generate JWT Token
-function generateToken(id) {
-    return jwt.sign({ id }, JWT_SECRET, { expiresIn: '7d' });
+// Generate JWT Token — embeds the user's role so middleware can enforce
+// namespace isolation server-side (a teacher token cannot access admin routes, etc.)
+function generateToken(id, role) {
+    return jwt.sign({ id, role }, JWT_SECRET, { expiresIn: '7d' });
+}
+
+// ---------- Token Blacklist (in-memory) ----------
+// Stores blacklisted JWTs (logged-out tokens) so they can no longer be used.
+// In production, use Redis with a TTL matching the token expiry.
+const tokenBlacklist = new Set();
+setBlacklist(tokenBlacklist);
+
+function isTokenBlacklisted(token) {
+    return tokenBlacklist.has(token);
+}
+
+function blacklistToken(token) {
+    tokenBlacklist.add(token);
+}
+
+// Reusable middleware: verify JWT and enforce allowed roles.
+// Also checks the blacklist so logged-out tokens are rejected.
+function requireRole(...allowedRoles) {
+    return (req, res, next) => {
+        const token = req.headers.authorization?.split(' ')[1];
+        if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
+        if (isTokenBlacklisted(token)) {
+            return res.status(401).json({ success: false, message: 'Token has been invalidated. Please log in again.' });
+        }
+        try {
+            const decoded = jwt.verify(token, JWT_SECRET);
+            if (allowedRoles.length && !allowedRoles.includes(decoded.role)) {
+                return res.status(403).json({ success: false, message: `Role '${decoded.role}' is not authorized for this route` });
+            }
+            req.user = decoded;
+            next();
+        } catch {
+            return res.status(401).json({ success: false, message: 'Not authorized' });
+        }
+    };
 }
 
 // ============ API ROUTES ============
 
 // Auth - Login
-app.post('/api/auth/login', (req, res) => {
-    const { identifier, password, role } = req.body;
+app.post('/api/auth/login', async (req, res) => {
+    const { identifier, password, role, branch } = req.body;
     
-    const user = demoUsers[identifier];
+    if (!branch || !['nursery', 'secondary'].includes(branch)) {
+        return res.status(400).json({ success: false, message: 'Please select a valid branch' });
+    }
+    
+    // Try store first (MongoDB), fall back to demoUsers
+    let user = await store.findUserByIdentifier(identifier);
+    if (!user) user = demoUsers[identifier];
     
     if (!user || user.password !== password) {
         return res.status(401).json({ success: false, message: 'Invalid credentials' });
@@ -133,7 +217,12 @@ app.post('/api/auth/login', (req, res) => {
         return res.status(401).json({ success: false, message: 'Invalid role for this account' });
     }
     
-    const token = generateToken(user.id);
+    // Branch access control: verify user belongs to the selected branch (skip for admin)
+    if (user.role !== 'admin' && user.branch && user.branch !== branch) {
+        return res.status(403).json({ success: false, message: 'Unauthorized: This account does not belong to the selected branch' });
+    }
+    
+    const token = generateToken(user.id, user.role);
     
     res.json({
         success: true,
@@ -144,6 +233,7 @@ app.post('/api/auth/login', (req, res) => {
             lastName: user.lastName,
             email: user.email,
             role: user.role,
+            branch: user.branch,
             admissionNumber: user.admissionNumber,
             staffId: user.staffId
         }
@@ -151,13 +241,19 @@ app.post('/api/auth/login', (req, res) => {
 });
 
 // Auth - Get current user
-app.get('/api/auth/me', (req, res) => {
+app.get('/api/auth/me', async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
     
+    if (isTokenBlacklisted(token)) {
+        return res.status(401).json({ success: false, message: 'Token has been invalidated. Please log in again.' });
+    }
+
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
-        const user = Object.values(demoUsers).find(u => u.id === decoded.id);
+        // Try store first (MongoDB), fall back to demoUsers
+        let user = await store.findUserById(decoded.id);
+        if (!user) user = Object.values(demoUsers).find(u => u.id === decoded.id);
         if (!user) return res.status(404).json({ success: false, message: 'User not found' });
         
         const { password, ...userWithoutPassword } = user;
@@ -167,22 +263,72 @@ app.get('/api/auth/me', (req, res) => {
     }
 });
 
+// Auth - Verify token validity (used by client on page load).
+// Returns the token's embedded role so the client can enforce portal guards.
+app.get('/api/auth/verify', async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ success: false, valid: false, message: 'No token provided' });
+
+    if (isTokenBlacklisted(token)) {
+        return res.status(401).json({ success: false, valid: false, message: 'Token has been invalidated' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        // Try store first (MongoDB), fall back to demoUsers
+        let user = await store.findUserById(decoded.id);
+        if (!user) user = Object.values(demoUsers).find(u => u.id === decoded.id);
+        if (!user) {
+            return res.status(401).json({ success: false, valid: false, message: 'User not found' });
+        }
+        res.json({ success: true, valid: true, role: decoded.role, user: { id: user.id, role: user.role } });
+    } catch (err) {
+        if (err.name === 'TokenExpiredError') {
+            return res.status(401).json({ success: false, valid: false, message: 'Token expired' });
+        }
+        if (err.name === 'JsonWebTokenError') {
+            return res.status(401).json({ success: false, valid: false, message: 'Invalid token' });
+        }
+        console.error('Verify token error:', err);
+        return res.status(500).json({ success: false, valid: false, message: 'Verification failed' });
+    }
+});
+
+// Auth - Logout (invalidates the token server-side)
+app.post('/api/auth/logout', (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+        return res.status(400).json({ success: false, message: 'No token provided' });
+    }
+    try {
+        jwt.verify(token, JWT_SECRET);
+        blacklistToken(token);
+    } catch (err) {
+        return res.status(401).json({ success: false, message: 'Invalid token' });
+    }
+    res.json({ success: true, message: 'Logged out successfully' });
+});
+
 // Auth - Change Password
 app.put('/api/auth/change-password', (req, res) => {
     res.json({ success: true, message: 'Password updated successfully' });
 });
 
 // Students - Get profile
-app.get('/api/students/profile', (req, res) => {
+app.get('/api/students/profile', async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
+    if (isTokenBlacklisted(token)) {
+        return res.status(401).json({ success: false, message: 'Token has been invalidated. Please log in again.' });
+    }
     
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
-        const user = Object.values(demoUsers).find(u => u.id === decoded.id);
+        let user = await store.findUserById(decoded.id);
+        if (!user) user = Object.values(demoUsers).find(u => u.id === decoded.id);
         if (!user) return res.status(404).json({ success: false, message: 'User not found' });
         
-        const student = demoStudents.find(s => s.admissionNumber === user.admissionNumber);
+        const student = await store.getStudentByAdmission(user.admissionNumber);
         res.json({ success: true, student: student || { admissionNumber: user.admissionNumber, class: user.class, session: user.session, term: user.term } });
     } catch (err) {
         res.status(401).json({ success: false, message: 'Not authorized' });
@@ -190,45 +336,49 @@ app.get('/api/students/profile', (req, res) => {
 });
 
 // Students - Get all
-app.get('/api/students/all', (req, res) => {
-    res.json({ success: true, count: demoStudents.length, students: demoStudents });
+app.get('/api/students/all', requireRole('admin'), async (req, res) => {
+    try {
+        const filter = {};
+        if (req.query.branch) filter.branch = req.query.branch;
+        const students = await store.getAllStudents(filter);
+        res.json({ success: true, count: students.length, students });
+    } catch (err) {
+        console.error('Get all students error:', err);
+        res.status(500).json({ success: false, message: 'Failed to fetch students' });
+    }
 });
 
-// Students - Create
-app.post('/api/students', (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
-    
-    try {
-        jwt.verify(token, JWT_SECRET);
-    } catch (err) {
-        return res.status(401).json({ success: false, message: 'Not authorized' });
-    }
-    
-    const { firstName, lastName, email, admissionNumber: inputAdmissionNo, class: studentClass, gender, password, session, term } = req.body;
+// Students - Create (admin only)
+app.post('/api/students', requireRole('admin'), async (req, res) => {
+    const { firstName, lastName, email, admissionNumber: inputAdmissionNo, class: studentClass, gender, password, session, term, branch } = req.body;
     
     if (!firstName || !lastName) {
         return res.status(400).json({ success: false, message: 'First name and last name are required' });
     }
     
+    const studentBranch = branch || 'secondary';
+    
     // Auto-generate admission number if not provided
     let admissionNumber = inputAdmissionNo;
     if (!admissionNumber) {
         const currentYear = new Date().getFullYear();
-        const yearStudents = demoStudents.filter(s => s.admissionNumber && s.admissionNumber.includes(`BSS/${currentYear}`));
+        const prefix = studentBranch === 'nursery' ? 'BNP' : 'BSS';
+        const existingStudents = await store.getAllStudents({ branch: studentBranch });
+        const yearStudents = existingStudents.filter(s => s.admissionNumber && s.admissionNumber.includes(`${prefix}/${currentYear}`));
         const nextNumber = yearStudents.length + 1;
-        admissionNumber = `BSS/${currentYear}/${String(nextNumber).padStart(3, '0')}`;
+        admissionNumber = `${prefix}/${currentYear}/${String(nextNumber).padStart(3, '0')}`;
     }
     
-    const exists = demoStudents.find(s => s.admissionNumber === admissionNumber);
+    const existingStudents = await store.getAllStudents({ branch: studentBranch });
+    const exists = existingStudents.find(s => s.admissionNumber === admissionNumber);
     if (exists) {
         return res.status(400).json({ success: false, message: 'Admission number already exists' });
     }
     
-    const newId = String(demoStudents.length + 1);
-    const newStudent = {
-        _id: newId,
+    const newStudent = await store.createStudent({
         admissionNumber,
+        password: password || 'password123',
+        branch: studentBranch,
         class: studentClass,
         gender,
         session,
@@ -236,207 +386,127 @@ app.post('/api/students', (req, res) => {
         parentName: '',
         parentPhone: '',
         user: { firstName, lastName, email }
-    };
-    
-    demoStudents.push(newStudent);
-    demoUsers[admissionNumber] = {
-        id: newId,
-        email,
-        password: password || 'password123',
-        firstName,
-        lastName,
-        role: 'student',
-        admissionNumber,
-        class: studentClass,
-        session,
-        term
-    };
+    });
     
     res.status(201).json({ success: true, message: 'Student added successfully', student: newStudent });
 });
 
-// Students - Update
-app.put('/api/students/:id', (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
-    
+// Students - Update (admin only)
+app.put('/api/students/:id', requireRole('admin'), async (req, res) => {
     try {
-        jwt.verify(token, JWT_SECRET);
+        const { firstName, lastName, email, admissionNumber, class: studentClass, gender, parentName, parentPhone, password } = req.body;
+
+        const student = await store.updateStudent(req.params.id, {
+            firstName, lastName, email, admissionNumber,
+            class: studentClass, gender, parentName, parentPhone
+        });
+        if (!student) return res.status(404).json({ success: false, message: 'Student not found' });
+
+        res.json({ success: true, message: 'Student updated successfully', student });
     } catch (err) {
-        return res.status(401).json({ success: false, message: 'Not authorized' });
+        console.error('Update student error:', err);
+        res.status(500).json({ success: false, message: 'Failed to update student' });
     }
-    
-    const student = demoStudents.find(s => s._id === req.params.id);
-    if (!student) return res.status(404).json({ success: false, message: 'Student not found' });
-    
-    const { firstName, lastName, email, admissionNumber, class: studentClass, gender, parentName, parentPhone, password } = req.body;
-    
-    if (firstName) student.user.firstName = firstName;
-    if (lastName) student.user.lastName = lastName;
-    if (email) student.user.email = email;
-    if (admissionNumber) student.admissionNumber = admissionNumber;
-    if (studentClass) student.class = studentClass;
-    if (gender) student.gender = gender;
-    if (parentName) student.parentName = parentName;
-    if (parentPhone) student.parentPhone = parentPhone;
-    
-    // Update demoUsers
-    const user = demoUsers[student.admissionNumber] || demoUsers[Object.keys(demoUsers).find(k => demoUsers[k].id === req.params.id)];
-    if (user) {
-        if (firstName) user.firstName = firstName;
-        if (lastName) user.lastName = lastName;
-        if (email) user.email = email;
-        if (password) user.password = password;
-        if (studentClass) user.class = studentClass;
-    }
-    
-    res.json({ success: true, message: 'Student updated successfully', student });
 });
 
-// Students - Delete
-app.delete('/api/students/:id', (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
-    
+// Students - Delete (admin only)
+app.delete('/api/students/:id', requireRole('admin'), async (req, res) => {
     try {
-        jwt.verify(token, JWT_SECRET);
+        const students = await store.getAllStudents();
+        const student = students.find(s => String(s._id) === String(req.params.id));
+        if (!student) return res.status(404).json({ success: false, message: 'Student not found' });
+
+        await store.deleteStudent(req.params.id);
+
+        res.json({ success: true, message: 'Student deleted successfully' });
     } catch (err) {
-        return res.status(401).json({ success: false, message: 'Not authorized' });
+        console.error('Delete student error:', err);
+        res.status(500).json({ success: false, message: 'Failed to delete student' });
     }
-    
-    const index = demoStudents.findIndex(s => s._id === req.params.id);
-    if (index === -1) return res.status(404).json({ success: false, message: 'Student not found' });
-    
-    const student = demoStudents[index];
-    delete demoUsers[student.admissionNumber];
-    demoStudents.splice(index, 1);
-    
-    res.json({ success: true, message: 'Student deleted successfully' });
 });
 
 // Teachers - Get all
-app.get('/api/teachers/all', (req, res) => {
-    res.json({ success: true, count: demoTeachers.length, teachers: demoTeachers });
+app.get('/api/teachers/all', requireRole('admin'), async (req, res) => {
+    try {
+        const filter = {};
+        if (req.query.branch) filter.branch = req.query.branch;
+        const teachers = await store.getAllTeachers(filter);
+        res.json({ success: true, count: teachers.length, teachers });
+    } catch (err) {
+        console.error('Get all teachers error:', err);
+        res.status(500).json({ success: false, message: 'Failed to fetch teachers' });
+    }
 });
 
-// Teachers - Create
-app.post('/api/teachers', (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
-    
-    try {
-        jwt.verify(token, JWT_SECRET);
-    } catch (err) {
-        return res.status(401).json({ success: false, message: 'Not authorized' });
-    }
-    
-    const { firstName, lastName, email, staffId, department, password } = req.body;
+// Teachers - Create (admin only)
+app.post('/api/teachers', requireRole('admin'), async (req, res) => {
+    const { firstName, lastName, email, staffId, department, password, branch } = req.body;
     
     if (!firstName || !lastName || !staffId) {
         return res.status(400).json({ success: false, message: 'Missing required fields' });
     }
     
-    const exists = demoTeachers.find(t => t.staffId === staffId);
+    const teacherBranch = branch || 'secondary';
+    
+    const existingTeachers = await store.getAllTeachers({ branch: teacherBranch });
+    const exists = existingTeachers.find(t => t.staffId === staffId);
     if (exists) {
         return res.status(400).json({ success: false, message: 'Staff ID already exists' });
     }
     
-    const newId = String(demoTeachers.length + 10);
-    const newTeacher = {
-        _id: newId,
+    const newTeacher = await store.createTeacher({
         staffId,
+        password: password || 'password123',
+        branch: teacherBranch,
         department,
         subjects: [],
         qualification: '',
         experience: 0,
         status: 'active',
         user: { firstName, lastName, email }
-    };
-    
-    demoTeachers.push(newTeacher);
-    demoUsers[staffId] = {
-        id: newId,
-        email,
-        password: password || 'password123',
-        firstName,
-        lastName,
-        role: 'teacher',
-        staffId
-    };
+    });
     
     res.status(201).json({ success: true, message: 'Teacher added successfully', teacher: newTeacher });
 });
 
-// Teachers - Update
-app.put('/api/teachers/:id', (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
-    
+// Teachers - Update (admin only)
+app.put('/api/teachers/:id', requireRole('admin'), async (req, res) => {
     try {
-        jwt.verify(token, JWT_SECRET);
+        const { firstName, lastName, email, staffId, department, qualification, password } = req.body;
+
+        const teacher = await store.updateTeacher(req.params.id, {
+            firstName, lastName, email, staffId, department, qualification
+        });
+        if (!teacher) return res.status(404).json({ success: false, message: 'Teacher not found' });
+
+        res.json({ success: true, message: 'Teacher updated successfully', teacher });
     } catch (err) {
-        return res.status(401).json({ success: false, message: 'Not authorized' });
+        console.error('Update teacher error:', err);
+        res.status(500).json({ success: false, message: 'Failed to update teacher' });
     }
-    
-    const teacher = demoTeachers.find(t => t._id === req.params.id);
-    if (!teacher) return res.status(404).json({ success: false, message: 'Teacher not found' });
-    
-    const { firstName, lastName, email, staffId, department, qualification, password } = req.body;
-    
-    if (firstName) teacher.user.firstName = firstName;
-    if (lastName) teacher.user.lastName = lastName;
-    if (email) teacher.user.email = email;
-    if (staffId) teacher.staffId = staffId;
-    if (department) teacher.department = department;
-    if (qualification) teacher.qualification = qualification;
-    
-    // Update demoUsers
-    const user = demoUsers[teacher.staffId] || demoUsers[Object.keys(demoUsers).find(k => demoUsers[k].id === req.params.id)];
-    if (user) {
-        if (firstName) user.firstName = firstName;
-        if (lastName) user.lastName = lastName;
-        if (email) user.email = email;
-        if (password) user.password = password;
-    }
-    
-    res.json({ success: true, message: 'Teacher updated successfully', teacher });
 });
 
-// Teachers - Delete
-app.delete('/api/teachers/:id', (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
-    
+// Teachers - Delete (admin only)
+app.delete('/api/teachers/:id', requireRole('admin'), async (req, res) => {
     try {
-        jwt.verify(token, JWT_SECRET);
+        const teachers = await store.getAllTeachers();
+        const teacher = teachers.find(t => String(t._id) === String(req.params.id));
+        if (!teacher) return res.status(404).json({ success: false, message: 'Teacher not found' });
+
+        await store.deleteTeacher(req.params.id);
+
+        res.json({ success: true, message: 'Teacher deleted successfully' });
     } catch (err) {
-        return res.status(401).json({ success: false, message: 'Not authorized' });
+        console.error('Delete teacher error:', err);
+        res.status(500).json({ success: false, message: 'Failed to delete teacher' });
     }
-    
-    const index = demoTeachers.findIndex(t => t._id === req.params.id);
-    if (index === -1) return res.status(404).json({ success: false, message: 'Teacher not found' });
-    
-    const teacher = demoTeachers[index];
-    delete demoUsers[teacher.staffId];
-    demoTeachers.splice(index, 1);
-    
-    res.json({ success: true, message: 'Teacher deleted successfully' });
 });
 
-// Announcements - Create
-app.post('/api/announcements', async (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
-    
+// Announcements - Create (admin only)
+app.post('/api/announcements', requireRole('admin'), async (req, res) => {
+    const { title, category, content, branch } = req.body;
     try {
-        jwt.verify(token, JWT_SECRET);
-    } catch (err) {
-        return res.status(401).json({ success: false, message: 'Not authorized' });
-    }
-    
-    const { title, category, content } = req.body;
-    try {
-        const announcement = await store.createAnnouncement({ title, category, content });
+        const announcement = await store.createAnnouncement({ title, category, content, branch: branch || 'secondary' });
         res.status(201).json({ success: true, announcement });
     } catch (err) {
         console.error('Create announcement error:', err);
@@ -444,17 +514,8 @@ app.post('/api/announcements', async (req, res) => {
     }
 });
 
-// Announcements - Delete
-app.delete('/api/announcements/:id', async (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
-    
-    try {
-        jwt.verify(token, JWT_SECRET);
-    } catch (err) {
-        return res.status(401).json({ success: false, message: 'Not authorized' });
-    }
-    
+// Announcements - Delete (admin only)
+app.delete('/api/announcements/:id', requireRole('admin'), async (req, res) => {
     try {
         const ok = await store.deleteAnnouncement(req.params.id);
         if (!ok) return res.status(404).json({ success: false, message: 'Announcement not found' });
@@ -466,19 +527,27 @@ app.delete('/api/announcements/:id', async (req, res) => {
 });
 
 // Results - Get student results
-app.get('/api/results/student', (req, res) => {
+app.get('/api/results/student', async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
     let admissionNumber = 'BSS/2026/001';
     
-    if (token) {
+    if (token && !isTokenBlacklisted(token)) {
         try {
             const decoded = jwt.verify(token, JWT_SECRET);
-            const user = Object.values(demoUsers).find(u => u.id === decoded.id);
+            let user = await store.findUserById(decoded.id);
+            if (!user) user = Object.values(demoUsers).find(u => u.id === decoded.id);
             if (user) admissionNumber = user.admissionNumber;
         } catch (err) {}
     }
     
-    const results = demoResults[admissionNumber] || [];
+    // Try store first (MongoDB), fall back to demoResults
+    let results = [];
+    if (store.isDbConnected()) {
+        const data = await store.getStudentResultSummary(admissionNumber, '2025/2026', 'Second Term');
+        results = data.results || [];
+    } else {
+        results = demoResults[admissionNumber] || [];
+    }
     let totalScore = 0;
     results.forEach(r => totalScore += r.totalScore);
     const average = results.length > 0 ? (totalScore / results.length).toFixed(2) : 0;
@@ -490,8 +559,8 @@ app.get('/api/results/student', (req, res) => {
     });
 });
 
-// Teacher uploads results (Single Batch: upsert into an existing 'pending' record)
-app.post('/api/results', async (req, res) => {
+// Teacher uploads results (teacher only — Single Batch: upsert into an existing 'pending' record)
+app.post('/api/results', requireRole('teacher'), async (req, res) => {
     const { class: cls, subject, session, term, students, status } = req.body;
     if (!cls || !subject || !Array.isArray(students)) {
         return res.status(400).json({ success: false, message: 'Class, subject and students are required' });
@@ -507,9 +576,11 @@ app.post('/api/results', async (req, res) => {
 });
 
 // Admin: fetch only result records pending verification
-app.get('/api/results/pending', async (req, res) => {
+app.get('/api/results/pending', requireRole('admin'), async (req, res) => {
     try {
-        const results = await store.getPendingResultUploads();
+        const filter = {};
+        if (req.query.branch) filter.branch = req.query.branch;
+        const results = await store.getPendingResultUploads(filter);
         res.json({ success: true, results });
     } catch (err) {
         console.error('Pending results error:', err);
@@ -518,7 +589,7 @@ app.get('/api/results/pending', async (req, res) => {
 });
 
 // Admin: approve (verify) a result batch
-app.post('/api/results/:id/approve', async (req, res) => {
+app.post('/api/results/:id/approve', requireRole('admin'), async (req, res) => {
     try {
         const upload = await store.approveResultUpload(req.params.id);
         if (!upload) return res.status(404).json({ success: false, message: 'Result record not found' });
@@ -529,15 +600,133 @@ app.post('/api/results/:id/approve', async (req, res) => {
     }
 });
 
+// ═════════════════════════════════════════════════════════════════════════
+// Result Processing & Ranking System Routes
+// ═════════════════════════════════════════════════════════════════════════
+
+// Teacher: upload results for a class/subject (upsert batch + individual records)
+app.post('/api/v2/results', requireRole('teacher'), async (req, res) => {
+    try {
+        const { class: cls, subject, session, term, students, branch } = req.body;
+        if (!cls || !subject || !Array.isArray(students) || students.length === 0) {
+            return res.status(400).json({ success: false, message: 'Class, subject and students array are required' });
+        }
+
+        const decoded = jwt.verify(req.headers.authorization.split(' ')[1], JWT_SECRET);
+        let user = await store.findUserById(decoded.id);
+        if (!user) user = Object.values(demoUsers).find(u => u.id === decoded.id);
+        const uploadedBy = user ? (user.staffId || user.email) : 'unknown';
+        const uploadedByName = user ? `${user.firstName} ${user.lastName}` : 'Unknown';
+        const resultBranch = branch || (user ? user.branch : 'secondary');
+
+        const { batch, replaced } = await store.createResultBatch({
+            class: cls, subject, session, term, students, uploadedBy, uploadedByName, branch: resultBranch
+        });
+
+        const message = replaced
+            ? 'Existing results updated. Pending admin approval.'
+            : 'Results saved. Pending admin approval.';
+
+        res.status(replaced ? 200 : 201).json({ success: true, message, batch, replaced });
+    } catch (err) {
+        console.error('Create result batch error:', err);
+        if (err.code === 11000) {
+            return res.status(409).json({ success: false, message: 'A pending batch already exists for this class/subject/term/session.' });
+        }
+        res.status(500).json({ success: false, message: 'Failed to save results' });
+    }
+});
+
+// Teacher: view their own uploaded batches
+app.get('/api/v2/results/teacher', requireRole('teacher'), async (req, res) => {
+    try {
+        const decoded = jwt.verify(req.headers.authorization.split(' ')[1], JWT_SECRET);
+        let user = await store.findUserById(decoded.id);
+        if (!user) user = Object.values(demoUsers).find(u => u.id === decoded.id);
+        const uploadedBy = user ? (user.staffId || user.email) : 'unknown';
+        const filter = {};
+        if (user && user.branch) filter.branch = user.branch;
+
+        const batches = await store.getTeacherResultBatches(uploadedBy, filter);
+        res.json({ success: true, batches });
+    } catch (err) {
+        console.error('Get teacher results error:', err);
+        res.status(500).json({ success: false, message: 'Failed to load results' });
+    }
+});
+
+// Admin: get all pending batches
+app.get('/api/v2/results/pending', requireRole('admin'), async (req, res) => {
+    try {
+        const filter = {};
+        if (req.query.branch) filter.branch = req.query.branch;
+        const batches = await store.getPendingResultBatches(filter);
+        res.json({ success: true, batches });
+    } catch (err) {
+        console.error('Get pending batches error:', err);
+        res.status(500).json({ success: false, message: 'Failed to load pending results' });
+    }
+});
+
+// Admin: get a batch with its student results (for preview before approval)
+app.get('/api/v2/results/batch/:id', requireRole('admin'), async (req, res) => {
+    try {
+        const data = await store.getResultBatchWithStudents(req.params.id);
+        if (!data) return res.status(404).json({ success: false, message: 'Batch not found' });
+        res.json({ success: true, ...data });
+    } catch (err) {
+        console.error('Get batch error:', err);
+        res.status(500).json({ success: false, message: 'Failed to load batch' });
+    }
+});
+
+// Admin: approve a batch → triggers ranking engine
+app.post('/api/v2/results/batch/:id/approve', requireRole('admin'), async (req, res) => {
+    try {
+        const batch = await store.approveResultBatch(req.params.id);
+        if (!batch) return res.status(404).json({ success: false, message: 'Batch not found' });
+        res.json({ success: true, message: 'Results approved and rankings computed.', batch });
+    } catch (err) {
+        console.error('Approve batch error:', err);
+        res.status(500).json({ success: false, message: 'Failed to approve batch' });
+    }
+});
+
+// Student: view own approved results with summary/ranking
+app.get('/api/v2/results/student', async (req, res) => {
+    try {
+        const token = req.headers.authorization?.split(' ')[1];
+        let admissionNumber = 'BSS/2026/001';
+        if (token && !isTokenBlacklisted(token)) {
+            try {
+                const decoded = jwt.verify(token, JWT_SECRET);
+                let user = await store.findUserById(decoded.id);
+                if (!user) user = Object.values(demoUsers).find(u => u.id === decoded.id);
+                if (user) admissionNumber = user.admissionNumber;
+            } catch (err) {}
+        }
+
+        const session = req.query.session || '2025/2026';
+        const term = req.query.term || 'Second Term';
+
+        const data = await store.getStudentResultSummary(admissionNumber, session, term);
+        res.json({ success: true, ...data });
+    } catch (err) {
+        console.error('Get student results error:', err);
+        res.status(500).json({ success: false, message: 'Failed to load results' });
+    }
+});
+
 // Fees - Get student fees
 app.get('/api/fees/student', async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
     let admissionNumber = 'BSS/2026/001';
     
-    if (token) {
+    if (token && !isTokenBlacklisted(token)) {
         try {
             const decoded = jwt.verify(token, JWT_SECRET);
-            const user = Object.values(demoUsers).find(u => u.id === decoded.id);
+            let user = await store.findUserById(decoded.id);
+            if (!user) user = Object.values(demoUsers).find(u => u.id === decoded.id);
             if (user) admissionNumber = user.admissionNumber;
         } catch (err) {}
     }
@@ -549,7 +738,7 @@ app.get('/api/fees/student', async (req, res) => {
     res.json({ success: true, fees, summary: { totalPaid, totalBalance } });
 });
 
-// Announcements - Get all
+// Announcements - Get all (global — not filtered by branch)
 app.get('/api/announcements', async (req, res) => {
     try {
         const announcements = await store.getAnnouncements();
@@ -565,7 +754,7 @@ app.get('/api/announcements', async (req, res) => {
 // Student/Teacher: get timetable for a class (shared, DB-driven)
 app.get('/api/timetable', async (req, res) => {
     try {
-        const filter = { class: req.query.class, session: req.query.session, term: req.query.term };
+        const filter = { class: req.query.class, session: req.query.session, term: req.query.term, branch: req.query.branch };
         const timetable = await store.getTimetable(filter);
         res.json({ success: true, timetable: timetable || null });
     } catch (err) {
@@ -575,9 +764,11 @@ app.get('/api/timetable', async (req, res) => {
 });
 
 // Admin: get all timetables
-app.get('/api/timetables', async (req, res) => {
+app.get('/api/timetables', requireRole('admin'), async (req, res) => {
     try {
-        const timetables = await store.getAllTimetables();
+        const filter = {};
+        if (req.query.branch) filter.branch = req.query.branch;
+        const timetables = await store.getAllTimetables(filter);
         res.json({ success: true, timetables });
     } catch (err) {
         console.error('Get timetables error:', err);
@@ -586,20 +777,13 @@ app.get('/api/timetables', async (req, res) => {
 });
 
 // Admin: create/edit a class timetable (upsert by class+session+term)
-app.post('/api/timetable', async (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
-    try {
-        jwt.verify(token, JWT_SECRET);
-    } catch (err) {
-        return res.status(401).json({ success: false, message: 'Not authorized' });
-    }
-    const { class: cls, session, term, schedule, dismissalTimes } = req.body;
+app.post('/api/timetable', requireRole('admin'), async (req, res) => {
+    const { class: cls, session, term, schedule, dismissalTimes, branch } = req.body;
     if (!cls || !Array.isArray(schedule)) {
         return res.status(400).json({ success: false, message: 'Class and schedule are required' });
     }
     try {
-        const timetable = await store.upsertTimetable({ class: cls, session, term, schedule, dismissalTimes });
+        const timetable = await store.upsertTimetable({ class: cls, session, term, schedule, dismissalTimes, branch: branch || 'secondary' });
         res.status(200).json({ success: true, timetable });
     } catch (err) {
         console.error('Save timetable error:', err);
@@ -616,6 +800,7 @@ app.get('/api/assignments', async (req, res) => {
         if (req.query.class) filter.class = req.query.class;
         if (req.query.session) filter.session = req.query.session;
         if (req.query.term) filter.term = req.query.term;
+        if (req.query.branch) filter.branch = req.query.branch;
         const assignments = await store.getAssignments(filter);
         res.json({ success: true, assignments });
     } catch (err) {
@@ -625,9 +810,11 @@ app.get('/api/assignments', async (req, res) => {
 });
 
 // Admin: get all assignments (including inactive)
-app.get('/api/assignments/all', async (req, res) => {
+app.get('/api/assignments/all', requireRole('admin'), async (req, res) => {
     try {
-        const assignments = await store.getAllAssignments();
+        const filter = {};
+        if (req.query.branch) filter.branch = req.query.branch;
+        const assignments = await store.getAllAssignments(filter);
         res.json({ success: true, assignments });
     } catch (err) {
         console.error('Get all assignments error:', err);
@@ -635,24 +822,19 @@ app.get('/api/assignments/all', async (req, res) => {
     }
 });
 
-// Teacher: post a new assignment
-app.post('/api/assignments', async (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
-    let user = null;
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET);
-        user = Object.values(demoUsers).find(u => u.id === decoded.id);
-    } catch (err) {
-        return res.status(401).json({ success: false, message: 'Not authorized' });
-    }
-    const { title, description, subject, class: cls, session, term, dueDate, totalMarks } = req.body;
+// Teacher: post a new assignment (teacher only)
+app.post('/api/assignments', requireRole('teacher'), async (req, res) => {
+    const decoded = req.user;
+    let user = await store.findUserById(decoded.id);
+    if (!user) user = Object.values(demoUsers).find(u => u.id === decoded.id);
+    const { title, description, subject, class: cls, session, term, dueDate, totalMarks, branch } = req.body;
     if (!title || !subject || !cls) {
         return res.status(400).json({ success: false, message: 'Title, subject and class are required' });
     }
     try {
         const assignment = await store.createAssignment({
             title, description, subject, class: cls, session, term, dueDate, totalMarks,
+            branch: branch || (user ? user.branch : 'secondary'),
             postedBy: user ? `${user.firstName} ${user.lastName}` : 'Teacher'
         });
         res.status(201).json({ success: true, assignment });
@@ -663,14 +845,7 @@ app.post('/api/assignments', async (req, res) => {
 });
 
 // Teacher/Admin: delete an assignment
-app.delete('/api/assignments/:id', async (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
-    try {
-        jwt.verify(token, JWT_SECRET);
-    } catch (err) {
-        return res.status(401).json({ success: false, message: 'Not authorized' });
-    }
+app.delete('/api/assignments/:id', requireRole('teacher', 'admin'), async (req, res) => {
     try {
         const ok = await store.deleteAssignment(req.params.id);
         if (!ok) return res.status(404).json({ success: false, message: 'Assignment not found' });
@@ -686,7 +861,7 @@ app.get('/api/attendance/student', (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
     let admissionNumber = 'BSS/2026/001';
     
-    if (token) {
+    if (token && !isTokenBlacklisted(token)) {
         try {
             const decoded = jwt.verify(token, JWT_SECRET);
             const user = Object.values(demoUsers).find(u => u.id === decoded.id);
@@ -709,9 +884,12 @@ app.get('/api/attendance/student', (req, res) => {
 });
 
 // Get all students (optional ?class=SS1 filter)
-app.get('/api/students', async (req, res) => {
+app.get('/api/students', requireRole('admin', 'teacher'), async (req, res) => {
     try {
-        const students = await store.getStudents(req.query.class ? { class: req.query.class } : {});
+        const filter = {};
+        if (req.query.class) filter.class = req.query.class;
+        if (req.query.branch) filter.branch = req.query.branch;
+        const students = await store.getStudents(filter);
         res.json({ success: true, students, total: students.length });
     } catch (err) {
         console.error('Get students error:', err);
@@ -720,9 +898,11 @@ app.get('/api/students', async (req, res) => {
 });
 
 // Get all teachers
-app.get('/api/teachers', async (req, res) => {
+app.get('/api/teachers', requireRole('admin'), async (req, res) => {
     try {
-        const teachers = await store.getTeachers();
+        const filter = {};
+        if (req.query.branch) filter.branch = req.query.branch;
+        const teachers = await store.getTeachers(filter);
         res.json({ success: true, teachers, total: teachers.length });
     } catch (err) {
         console.error('Get teachers error:', err);
@@ -733,7 +913,9 @@ app.get('/api/teachers', async (req, res) => {
 // Get statistics
 app.get('/api/statistics', async (req, res) => {
     try {
-        const statistics = await store.getStatistics();
+        const filter = {};
+        if (req.query.branch) filter.branch = req.query.branch;
+        const statistics = await store.getStatistics(filter);
         res.json({ success: true, statistics });
     } catch (err) {
         console.error('Get statistics error:', err);
@@ -741,17 +923,19 @@ app.get('/api/statistics', async (req, res) => {
     }
 });
 
-// Admin - Dashboard stats
-app.get('/api/admin/dashboard', async (req, res) => {
+// Admin - Dashboard stats (admin only)
+app.get('/api/admin/dashboard', requireRole('admin'), async (req, res) => {
     try {
-        const stats = await store.getStatistics();
+        const filter = {};
+        if (req.query.branch) filter.branch = req.query.branch;
+        const stats = await store.getStatistics(filter);
         res.json({
             success: true,
             stats: {
                 totalStudents: stats.totalStudents,
                 totalTeachers: stats.totalTeachers,
                 totalAdmins: 1,
-                recentStudents: (await store.getStudents()).slice(0, 3),
+                recentStudents: (await store.getStudents(filter)).slice(0, 3),
                 activeSession: { name: '2025/2026', currentTerm: 'Second Term' }
             }
         });
@@ -776,12 +960,19 @@ app.get('/results', (req, res) => res.sendFile(path.join(__dirname, 'views', 're
 app.get('/fees', (req, res) => res.sendFile(path.join(__dirname, 'views', 'fees.html')));
 app.get('/admission-form', (req, res) => res.sendFile(path.join(__dirname, 'views', 'admission-form.html')));
 
-// Start server (only when run directly, not when imported by Vercel serverless)
-if (require.main === module) {
-    app.listen(PORT, () => {
-        console.log(`Server running on http://localhost:${PORT}`);
-    });
-}
+// 404 handler
+app.use((req, res) => {
+    if (req.path.startsWith('/api/')) {
+        return res.status(404).json({ success: false, message: 'Route not found' });
+    }
+    res.status(404).sendFile(path.join(__dirname, 'views', 'index.html'));
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error('Server error:', err.stack || err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+});
 
 // Export for serverless (Vercel @vercel/node) deployments
 module.exports = app;

@@ -1,13 +1,10 @@
 // Teacher Dashboard JavaScript
 
-document.addEventListener('DOMContentLoaded', function() {
-    const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
+document.addEventListener('DOMContentLoaded', async function() {
+    const auth = await requireAuth('teacher');
+    if (!auth.ok) return;
     
-    if (!token || !user.role || user.role !== 'teacher') {
-        window.location.href = '/login?role=teacher';
-        return;
-    }
+    const { user } = auth;
     
     document.getElementById('teacherName').textContent = `${user.firstName} ${user.lastName}`;
     document.getElementById('teacherFirstName').textContent = user.firstName;
@@ -19,12 +16,14 @@ document.addEventListener('DOMContentLoaded', function() {
 // Load dashboard data from API
 async function loadDashboardData() {
     try {
-        const token = localStorage.getItem('token');
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const session = getSession('teacher');
+        const token = session ? session.token : null;
+        const user = session ? session.user : {};
+        const teacherBranch = user.branch || 'secondary';
         let classBreakdown = {};
         
         // Fetch statistics
-        const statsResponse = await fetch('/api/statistics', {
+        const statsResponse = await fetch(`/api/statistics?branch=${teacherBranch}`, {
             headers: token ? { 'Authorization': `Bearer ${token}` } : {}
         });
         
@@ -39,7 +38,7 @@ async function loadDashboardData() {
         }
         
         // Fetch teacher's subjects from demo data
-        const teachersResponse = await fetch('/api/teachers', {
+        const teachersResponse = await fetch(`/api/teachers?branch=${teacherBranch}`, {
             headers: token ? { 'Authorization': `Bearer ${token}` } : {}
         });
         
@@ -62,10 +61,20 @@ async function loadDashboardData() {
     }
 }
 
-// Clean a class name for DISPLAY only: strip all alphabetical characters.
-// "SS 1A" -> "1", "SS1" -> "1". Original key is preserved for backend requests.
+// Maps raw database IDs / class keys to user-friendly display names.
+// If a key is not found, it falls back to 'Unknown Class'.
+const CLASS_NAME_MAP = {
+    '1': 'JSS 1', 'JSS1': 'JSS 1',
+    '2': 'JSS 2', 'JSS2': 'JSS 2',
+    '3': 'JSS 3', 'JSS3': 'JSS 3',
+    '4': 'SS 1',  'SS1': 'SS 1',
+    '5': 'SS 2',  'SS2': 'SS 2',
+    '6': 'SS 3',  'SS3': 'SS 3'
+};
+
+// Return a user-friendly class name, falling back to 'Unknown Class' for unmapped keys.
 function cleanClassName(name) {
-    return name.replace(/[A-Za-z]/g, '').trim();
+    return CLASS_NAME_MAP[name] || 'Unknown Class';
 }
 
 // Build "My Classes" cards from real class-breakdown data
@@ -124,7 +133,7 @@ async function loadStudentsForResults() {
         return;
     }
     try {
-        const token = localStorage.getItem('token');
+        const token = getSession('teacher')?.token;
         const res = await fetch(`/api/students?class=${encodeURIComponent(cls)}`, {
             headers: token ? { 'Authorization': `Bearer ${token}` } : {}
         });
@@ -159,7 +168,7 @@ async function loadStudentsForResults() {
     }
 }
 
-// Requirement 2: Save results with status 'pending_verification' for admin approval
+// Requirement 2: Save results with status 'Pending' for admin approval
 async function saveResults() {
     const cls = document.getElementById('resultClassSelect').value;
     const subject = document.getElementById('resultSubjectSelect').value;
@@ -182,41 +191,41 @@ async function saveResults() {
         const ca1 = parseFloat(row.querySelector('[data-field="ca1"]').value) || 0;
         const ca2 = parseFloat(row.querySelector('[data-field="ca2"]').value) || 0;
         const exam = parseFloat(row.querySelector('[data-field="exam"]').value) || 0;
+        const nameCell = row.querySelector('td:first-child');
         return {
             admissionNumber: row.getAttribute('data-admission'),
-            ca1, ca2, exam,
-            total: ca1 + ca2 + exam
+            studentName: nameCell ? nameCell.textContent.trim() : '',
+            ca1, ca2, exam
         };
     });
 
-    const payload = {
-        class: cls,            // original key kept for backend
-        subject,
-        session,
-        term,
-        status: 'pending_verification',
-        students
-    };
+    const payload = { class: cls, subject, session, term, students };
 
     try {
-        const token = localStorage.getItem('token');
-        const res = await fetch('/api/results', {
+        const token = getSession('teacher')?.token;
+        if (!token) {
+            showSaveMsg(msg, 'Session expired. Please log in again.', false);
+            return;
+        }
+        const res = await fetch('/api/v2/results', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify(payload)
         });
         const data = await res.json();
         if (data.success) {
-            showSaveMsg(msg, 'Results saved and sent for admin verification.', true);
+            const note = data.replaced ? 'Existing results updated.' : 'Results saved.';
+            showSaveMsg(msg, `${note} Pending admin approval.`, true);
+            loadTeacherUploadedResults();
         } else {
             showSaveMsg(msg, data.message || 'Failed to save results.', false);
         }
     } catch (e) {
-        console.error(e);
-        showSaveMsg(msg, 'Upstream request failed. Please try again.', false);
+        console.error('Save results error:', e);
+        showSaveMsg(msg, `Network error: ${e.message}. Is the server running on port 3000?`, false);
     }
 }
 
@@ -228,7 +237,7 @@ function showSaveMsg(el, text, success) {
 // View students in a class (uses the ORIGINAL class key for the backend request)
 async function viewClassStudents(originalClass) {
     try {
-        const token = localStorage.getItem('token');
+        const token = getSession('teacher')?.token;
         const res = await fetch(`/api/students?class=${encodeURIComponent(originalClass)}`, {
             headers: token ? { 'Authorization': `Bearer ${token}` } : {}
         });
@@ -251,11 +260,51 @@ function showSection(section) {
 
     if (section === 'assignments') loadTeacherAssignments();
     if (section === 'announcements') loadTeacherAnnouncements();
+    if (section === 'results') loadTeacherUploadedResults();
 }
 
-function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('open');
+// Load teacher's own uploaded result batches with approval status
+async function loadTeacherUploadedResults() {
+    const container = document.getElementById('teacherUploadedResults');
+    if (!container) return;
+    container.innerHTML = '<p class="text-slate-400 text-sm text-center py-4">Loading...</p>';
+    try {
+        const token = getSession('teacher')?.token;
+        const res = await fetch('/api/v2/results/teacher', {
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
+        const data = await res.json();
+        const batches = data.batches || [];
+        if (batches.length === 0) {
+            container.innerHTML = '<p class="text-slate-400 text-sm text-center py-4">No results uploaded yet. Use the form above to upload results.</p>';
+            return;
+        }
+        container.innerHTML = batches.map(b => {
+            const isApproved = b.status === 'Approved';
+            const badgeClass = isApproved ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700';
+            return `
+                <div class="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200 hover:shadow-sm transition">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-10 h-10 ${isApproved ? 'bg-emerald-100' : 'bg-amber-100'} rounded-lg flex items-center justify-center">
+                            <i class="fas ${isApproved ? 'fa-check-circle text-emerald-600' : 'fa-clock text-amber-600'}"></i>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-slate-800">${b.class} &mdash; ${b.subject}</p>
+                            <p class="text-xs text-slate-500">${b.session} | ${b.term}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold ${badgeClass}">${b.status.toUpperCase()}</span>
+                        <p class="text-xs text-slate-400 mt-1">${new Date(b.createdAt).toLocaleDateString()}</p>
+                    </div>
+                </div>`;
+        }).join('');
+    } catch (e) {
+        console.error(e);
+        container.innerHTML = '<p class="text-red-500 text-sm text-center py-4">Failed to load results.</p>';
+    }
 }
+
 
 function openModal(id) {
     document.getElementById(id).classList.remove('hidden');
@@ -265,23 +314,20 @@ function closeModal(id) {
     document.getElementById(id).classList.add('hidden');
 }
 
-function logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    window.location.href = '/login?role=teacher';
-}
 
 // Post a new assignment (shared with student portal)
 async function postAssignment(event) {
     event.preventDefault();
-    const token = localStorage.getItem('token');
+    const token = getSession('teacher')?.token;
+    const teacherBranch = getSession('teacher')?.user?.branch || 'secondary';
     const payload = {
         title: document.getElementById('assignmentTitle').value,
         description: document.getElementById('assignmentDescription').value,
         subject: document.getElementById('assignmentSubject').value,
         class: document.getElementById('assignmentClass').value,
         dueDate: document.getElementById('assignmentDueDate').value,
-        totalMarks: Number(document.getElementById('assignmentTotalMarks').value) || 100
+        totalMarks: Number(document.getElementById('assignmentTotalMarks').value) || 100,
+        branch: teacherBranch
     };
 
     try {
@@ -310,8 +356,9 @@ async function loadTeacherAssignments() {
     const container = document.getElementById('teacherAssignmentsList');
     if (!container) return;
     try {
-        const token = localStorage.getItem('token');
-        const res = await fetch('/api/assignments/all', {
+        const token = getSession('teacher')?.token;
+        const teacherBranch = getSession('teacher')?.user?.branch || 'secondary';
+        const res = await fetch(`/api/assignments/all?branch=${teacherBranch}`, {
             headers: token ? { 'Authorization': `Bearer ${token}` } : {}
         });
         const data = await res.json();
@@ -342,7 +389,7 @@ async function loadTeacherAssignments() {
 async function deleteAssignment(id) {
     if (!confirm('Delete this assignment?')) return;
     try {
-        const token = localStorage.getItem('token');
+        const token = getSession('teacher')?.token;
         await fetch(`/api/assignments/${id}`, {
             method: 'DELETE',
             headers: token ? { 'Authorization': `Bearer ${token}` } : {}
@@ -359,6 +406,7 @@ async function loadTeacherAnnouncements() {
     const container = document.getElementById('teacherAnnouncementsList');
     if (!container) return;
     try {
+        const teacherBranch = getSession('teacher')?.user?.branch || 'secondary';
         const res = await fetch('/api/announcements');
         const data = await res.json();
         const list = data.announcements || [];

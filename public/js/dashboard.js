@@ -1,14 +1,11 @@
 // Dashboard JavaScript for Student Portal
 
-// Check authentication
-document.addEventListener('DOMContentLoaded', function() {
-    const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
+// Check authentication (server-verified)
+document.addEventListener('DOMContentLoaded', async function() {
+    const auth = await requireAuth('student');
+    if (!auth.ok) return;
     
-    if (!token || !user.role || user.role !== 'student') {
-        window.location.href = '/login?role=student';
-        return;
-    }
+    const { user } = auth;
     
     // Update user info
     updateUserInfo(user);
@@ -37,19 +34,19 @@ function updateUserInfo(user) {
 // Load dashboard data from API
 async function loadDashboardData() {
     try {
-        const token = localStorage.getItem('token');
+        const headers = getAuthHeader('student');
+        const session = getSession('student');
+        const studentBranch = session?.user?.branch || 'secondary';
         
         // Load student profile
-        const profileResponse = await fetch('/api/students/profile', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
+        const profileResponse = await fetch('/api/students/profile', { headers });
         
         if (profileResponse.ok) {
             const profileData = await profileResponse.json();
             updateProfileData(profileData.student);
         }
         
-        // Load announcements
+        // Load announcements (global — not filtered by branch)
         const announcementsResponse = await fetch('/api/announcements');
         if (announcementsResponse.ok) {
             const announcementsData = await announcementsResponse.json();
@@ -172,10 +169,12 @@ async function loadTimetable() {
         const cls = window.studentClass;
         const session = window.studentSession;
         const term = window.studentTerm;
+        const studentBranch = getSession('student')?.user?.branch || 'secondary';
         const q = new URLSearchParams();
         if (cls) q.set('class', cls);
         if (session) q.set('session', session);
         if (term) q.set('term', term);
+        q.set('branch', studentBranch);
         const res = await fetch(`/api/timetable?${q.toString()}`);
         const data = await res.json();
         const tt = data.timetable;
@@ -211,8 +210,10 @@ async function loadAssignments() {
     if (!container) return;
     try {
         const cls = window.studentClass;
+        const studentBranch = getSession('student')?.user?.branch || 'secondary';
         const q = new URLSearchParams();
         if (cls) q.set('class', cls);
+        q.set('branch', studentBranch);
         const res = await fetch(`/api/assignments?${q.toString()}`);
         const data = await res.json();
         const list = data.assignments || [];
@@ -252,21 +253,16 @@ async function loadAnnouncements() {
     }
 }
 
-// Toggle sidebar on mobile
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    sidebar.classList.toggle('open');
-}
 
-// Load results
+// Load results from the v2 Result Processing system
 async function loadResults() {
     try {
-        const token = localStorage.getItem('token');
+        const headers = getAuthHeader('student');
         const session = document.getElementById('resultSession').value;
         const term = document.getElementById('resultTerm').value;
         
-        const response = await fetch(`/api/results/student?session=${session}&term=${term}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
+        const response = await fetch(`/api/v2/results/student?session=${session}&term=${term}`, {
+            headers
         });
         
         if (response.ok) {
@@ -278,7 +274,7 @@ async function loadResults() {
     }
 }
 
-// Display results
+// Display results with ranking
 function displayResults(data) {
     const tbody = document.getElementById('resultsTable');
     
@@ -286,12 +282,20 @@ function displayResults(data) {
         tbody.innerHTML = `
             <tr>
                 <td colspan="6" class="px-6 py-8 text-center text-gray-500">
-                    No results found for this session/term
+                    No approved results found for this session/term. Results will appear here once uploaded by your teacher and approved by the admin.
                 </td>
             </tr>
         `;
+        document.getElementById('totalScore').textContent = '-';
+        document.getElementById('averageScore').textContent = '-';
+        document.getElementById('position').textContent = '-';
+        window.studentResults = null;
         return;
     }
+    
+    // Store for PDF download
+    window.studentResults = data.results;
+    window.studentSummary = data.summary;
     
     tbody.innerHTML = data.results.map(result => {
         const gradeColors = {
@@ -299,7 +303,6 @@ function displayResults(data) {
             'B': 'bg-blue-100 text-blue-700',
             'C': 'bg-yellow-100 text-yellow-700',
             'D': 'bg-orange-100 text-orange-700',
-            'E': 'bg-red-100 text-red-700',
             'F': 'bg-red-200 text-red-800'
         };
         
@@ -317,11 +320,285 @@ function displayResults(data) {
         `;
     }).join('');
     
-    // Update summary
+    // Update summary with ranking
     if (data.summary) {
         document.getElementById('totalScore').textContent = data.summary.totalScore;
         document.getElementById('averageScore').textContent = data.summary.average;
-        document.getElementById('position').textContent = getOrdinal(data.summary.position);
+        document.getElementById('position').textContent = data.summary.classRank || getOrdinal(data.summary.position);
+    }
+}
+
+// ═════════════════════════════════════════════════════════════════════════
+// Report Card PDF Download
+// ═════════════════════════════════════════════════════════════════════════
+
+async function downloadReportCard() {
+    if (!window.studentResults || window.studentResults.length === 0) {
+        alert('No results to download. Please view your results first.');
+        return;
+    }
+
+    const btn = document.querySelector('[onclick="downloadReportCard()"]');
+    const originalHtml = btn ? btn.innerHTML : '';
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Generating...';
+    }
+
+    try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('p', 'mm', 'a4');
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const margin = 15;
+        const contentWidth = pageWidth - margin * 2;
+        let y = margin;
+
+        // ── Colors ──
+        const navy = [15, 23, 42];
+        const brand = [59, 130, 246];
+        const slate600 = [71, 85, 105];
+        const slate400 = [148, 163, 184];
+        const white = [255, 255, 255];
+        const slate50 = [248, 250, 252];
+        const slate100 = [241, 245, 249];
+        const slate200 = [226, 232, 240];
+
+        // ── Helper: draw line ──
+        function drawLine(yPos, color = slate200, width = 0.3) {
+            doc.setDrawColor(...color);
+            doc.setLineWidth(width);
+            doc.line(margin, yPos, pageWidth - margin, yPos);
+        }
+
+        // ── School Logo ──
+        try {
+            const logoImg = new Image();
+            logoImg.src = '/images/logo.jpeg';
+            await new Promise((resolve, reject) => {
+                logoImg.onload = resolve;
+                logoImg.onerror = reject;
+                setTimeout(reject, 3000);
+            });
+            doc.addImage(logoImg, 'JPEG', margin, y, 20, 20);
+        } catch (_) {
+            // Logo not available — draw placeholder circle
+            doc.setFillColor(...brand);
+            doc.circle(margin + 10, y + 10, 8, 'F');
+            doc.setTextColor(...white);
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('BS', margin + 10, y + 12, { align: 'center' });
+        }
+
+        // ── School Name & Address ──
+        doc.setTextColor(...navy);
+        doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
+        doc.text('BRIGHT STAR INTERNATIONAL SCHOOL', margin + 25, y + 8);
+
+        doc.setTextColor(...slate600);
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'normal');
+        doc.text('10/12 Ikpeamaeze Street, Off Umuikpo Ariaria, ABA', margin + 25, y + 13);
+        doc.text('Phone: +234 703 568 5063  |  Email: brightstars@gmail.com', margin + 25, y + 17);
+
+        y += 25;
+        drawLine(y, brand, 0.8);
+        y += 3;
+
+        // ── Report Card Title ──
+        doc.setFillColor(...navy);
+        doc.roundedRect(margin, y, contentWidth, 10, 1, 1, 'F');
+        doc.setTextColor(...white);
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'bold');
+        doc.text('STUDENT REPORT CARD', pageWidth / 2, y + 6.5, { align: 'center' });
+        y += 14;
+
+        // ── Student Info Box ──
+        doc.setFillColor(...slate50);
+        doc.roundedRect(margin, y, contentWidth, 22, 1, 1, 'F');
+        doc.setDrawColor(...slate200);
+        doc.roundedRect(margin, y, contentWidth, 22, 1, 1, 'S');
+
+        const session = document.getElementById('resultSession')?.value || window.studentSession || '2025/2026';
+        const term = document.getElementById('resultTerm')?.value || window.studentTerm || 'Second Term';
+        const studentName = document.getElementById('dashName')?.textContent || 'Student';
+        const admissionNo = document.getElementById('dashAdmission')?.textContent?.replace('Admission No: ', '') || 'N/A';
+        const studentClass = window.studentClass || 'N/A';
+
+        const leftCol = margin + 4;
+        const rightCol = pageWidth / 2 + 5;
+        let infoY = y + 5;
+
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(...slate600);
+        doc.text('STUDENT NAME:', leftCol, infoY);
+        doc.text('ADMISSION NO:', rightCol, infoY);
+        infoY += 5;
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(...navy);
+        doc.setFontSize(10);
+        doc.text(studentName, leftCol, infoY);
+        doc.text(admissionNo, rightCol, infoY);
+        infoY += 6;
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(...slate600);
+        doc.text('CLASS:', leftCol, infoY);
+        doc.text('SESSION:', rightCol, infoY);
+        infoY += 5;
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(...navy);
+        doc.setFontSize(10);
+        doc.text(studentClass, leftCol, infoY);
+        doc.text(session + '  |  ' + term, rightCol, infoY);
+
+        y += 27;
+
+        // ── Results Table ──
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(...navy);
+        doc.text('ACADEMIC RESULTS', margin, y);
+        y += 4;
+
+        const results = window.studentResults;
+        const colWidths = [60, 22, 22, 22, 22, 22];
+        const headers = ['Subject', 'CA1', 'CA2', 'Exam', 'Total', 'Grade'];
+        const colX = [margin];
+        for (let i = 0; i < colWidths.length - 1; i++) {
+            colX.push(colX[i] + colWidths[i]);
+        }
+
+        // Table header
+        doc.setFillColor(...brand);
+        doc.rect(margin, y, contentWidth, 7, 'F');
+        doc.setTextColor(...white);
+        doc.setFontSize(7);
+        doc.setFont('helvetica', 'bold');
+        headers.forEach((h, i) => {
+            const align = i === 0 ? 'left' : 'center';
+            const xPos = i === 0 ? colX[i] + 2 : colX[i] + colWidths[i] / 2;
+            doc.text(h, xPos, y + 4.5, { align });
+        });
+        y += 7;
+
+        // Table rows
+        results.forEach((r, idx) => {
+            const bgColor = idx % 2 === 0 ? white : slate50;
+            doc.setFillColor(...bgColor);
+            doc.rect(margin, y, contentWidth, 7, 'F');
+            doc.setDrawColor(...slate200);
+            doc.setLineWidth(0.1);
+            doc.line(margin, y, pageWidth - margin, y);
+
+            doc.setFontSize(8);
+            doc.setTextColor(...navy);
+
+            const values = [r.subject, r.ca1, r.ca2, r.exam, r.totalScore, r.grade];
+            values.forEach((v, i) => {
+                const align = i === 0 ? 'left' : 'center';
+                const xPos = i === 0 ? colX[i] + 2 : colX[i] + colWidths[i] / 2;
+                if (i === 4) doc.setFont('helvetica', 'bold');
+                else doc.setFont('helvetica', 'normal');
+                doc.text(String(v), xPos, y + 4.5, { align });
+            });
+            y += 7;
+        });
+
+        // Table bottom border
+        doc.setDrawColor(...brand);
+        doc.setLineWidth(0.5);
+        doc.line(margin, y, pageWidth - margin, y);
+        y += 8;
+
+        // ── Summary & Remarks (side by side) ──
+        const summary = window.studentSummary || {};
+        const halfWidth = (contentWidth - 5) / 2;
+
+        // Summary box
+        doc.setFillColor(...slate50);
+        doc.roundedRect(margin, y, halfWidth, 32, 1, 1, 'F');
+        doc.setDrawColor(...slate200);
+        doc.roundedRect(margin, y, halfWidth, 32, 1, 1, 'S');
+
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(...navy);
+        doc.text('SUMMARY', margin + 4, y + 5);
+
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(...slate600);
+        const summaryItems = [
+            ['Total Score:', summary.totalScore || '-'],
+            ['Average:', summary.average || '-'],
+            ['Class Position:', summary.classRank || getOrdinal(summary.position) || '-'],
+            ['Total Subjects:', summary.totalSubjects || results.length]
+        ];
+        let sy = y + 11;
+        summaryItems.forEach(([label, val]) => {
+            doc.text(label, margin + 4, sy);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(...navy);
+            doc.text(String(val), margin + halfWidth - 4, sy, { align: 'right' });
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(...slate600);
+            sy += 5.5;
+        });
+
+        // Remarks box
+        const remarksX = margin + halfWidth + 5;
+        doc.setFillColor(...slate50);
+        doc.roundedRect(remarksX, y, halfWidth, 32, 1, 1, 'F');
+        doc.setDrawColor(...slate200);
+        doc.roundedRect(remarksX, y, halfWidth, 32, 1, 1, 'S');
+
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(...navy);
+        doc.text('REMARKS', remarksX + 4, y + 5);
+
+        doc.setFontSize(7.5);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(...slate600);
+        doc.text('Class Teacher:', remarksX + 4, y + 12);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(...navy);
+        doc.text('Good performance. Keep it up!', remarksX + 4, y + 17);
+
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(...slate600);
+        doc.text('Principal:', remarksX + 4, y + 24);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(...navy);
+        doc.text('Excellent effort. Continue to strive for excellence.', remarksX + 4, y + 29);
+
+        y += 38;
+
+        // ── Footer ──
+        drawLine(y, brand, 0.5);
+        y += 4;
+        doc.setFontSize(7);
+        doc.setFont('helvetica', 'italic');
+        doc.setTextColor(...slate400);
+        doc.text('This report card was generated from Bright Star International School Portal', pageWidth / 2, y, { align: 'center' });
+        doc.text(`Generated on ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, pageWidth / 2, y + 4, { align: 'center' });
+
+        // ── Download ──
+        const fileName = `ReportCard_${studentName.replace(/\s+/g, '_')}_${session.replace('/', '-')}_${term.replace(/\s+/g, '')}.pdf`;
+        doc.save(fileName);
+
+    } catch (error) {
+        console.error('PDF generation error:', error);
+        alert('Failed to generate report card. Please try again.');
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
+        }
     }
 }
 
@@ -335,9 +612,9 @@ function getOrdinal(n) {
 // Load attendance
 async function loadAttendance() {
     try {
-        const token = localStorage.getItem('token');
+        const headers = getAuthHeader('student');
         const response = await fetch('/api/attendance/student', {
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers
         });
         
         if (response.ok) {
@@ -382,9 +659,9 @@ function displayAttendance(data) {
 // Load fees
 async function loadFees() {
     try {
-        const token = localStorage.getItem('token');
+        const headers = getAuthHeader('student');
         const response = await fetch('/api/fees/student', {
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers
         });
         
         if (response.ok) {
@@ -405,11 +682,6 @@ function displayFees(data) {
     }
 }
 
-// Download report card (placeholder)
-function downloadReportCard() {
-    alert('Report card PDF download feature will be available soon. This feature requires a PDF generation library.');
-}
-
 // Change password
 async function changePassword(event) {
     event.preventDefault();
@@ -424,13 +696,10 @@ async function changePassword(event) {
     }
     
     try {
-        const token = localStorage.getItem('token');
+        const headers = { ...getAuthHeader('student'), 'Content-Type': 'application/json' };
         const response = await fetch('/api/auth/change-password', {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
+            headers,
             body: JSON.stringify({ currentPassword, newPassword })
         });
         
@@ -448,11 +717,6 @@ async function changePassword(event) {
 }
 
 // Logout
-function logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    window.location.href = '/login?role=student';
-}
 
 // Format currency
 function formatCurrency(amount) {
