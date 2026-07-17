@@ -60,6 +60,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     document.getElementById('branchSwitcher').value = currentBranch;
     populateClassSelects();
     loadDashboard();
+    loadAdminProfile();
 });
 
 function switchBranch(branch) {
@@ -490,15 +491,49 @@ async function deleteTeacher(id) {
 // Admin Profile
 function updateAdminProfile(event) {
     event.preventDefault();
+    const firstName = document.getElementById('adminFirstName').value.trim();
+    const lastName = document.getElementById('adminLastName').value.trim();
+    const email = document.getElementById('adminEmail').value.trim();
     const newPassword = document.getElementById('adminNewPassword').value;
     const confirmPassword = document.getElementById('adminConfirmPassword').value;
+    
+    if (!firstName || !lastName || !email) {
+        alert('Please fill in all required fields');
+        return;
+    }
     
     if (newPassword && newPassword !== confirmPassword) {
         alert('Passwords do not match');
         return;
     }
-    
+
+    // Save to localStorage
+    const profile = { firstName, lastName, email };
+    localStorage.setItem('admin_profile', JSON.stringify(profile));
+
+    // Update sidebar name
+    const sidebarName = document.getElementById('adminName');
+    if (sidebarName) sidebarName.textContent = `${firstName} ${lastName}`;
+
+    // Clear password fields
+    document.getElementById('adminCurrentPassword').value = '';
+    document.getElementById('adminNewPassword').value = '';
+    document.getElementById('adminConfirmPassword').value = '';
+
     alert('Admin profile updated successfully');
+}
+
+function loadAdminProfile() {
+    const saved = localStorage.getItem('admin_profile');
+    if (saved) {
+        const profile = JSON.parse(saved);
+        document.getElementById('adminFirstName').value = profile.firstName || 'Admin';
+        document.getElementById('adminLastName').value = profile.lastName || 'User';
+        document.getElementById('adminEmail').value = profile.email || 'admin@brightstar.com';
+
+        const sidebarName = document.getElementById('adminName');
+        if (sidebarName) sidebarName.textContent = `${profile.firstName} ${profile.lastName}`;
+    }
 }
 
 // Existing functions
