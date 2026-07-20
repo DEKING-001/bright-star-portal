@@ -238,9 +238,10 @@
                         </div>
                     </div>
                     <!-- Profile -->
-                    <div class="flex items-center space-x-3 pl-4 border-l border-slate-200">
-                        <div class="w-9 h-9 bg-brand-500 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-user-shield text-white text-sm"></i>
+                    <div onclick="showSection('settings'); showSettingsTab('adminProfile');" class="flex items-center space-x-3 pl-4 border-l border-slate-200 cursor-pointer hover:bg-slate-50 rounded-lg transition p-2 -mr-2">
+                        <div id="adminProfilePic" class="w-9 h-9 bg-brand-500 rounded-full flex items-center justify-center overflow-hidden">
+                            <i id="adminProfileIcon" class="fas fa-user-shield text-white text-sm"></i>
+                            <img id="adminProfileImg" class="w-full h-full object-cover hidden" alt="">
                         </div>
                         <div class="sidebar-text">
                             <p id="adminName" class="text-sm font-semibold text-slate-700">Admin</p>
@@ -1060,6 +1061,28 @@
                 <div id="adminProfileTab" class="hidden">
                     <div class="bg-white rounded-xl shadow-sm p-6 max-w-lg">
                         <h3 class="font-semibold text-slate-700 mb-6">Admin Profile</h3>
+                        
+                        <!-- Profile Picture -->
+                        <div class="flex items-center space-x-6 mb-6 pb-6 border-b border-slate-100">
+                            <div id="adminSettingsPic" class="w-20 h-20 bg-brand-500 rounded-full flex items-center justify-center overflow-hidden">
+                                <i class="fas fa-user-shield text-white text-2xl"></i>
+                                <img id="adminSettingsImg" class="w-full h-full object-cover hidden" alt="">
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate-700" id="adminSettingsName">Admin User</p>
+                                <p class="text-sm text-slate-400 mb-2">Profile Picture</p>
+                                <div class="flex space-x-2">
+                                    <label class="text-xs bg-brand-500 text-white px-3 py-1.5 rounded-lg cursor-pointer hover:bg-brand-600 transition font-medium">
+                                        <i class="fas fa-camera mr-1"></i>Upload
+                                        <input type="file" accept="image/*" class="hidden" onchange="uploadAdminPic(event)">
+                                    </label>
+                                    <button type="button" onclick="removeAdminPic()" class="text-xs bg-red-50 text-red-500 px-3 py-1.5 rounded-lg hover:bg-red-100 transition font-medium">
+                                        <i class="fas fa-trash mr-1"></i>Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
                         <form id="adminProfileForm" onsubmit="updateAdminProfile(event)" class="space-y-4">
                             <div class="grid grid-cols-2 gap-4">
                                 <div>

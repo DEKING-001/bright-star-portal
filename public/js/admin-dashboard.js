@@ -533,7 +533,44 @@ function loadAdminProfile() {
 
         const sidebarName = document.getElementById('adminName');
         if (sidebarName) sidebarName.textContent = `${profile.firstName} ${profile.lastName}`;
+        const settingsName = document.getElementById('adminSettingsName');
+        if (settingsName) settingsName.textContent = `${profile.firstName} ${profile.lastName}`;
     }
+    // Load profile picture
+    loadProfilePic('admin_profile_pic', 'adminProfileImg', 'adminProfileIcon', 'adminSettingsImg');
+}
+
+function loadProfilePic(storageKey, headerImgId, headerIconId, settingsImgId) {
+    const pic = localStorage.getItem(storageKey);
+    if (pic) {
+        [headerImgId, settingsImgId].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) { el.src = pic; el.classList.remove('hidden'); }
+        });
+        const icon = document.getElementById(headerIconId);
+        if (icon) icon.classList.add('hidden');
+    }
+}
+
+function uploadAdminPic(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) { alert('Image must be under 2MB'); return; }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const pic = e.target.result;
+        localStorage.setItem('admin_profile_pic', pic);
+        loadProfilePic('admin_profile_pic', 'adminProfileImg', 'adminProfileIcon', 'adminSettingsImg');
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeAdminPic() {
+    localStorage.removeItem('admin_profile_pic');
+    document.getElementById('adminProfileImg').classList.add('hidden');
+    document.getElementById('adminProfileIcon').classList.remove('hidden');
+    document.getElementById('adminSettingsImg').classList.add('hidden');
+    document.getElementById('adminSettingsImg').parentElement.querySelector('i')?.classList.remove('hidden');
 }
 
 // Existing functions

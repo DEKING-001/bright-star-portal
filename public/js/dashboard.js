@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', async function() {
     
     // Load dashboard data
     loadDashboardData();
+    
+    // Load profile picture
+    loadStudentPic();
 });
 
 // Update user information in the UI
@@ -29,6 +32,45 @@ function updateUserInfo(user) {
     document.getElementById('dashAdmission').textContent = `Admission No: ${user.admissionNumber || 'N/A'}`;
     document.getElementById('profileAdmission').textContent = `Admission No: ${user.admissionNumber || 'N/A'}`;
     document.getElementById('profileEmail').textContent = user.email || 'N/A';
+}
+
+// Profile picture functions
+function loadStudentPic() {
+    const pic = localStorage.getItem('student_profile_pic');
+    if (pic) {
+        ['dashAvatarImg', 'profileAvatarImg'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) { el.src = pic; el.classList.remove('hidden'); }
+        });
+        ['dashAvatarIcon', 'profileAvatarIcon'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.add('hidden');
+        });
+    }
+}
+
+function uploadStudentPic(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) { alert('Image must be under 2MB'); return; }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        localStorage.setItem('student_profile_pic', e.target.result);
+        loadStudentPic();
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeStudentPic() {
+    localStorage.removeItem('student_profile_pic');
+    ['dashAvatarImg', 'profileAvatarImg'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.src = ''; el.classList.add('hidden'); }
+    });
+    ['dashAvatarIcon', 'profileAvatarIcon'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('hidden');
+    });
 }
 
 // Load dashboard data from API

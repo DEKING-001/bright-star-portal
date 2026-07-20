@@ -8,10 +8,45 @@ document.addEventListener('DOMContentLoaded', async function() {
     
     document.getElementById('teacherName').textContent = `${user.firstName} ${user.lastName}`;
     document.getElementById('teacherFirstName').textContent = user.firstName;
+    document.getElementById('teacherSettingsName').textContent = `${user.firstName} ${user.lastName}`;
     
     // Load dashboard data
     loadDashboardData();
+    
+    // Load profile picture
+    loadTeacherPic();
 });
+
+// Profile picture functions
+function loadTeacherPic() {
+    const pic = localStorage.getItem('teacher_profile_pic');
+    if (pic) {
+        const img = document.getElementById('teacherProfileImg');
+        if (img) { img.src = pic; img.classList.remove('hidden'); }
+        const icon = document.getElementById('teacherProfileIcon');
+        if (icon) icon.classList.add('hidden');
+    }
+}
+
+function uploadTeacherPic(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) { alert('Image must be under 2MB'); return; }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        localStorage.setItem('teacher_profile_pic', e.target.result);
+        loadTeacherPic();
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeTeacherPic() {
+    localStorage.removeItem('teacher_profile_pic');
+    const img = document.getElementById('teacherProfileImg');
+    if (img) { img.src = ''; img.classList.add('hidden'); }
+    const icon = document.getElementById('teacherProfileIcon');
+    if (icon) icon.classList.remove('hidden');
+}
 
 // Load dashboard data from API
 async function loadDashboardData() {
