@@ -38,7 +38,7 @@
         body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
-<body class="bg-slate-50">
+<body class="bg-slate-50 flex flex-col min-h-screen">
     <!-- Navigation -->
     <nav class="bg-white sticky top-0 z-50 shadow-sm border-b border-slate-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -56,7 +56,6 @@
                     <a href="/admissions" class="text-slate-600 hover:text-brand font-medium transition">Admissions</a>
                     <a href="/gallery" class="text-slate-600 hover:text-brand font-medium transition">Gallery</a>
                     <a href="/contact" class="text-brand font-semibold">Contact</a>
-                    
                 </div>
                 <button id="mobileMenuBtn" class="md:hidden text-slate-600 text-2xl"><i class="fas fa-bars"></i></button>
             </div>
@@ -68,159 +67,101 @@
                 <a href="/admissions" class="block text-slate-600 hover:text-brand font-medium">Admissions</a>
                 <a href="/gallery" class="block text-slate-600 hover:text-brand font-medium">Gallery</a>
                 <a href="/contact" class="block text-brand font-semibold">Contact</a>
-                
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="bg-gradient-to-br from-slate-900 via-slate-800 to-brand-dark text-white py-20">
-        <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
-            <div class="inline-flex items-center bg-brand/20 border border-brand/30 text-blue-300 px-4 py-2 rounded-full text-sm font-medium mb-6">
-                <i class="fas fa-headset mr-2"></i>
-                We're Here to Help
+    <main class="flex-1">
+        <!-- Hero Section -->
+        <section class="relative bg-slate-900 text-white overflow-hidden">
+            <div class="absolute inset-0 opacity-10">
+                <div class="absolute top-0 right-0 w-96 h-96 bg-brand rounded-full blur-3xl"></div>
             </div>
-            <h1 class="text-4xl md:text-5xl font-bold mb-4">Contact Us</h1>
-            <p class="text-xl text-slate-300 max-w-2xl mx-auto">Have questions about admissions, programs, or anything else? We'd love to hear from you.</p>
-        </div>
-    </section>
+            <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20">
+                <p class="text-brand font-medium tracking-widest uppercase text-xs mb-3">Get in Touch</p>
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold">Contact Us</h1>
+                <p class="mt-3 text-white/60 max-w-lg">Have questions about admissions, programs, or anything else? We'd love to hear from you.</p>
+            </div>
+        </section>
 
-    <!-- Contact Info & Form -->
-    <section class="py-20">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="grid lg:grid-cols-2 gap-12">
-                <!-- Contact Information -->
-                <div>
-                    <h2 class="text-3xl font-bold text-slate-900 mb-4">Get In Touch</h2>
-                    <p class="text-slate-600 mb-10 text-lg">We're here to help and answer any questions you might have. We look forward to hearing from you.</p>
-                    
-                    <div class="space-y-6">
-                        <div class="flex items-start space-x-4 bg-white p-5 rounded-xl border border-slate-200 hover:border-brand/30 hover:shadow-md transition">
-                            <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-map-marker-alt text-brand text-lg"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-slate-900 mb-1">Address</h4>
-                                <p class="text-slate-600">123 Education Avenue, Ikeja, Lagos State, Nigeria</p>
-                            </div>
+        <!-- Contact Info Cards -->
+        <section class="py-16 sm:py-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <a href="tel:+2347035685063" class="bg-white p-6 rounded-2xl border border-slate-200 hover:shadow-lg hover:border-brand/30 transition-all duration-300 text-center group">
+                        <div class="w-14 h-14 bg-brand/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-brand/20 transition-colors">
+                            <i class="fas fa-phone text-brand text-xl"></i>
                         </div>
-                        <div class="flex items-start space-x-4 bg-white p-5 rounded-xl border border-slate-200 hover:border-brand/30 hover:shadow-md transition">
-                            <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-phone text-brand text-lg"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-slate-900 mb-1">Phone</h4>
-                                <p class="text-slate-600">+234 703 568 5063</p>
-                                <p class="text-slate-600">+234 809 876 5432</p>
-                            </div>
+                        <h3 class="font-bold text-slate-900 mb-1">Call Us</h3>
+                        <p class="text-brand font-semibold text-sm">+234 703 568 5063</p>
+                        <p class="text-xs text-slate-400 mt-1">Mon - Fri, 8am - 4pm</p>
+                    </a>
+                    <a href="https://wa.me/2347035685063" target="_blank" rel="noopener noreferrer" class="bg-white p-6 rounded-2xl border border-slate-200 hover:shadow-lg hover:border-brand/30 transition-all duration-300 text-center group">
+                        <div class="w-14 h-14 bg-brand/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-brand/20 transition-colors">
+                            <i class="fab fa-whatsapp text-brand text-xl"></i>
                         </div>
-                        <div class="flex items-start space-x-4 bg-white p-5 rounded-xl border border-slate-200 hover:border-brand/30 hover:shadow-md transition">
-                            <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-envelope text-brand text-lg"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-slate-900 mb-1">Email</h4>
-                                <p class="text-slate-600">brightstars@gmail.com</p>
-                                <p class="text-slate-600">admissions@brightstarschool.edu.ng</p>
-                            </div>
+                        <h3 class="font-bold text-slate-900 mb-1">WhatsApp</h3>
+                        <p class="text-brand font-semibold text-sm">+234 703 568 5063</p>
+                        <p class="text-xs text-slate-400 mt-1">Chat with us directly</p>
+                    </a>
+                    <a href="mailto:brightstars@gmail.com" class="bg-white p-6 rounded-2xl border border-slate-200 hover:shadow-lg hover:border-brand/30 transition-all duration-300 text-center group">
+                        <div class="w-14 h-14 bg-brand/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-brand/20 transition-colors">
+                            <i class="fas fa-envelope text-brand text-xl"></i>
                         </div>
-                        <div class="flex items-start space-x-4 bg-white p-5 rounded-xl border border-slate-200 hover:border-brand/30 hover:shadow-md transition">
-                            <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-clock text-brand text-lg"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-slate-900 mb-1">Office Hours</h4>
-                                <p class="text-slate-600">Monday - Friday: 8:00 AM - 4:00 PM</p>
-                                <p class="text-slate-600">Saturday: 9:00 AM - 12:00 PM</p>
-                            </div>
+                        <h3 class="font-bold text-slate-900 mb-1">Email Us</h3>
+                        <p class="text-brand font-semibold text-sm">brightstars@gmail.com</p>
+                        <p class="text-xs text-slate-400 mt-1">We reply within 24 hours</p>
+                    </a>
+                    <a href="https://maps.google.com/?q=Ikeja+Lagos+Nigeria" target="_blank" rel="noopener noreferrer" class="bg-white p-6 rounded-2xl border border-slate-200 hover:shadow-lg hover:border-brand/30 transition-all duration-300 text-center group">
+                        <div class="w-14 h-14 bg-brand/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-brand/20 transition-colors">
+                            <i class="fas fa-map-marker-alt text-brand text-xl"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-900 mb-1">Visit Us</h3>
+                        <p class="text-brand font-semibold text-sm">Ikeja, Lagos</p>
+                        <p class="text-xs text-slate-400 mt-1">Open for school visits</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Form -->
+        <section class="py-16 bg-slate-100">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-10">
+                    <p class="text-brand font-medium tracking-widest uppercase text-xs mb-3">Send a Message</p>
+                    <h2 class="text-3xl font-bold text-slate-900">Let's Talk</h2>
+                    <p class="text-sm text-slate-500 mt-2">Fill the form below and we'll get back to you shortly</p>
+                </div>
+                <form id="contactForm" onsubmit="submitContact(event)" class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 space-y-5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-900 mb-2">Your Name</label>
+                            <input type="text" required placeholder="John Doe" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all text-slate-900 placeholder-slate-400">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-900 mb-2">Phone Number</label>
+                            <input type="tel" required placeholder="+234 703 568 5063" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all text-slate-900 placeholder-slate-400">
                         </div>
                     </div>
-
-                    <!-- Social Media -->
-                    <div class="mt-10">
-                        <h4 class="font-semibold text-slate-900 mb-4">Follow Us</h4>
-                        <div class="flex space-x-3">
-                            <a href="https://share.google/HBKujBAtycTnleiJm" target="_blank" class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-600 hover:bg-brand hover:text-white transition">
-                                <i class="fab fa-facebook-f"></i>
-                            </a>
-                            <a href="https://share.google/HBKujBAtycTnleiJm" target="_blank" class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-600 hover:bg-brand hover:text-white transition">
-                                <i class="fab fa-twitter"></i>
-                            </a>
-                            <a href="https://share.google/HBKujBAtycTnleiJm" target="_blank" class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-600 hover:bg-brand hover:text-white transition">
-                                <i class="fab fa-instagram"></i>
-                            </a>
-                            <a href="https://share.google/HBKujBAtycTnleiJm" target="_blank" class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-600 hover:bg-brand hover:text-white transition">
-                                <i class="fab fa-youtube"></i>
-                            </a>
-                            <a href="https://share.google/HBKujBAtycTnleiJm" target="_blank" class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-600 hover:bg-brand hover:text-white transition">
-                                <i class="fab fa-whatsapp"></i>
-                            </a>
-                        </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-900 mb-2">Subject</label>
+                        <input type="text" required placeholder="How can we help?" class="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all text-slate-900 placeholder-slate-400">
                     </div>
-                </div>
-
-                <!-- Contact Form -->
-                <div class="bg-white rounded-2xl shadow-lg p-8 border border-slate-200">
-                    <h3 class="text-2xl font-bold text-slate-900 mb-6">Send Us a Message</h3>
-                    <form id="contactForm" onsubmit="submitContact(event)" class="space-y-5">
-                        <div class="grid md:grid-cols-2 gap-5">
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-2">First Name</label>
-                                <input type="text" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand focus:border-brand transition text-slate-900 placeholder-slate-400" placeholder="John" required>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-2">Last Name</label>
-                                <input type="text" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand focus:border-brand transition text-slate-900 placeholder-slate-400" placeholder="Doe" required>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Email</label>
-                            <input type="email" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand focus:border-brand transition text-slate-900 placeholder-slate-400" placeholder="john@example.com" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Phone</label>
-                            <input type="tel" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand focus:border-brand transition text-slate-900 placeholder-slate-400" placeholder="+234 703 568 5063">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Subject</label>
-                            <select class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand focus:border-brand transition text-slate-900 bg-white">
-                                <option value="">Select a subject</option>
-                                <option>Admission Inquiry</option>
-                                <option>Fee Structure</option>
-                                <option>Academic Programs</option>
-                                <option>School Visit</option>
-                                <option>General Inquiry</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-2">Message</label>
-                            <textarea rows="4" class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-brand focus:border-brand transition text-slate-900 placeholder-slate-400 resize-none" placeholder="Tell us how we can help you..." required></textarea>
-                        </div>
-                        <button type="submit" class="w-full bg-brand text-white py-3.5 rounded-lg font-semibold hover:bg-brand-dark transition flex items-center justify-center">
-                            <i class="fas fa-paper-plane mr-2"></i>Send Message
-                        </button>
-                    </form>
-                </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-900 mb-2">Message</label>
+                        <textarea rows="5" required placeholder="Tell us what you need..." class="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand/20 focus:border-brand transition-all resize-none text-slate-900 placeholder-slate-400"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-brand text-white font-semibold py-3 rounded-xl hover:bg-brand-dark transition-colors flex items-center justify-center gap-2">
+                        <i class="fas fa-paper-plane"></i> Send Message
+                    </button>
+                </form>
             </div>
-        </div>
-    </section>
-
-    <!-- Map Section -->
-    <section class="h-80 bg-slate-200">
-        <div class="w-full h-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
-            <div class="text-center">
-                <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-md">
-                    <i class="fas fa-map-marked-alt text-brand text-3xl"></i>
-                </div>
-                <p class="text-slate-700 font-semibold text-lg">Interactive Map Coming Soon</p>
-                <p class="text-slate-500 mt-1">123 Education Avenue, Ikeja, Lagos</p>
-            </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
     <!-- Footer -->
-    <footer class="bg-slate-900 text-white py-12">
-        <div class="max-w-7xl mx-auto px-4">
+    <footer class="bg-slate-900 text-white mt-auto">
+        <div class="max-w-7xl mx-auto px-4 py-12">
             <div class="grid md:grid-cols-4 gap-8">
                 <div>
                     <div class="flex items-center space-x-3 mb-4">
@@ -251,10 +192,10 @@
                 </div>
                 <div>
                     <h4 class="font-semibold text-white mb-4">Contact Us</h4>
-                    <ul class="space-y-2 text-slate-400 text-sm">
-                        <li><i class="fas fa-map-marker-alt mr-2 text-brand"></i>10/12 Ikpeamaeze Street, off umuikpo Ariaria ABA</li>
-                        <li><i class="fas fa-phone mr-2 text-brand"></i>+234 703 568 5063</li>
-                        <li><i class="fas fa-envelope mr-2 text-brand"></i>brightstars@gmail.com</li>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="tel:+2347035685063" class="flex items-center gap-2 text-slate-400 hover:text-white transition-colors"><i class="fas fa-phone text-brand"></i> +234 703 568 5063</a></li>
+                        <li><a href="mailto:brightstars@gmail.com" class="flex items-center gap-2 text-slate-400 hover:text-white transition-colors"><i class="fas fa-envelope text-brand"></i> brightstars@gmail.com</a></li>
+                        <li><a href="https://maps.google.com/?q=Ikeja+Lagos+Nigeria" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 text-slate-400 hover:text-white transition-colors"><i class="fas fa-map-marker-alt text-brand"></i> Ikeja, Lagos</a></li>
                     </ul>
                 </div>
             </div>
