@@ -770,3 +770,18 @@ function formatDate(dateString) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString('en-US', options);
 }
+
+// Toggle notifications dropdown
+function toggleNotifications() {
+    const dropdown = document.getElementById('notificationDropdown');
+    dropdown.classList.toggle('hidden');
+}
+
+// Close notifications when clicking outside
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('notificationDropdown');
+    const bellBtn = event.target.closest('button[onclick="toggleNotifications()"]');
+    if (dropdown && !dropdown.contains(event.target) && !bellBtn) {
+        dropdown.classList.add('hidden');
+    }
+});
