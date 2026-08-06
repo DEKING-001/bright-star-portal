@@ -108,40 +108,40 @@
                 </div>
             </div>
             <nav class="space-y-1">
-                <a href="#" onclick="showSection('dashboard')" class="nav-item active flex items-center space-x-3 p-3 rounded-lg transition">
+                <a href="#" onclick="showSection('dashboard', event)" class="nav-item active flex items-center space-x-3 p-3 rounded-lg transition">
                     <i class="fas fa-home w-5 text-center"></i>
                     <span class="sidebar-text text-sm">Dashboard</span>
                 </a>
-                <a href="#" onclick="showSection('profile')" class="nav-item flex items-center space-x-3 p-3 rounded-lg transition text-slate-300">
+                <a href="#" onclick="showSection('profile', event)" class="nav-item flex items-center space-x-3 p-3 rounded-lg transition text-slate-300">
                     <i class="fas fa-user w-5 text-center"></i>
                     <span class="sidebar-text text-sm">My Profile</span>
                 </a>
-                <a href="#" onclick="showSection('results')" class="nav-item flex items-center space-x-3 p-3 rounded-lg transition text-slate-300">
+                <a href="#" onclick="showSection('results', event)" class="nav-item flex items-center space-x-3 p-3 rounded-lg transition text-slate-300">
                     <i class="fas fa-file-alt w-5 text-center"></i>
                     <span class="sidebar-text text-sm">Results</span>
                 </a>
-                <a href="#" onclick="showSection('timetable')" class="nav-item flex items-center space-x-3 p-3 rounded-lg transition text-slate-300">
+                <a href="#" onclick="showSection('timetable', event)" class="nav-item flex items-center space-x-3 p-3 rounded-lg transition text-slate-300">
                     <i class="fas fa-calendar w-5 text-center"></i>
                     <span class="sidebar-text text-sm">Timetable</span>
                 </a>
-                <a href="#" onclick="showSection('assignments')" class="nav-item flex items-center space-x-3 p-3 rounded-lg transition text-slate-300">
+                <a href="#" onclick="showSection('assignments', event)" class="nav-item flex items-center space-x-3 p-3 rounded-lg transition text-slate-300">
                     <i class="fas fa-tasks w-5 text-center"></i>
                     <span class="sidebar-text text-sm">Assignments</span>
                 </a>
-                <a href="#" onclick="showSection('attendance')" class="nav-item flex items-center space-x-3 p-3 rounded-lg transition text-slate-300">
+                <a href="#" onclick="showSection('attendance', event)" class="nav-item flex items-center space-x-3 p-3 rounded-lg transition text-slate-300">
                     <i class="fas fa-check-circle w-5 text-center"></i>
                     <span class="sidebar-text text-sm">Attendance</span>
                 </a>
-                <a href="#" onclick="showSection('fees')" class="nav-item flex items-center space-x-3 p-3 rounded-lg transition text-slate-300">
+                <a href="#" onclick="showSection('fees', event)" class="nav-item flex items-center space-x-3 p-3 rounded-lg transition text-slate-300">
                     <i class="fas fa-money-bill w-5 text-center"></i>
                     <span class="sidebar-text text-sm">Fees</span>
                 </a>
-                <a href="#" onclick="showSection('announcements')" class="nav-item flex items-center space-x-3 p-3 rounded-lg transition text-slate-300">
+                <a href="#" onclick="showSection('announcements', event)" class="nav-item flex items-center space-x-3 p-3 rounded-lg transition text-slate-300">
                     <i class="fas fa-bullhorn w-5 text-center"></i>
                     <span class="sidebar-text text-sm">Announcements</span>
                 </a>
                 <div class="border-t border-slate-700 my-4"></div>
-                <a href="#" onclick="showSection('settings')" class="nav-item flex items-center space-x-3 p-3 rounded-lg transition text-slate-300">
+                <a href="#" onclick="showSection('settings', event)" class="nav-item flex items-center space-x-3 p-3 rounded-lg transition text-slate-300">
                     <i class="fas fa-cog w-5 text-center"></i>
                     <span class="sidebar-text text-sm">Settings</span>
                 </a>
@@ -220,7 +220,7 @@
                                 </div>
                             </div>
                             <div class="p-3 border-t border-slate-100">
-                                <button class="w-full text-center text-brand text-sm font-medium hover:text-brand-dark">View All Notifications</button>
+                                <button onclick="document.getElementById('notificationDropdown').classList.add('hidden'); showSection('announcements', event);" class="w-full text-center text-brand text-sm font-medium hover:text-brand-dark">View All Notifications</button>
                             </div>
                         </div>
                     </div>
@@ -321,25 +321,25 @@
 
                 <!-- Quick Navigation -->
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                    <a href="#" onclick="showSection('results')" class="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition text-center group border border-slate-100">
+                    <a href="#" onclick="showSection('results', event)" class="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition text-center group border border-slate-100">
                         <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:bg-brand group-hover:text-white transition">
                             <i class="fas fa-file-alt text-brand group-hover:text-white text-lg"></i>
                         </div>
                         <p class="font-semibold text-slate-700 text-sm">Results</p>
                     </a>
-                    <a href="#" onclick="showSection('timetable')" class="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition text-center group border border-slate-100">
+                    <a href="#" onclick="showSection('timetable', event)" class="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition text-center group border border-slate-100">
                         <div class="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:bg-emerald-500 group-hover:text-white transition">
                             <i class="fas fa-calendar text-emerald-500 group-hover:text-white text-lg"></i>
                         </div>
                         <p class="font-semibold text-slate-700 text-sm">Timetable</p>
                     </a>
-                    <a href="#" onclick="showSection('assignments')" class="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition text-center group border border-slate-100">
+                    <a href="#" onclick="showSection('assignments', event)" class="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition text-center group border border-slate-100">
                         <div class="w-12 h-12 bg-amber-50 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:bg-amber-500 group-hover:text-white transition">
                             <i class="fas fa-tasks text-amber-500 group-hover:text-white text-lg"></i>
                         </div>
                         <p class="font-semibold text-slate-700 text-sm">Assignments</p>
                     </a>
-                    <a href="#" onclick="showSection('fees')" class="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition text-center group border border-slate-100">
+                    <a href="#" onclick="showSection('fees', event)" class="bg-white rounded-xl p-5 shadow-sm hover:shadow-md transition text-center group border border-slate-100">
                         <div class="w-12 h-12 bg-violet-50 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover:bg-violet-500 group-hover:text-white transition">
                             <i class="fas fa-money-bill text-violet-500 group-hover:text-white text-lg"></i>
                         </div>
@@ -351,7 +351,7 @@
                 <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-100">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-bold text-slate-800"><i class="fas fa-bullhorn mr-2 text-brand"></i> Recent Announcements</h3>
-                        <a href="#" onclick="showSection('announcements')" class="text-brand text-sm hover:underline">View All</a>
+                        <a href="#" onclick="showSection('announcements', event)" class="text-brand text-sm hover:underline">View All</a>
                     </div>
                     <div id="recentAnnouncements" class="space-y-4">
                         <div class="border-l-4 border-amber-400 pl-4 py-2 bg-amber-50 rounded-r-lg">
@@ -754,7 +754,7 @@
                                     <td class="px-6 py-4 text-sm text-slate-600">Bank Transfer</td>
                                     <td class="px-6 py-4 text-sm text-slate-600">TRF/2025/001</td>
                                     <td class="px-6 py-4 text-center">
-                                        <button class="text-brand hover:underline text-sm font-medium"><i class="fas fa-download mr-1"></i>Download</button>
+                                        <button onclick="downloadFeeReceipt()" class="text-brand hover:underline text-sm font-medium"><i class="fas fa-download mr-1"></i>Download</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -768,29 +768,6 @@
                 <h2 class="text-2xl font-bold text-slate-800 mb-6">Announcements</h2>
                 <div id="allAnnouncements" class="space-y-4">
                     <p class="text-slate-400 text-center py-4">Loading announcements...</p>
-                </div>
-            </div>
-                                </div>
-                                <h3 class="text-lg font-bold text-slate-800">Inter-House Sports Competition</h3>
-                                <p class="text-slate-600 mt-2 text-sm">Annual inter-house sports competition will hold on July 15th, 2026. Students should come in their respective house uniforms. Registration for various events is ongoing.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-100 hover:shadow-md transition">
-                        <div class="flex items-start space-x-4">
-                            <div class="w-12 h-12 bg-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-graduation-cap text-white"></i>
-                            </div>
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-2 mb-2">
-                                    <span class="bg-emerald-100 text-emerald-700 text-xs px-2 py-1 rounded font-medium">Academic</span>
-                                    <span class="text-slate-400 text-xs">June 28, 2026</span>
-                                </div>
-                                <h3 class="text-lg font-bold text-slate-800">Graduation Ceremony 2026</h3>
-                                <p class="text-slate-600 mt-2 text-sm">The graduation ceremony for the class of 2026 will hold on August 5th, 2026. All graduating students and their parents are expected to attend.</p>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 

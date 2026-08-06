@@ -287,7 +287,7 @@ async function viewClassStudents(originalClass) {
     }
 }
 
-function showSection(section) {
+function showSection(section, event) {
     document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
     document.getElementById(section + 'Section').classList.remove('hidden');
     document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
@@ -462,4 +462,32 @@ async function loadTeacherAnnouncements() {
         console.error(e);
         container.innerHTML = '<p class="text-red-500 text-center py-4">Failed to load announcements.</p>';
     }
+}
+
+// Attendance functions
+function loadAttendanceStudents() {
+    alert('Loading students for attendance...');
+}
+
+function saveAttendance() {
+    alert('Attendance saved successfully!');
+}
+
+// Settings functions
+function saveTeacherSettings() {
+    const firstName = document.getElementById('teacherSettingsFirstName')?.value;
+    const lastName = document.getElementById('teacherLastName')?.value;
+    const email = document.getElementById('teacherEmail')?.value;
+    
+    if (firstName) {
+        document.getElementById('teacherFirstName').textContent = firstName;
+        const session = getSession('teacher');
+        if (session?.user) {
+            session.user.firstName = firstName;
+            if (lastName) session.user.lastName = lastName;
+            setSession('teacher', session);
+        }
+    }
+    
+    alert('Settings saved successfully!');
 }

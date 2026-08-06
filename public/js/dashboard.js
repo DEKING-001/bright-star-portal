@@ -169,7 +169,7 @@ function displayAnnouncements(announcements) {
 }
 
 // Show different sections
-function showSection(section) {
+function showSection(section, event) {
     // Hide all sections
     document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
     
@@ -178,7 +178,7 @@ function showSection(section) {
     
     // Update active nav
     document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-    event.currentTarget.classList.add('active');
+    if (event && event.currentTarget) event.currentTarget.classList.add('active');
     
     // Load section-specific data
     switch(section) {
@@ -769,4 +769,9 @@ function formatCurrency(amount) {
 function formatDate(dateString) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString('en-US', options);
+}
+
+// Download fee receipt
+function downloadFeeReceipt() {
+    alert('Fee receipt download feature coming soon!');
 }

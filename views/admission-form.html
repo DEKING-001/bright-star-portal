@@ -53,6 +53,15 @@
                 <button id="mobileMenuBtn" class="md:hidden text-slate-600 text-2xl"><i class="fas fa-bars"></i></button>
             </div>
         </div>
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-t border-slate-200">
+            <div class="px-4 py-4 space-y-3">
+                <a href="/" class="block text-slate-600 hover:text-brand-600 font-medium">Home</a>
+                <a href="/about" class="block text-slate-600 hover:text-brand-600 font-medium">About</a>
+                <a href="/admissions" class="block text-brand-600 font-semibold">Admissions</a>
+                <a href="/gallery" class="block text-slate-600 hover:text-brand-600 font-medium">Gallery</a>
+                <a href="/contact" class="block text-slate-600 hover:text-brand-600 font-medium">Contact</a>
+            </div>
+        </div>
     </nav>
 
     <!-- Hero Section -->
@@ -287,6 +296,11 @@
                 document.getElementById('onlineAdmissionForm').reset();
             }
         }
+    </script>
+    <script>
+        document.getElementById('mobileMenuBtn')?.addEventListener('click', function() {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        });
     </script>
 </body>
 </html>

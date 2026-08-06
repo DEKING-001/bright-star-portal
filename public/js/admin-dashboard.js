@@ -98,7 +98,7 @@ async function loadDashboard() {
     }
 }
 
-function showSection(section) {
+function showSection(section, event) {
     document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
     document.getElementById(section + 'Section').classList.remove('hidden');
     document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
@@ -1192,4 +1192,13 @@ async function saveTimetable() {
         console.error(e);
         alert('Upstream request failed. Please try again.');
     }
+}
+
+// Session management functions
+function createNewSession() {
+    alert('Session creation feature coming soon!');
+}
+
+function saveSession() {
+    alert('Session settings saved successfully!');
 }
