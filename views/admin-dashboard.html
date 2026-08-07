@@ -577,7 +577,7 @@
                         <i class="fas fa-plus mr-2"></i>New Session
                     </button>
                 </div>
-                <div class="grid md:grid-cols-2 gap-5">
+                <div id="sessionsList" class="grid md:grid-cols-2 gap-5">
                     <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-emerald-500">
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="font-bold text-slate-800">2025/2026</h3>
@@ -775,19 +775,19 @@
                     <div class="grid md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-slate-600 mb-2">Session Year</label>
-                            <input type="text" value="2026/2027" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 outline-none">
+                            <input type="text" id="newSessionYear" value="2026/2027" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 outline-none">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-600 mb-2">Start Date</label>
-                            <input type="date" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 outline-none">
+                            <input type="date" id="newSessionStart" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 outline-none">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-600 mb-2">End Date</label>
-                            <input type="date" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 outline-none">
+                            <input type="date" id="newSessionEnd" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 outline-none">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-600 mb-2">Terms</label>
-                            <select class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 outline-none" id="sessionTerms">
+                            <label class="block text-sm font-medium text-slate-600 mb-2">Starting Term</label>
+                            <select id="newSessionTerm" class="w-full border border-slate-200 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-500 outline-none">
                                 <option>First Term</option>
                                 <option>Second Term</option>
                                 <option>Third Term</option>
@@ -795,7 +795,7 @@
                         </div>
                     </div>
                     <button onclick="saveSession()" class="mt-6 bg-brand-500 text-white px-6 py-2.5 rounded-lg hover:bg-brand-600 transition font-medium">
-                        Save Session
+                        <i class="fas fa-save mr-2"></i>Save Session
                     </button>
                 </div>
             </div>

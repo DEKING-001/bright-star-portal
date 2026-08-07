@@ -128,6 +128,7 @@ function showSection(section, event) {
     if (section === 'teachers') loadTeachers();
     if (section === 'announcements') loadAnnouncements();
     if (section === 'settings') loadSettings();
+    if (section === 'sessions') loadSessions();
     if (section === 'results') loadPendingResults();
     if (section === 'timetable') loadTimetableForAdmin();
 }
@@ -1208,9 +1209,64 @@ async function saveTimetable() {
 
 // Session management functions
 function createNewSession() {
-    alert('Session creation feature coming soon!');
+    document.getElementById('newSessionYear').value = '';
+    document.getElementById('newSessionStart').value = '';
+    document.getElementById('newSessionEnd').value = '';
+    document.getElementById('newSessionTerm').value = 'First Term';
+    document.getElementById('newSessionYear').focus();
 }
 
 function saveSession() {
-    alert('Session settings saved successfully!');
+    const year = document.getElementById('newSessionYear').value.trim();
+    const start = document.getElementById('newSessionStart').value;
+    const end = document.getElementById('newSessionEnd').value;
+    const term = document.getElementById('newSessionTerm').value;
+
+    if (!year) { alert('Please enter a session year (e.g., 2026/2027)'); return; }
+
+    const sessions = JSON.parse(localStorage.getItem('admin_sessions') || '[]');
+    const exists = sessions.find(s => s.year === year);
+    if (exists) { alert('This session already exists.'); return; }
+
+    sessions.push({ year, start, end, term, status: 'upcoming' });
+    localStorage.setItem('admin_sessions', JSON.stringify(sessions));
+
+    alert('Session ' + year + ' created successfully!');
+    loadSessions();
+    showSection('sessions');
+}
+
+function loadSessions() {
+    const container = document.getElementById('sessionsList');
+    if (!container) return;
+
+    const sessions = JSON.parse(localStorage.getItem('admin_sessions') || '[]');
+    const allSessions = [
+        { year: '2025/2026', start: '2025-09-01', end: '2026-07-31', term: 'Second Term', status: 'active' },
+        ...sessions
+    ];
+
+    container.innerHTML = allSessions.map(s => {
+        const isActive = s.status === 'active';
+        const startDate = s.start ? new Date(s.start).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '';
+        const endDate = s.end ? new Date(s.end).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '';
+        return `
+            <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 ${isActive ? 'border-emerald-500' : 'border-slate-300'}">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-bold text-slate-800">${s.year}</h3>
+                    <span class="${isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'} px-3 py-1 rounded-full text-xs font-semibold">${isActive ? 'Active' : 'Upcoming'}</span>
+                </div>
+                <p class="text-slate-500 text-sm">${startDate && endDate ? startDate + ' - ' + endDate : 'Dates TBD'}</p>
+                <p class="text-slate-400 text-sm mt-1">Current Term: <span class="text-slate-600 font-medium">${s.term}</span></p>
+                ${!isActive ? '<button onclick=\"deleteSession(\\'' + s.year + '\\')\" class=\"mt-3 text-xs text-red-500 hover:text-red-700 font-medium\"><i class=\"fas fa-trash mr-1\"></i>Delete</button>' : ''}
+            </div>`;
+    }).join('');
+}
+
+function deleteSession(year) {
+    if (!confirm('Delete session ' + year + '?')) return;
+    let sessions = JSON.parse(localStorage.getItem('admin_sessions') || '[]');
+    sessions = sessions.filter(s => s.year !== year);
+    localStorage.setItem('admin_sessions', JSON.stringify(sessions));
+    loadSessions();
 }
