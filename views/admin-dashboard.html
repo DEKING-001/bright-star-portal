@@ -1066,7 +1066,7 @@
                         <!-- Profile Picture -->
                         <div class="flex items-center space-x-6 mb-6 pb-6 border-b border-slate-100">
                             <div id="adminSettingsPic" class="w-20 h-20 bg-brand-500 rounded-full flex items-center justify-center overflow-hidden">
-                                <i class="fas fa-user-shield text-white text-2xl"></i>
+                                <i id="adminSettingsIcon" class="fas fa-user-shield text-white text-2xl"></i>
                                 <img id="adminSettingsImg" class="w-full h-full object-cover hidden" alt="">
                             </div>
                             <div>
@@ -1075,7 +1075,7 @@
                                 <div class="flex space-x-2">
                                     <label class="text-xs bg-brand-500 text-white px-3 py-1.5 rounded-lg cursor-pointer hover:bg-brand-600 transition font-medium">
                                         <i class="fas fa-camera mr-1"></i>Upload
-                                        <input type="file" accept="image/*" class="hidden" onchange="uploadAdminPic(event)">
+                                        <input type="file" accept="image/*" class="hidden" id="adminPicInput" onchange="uploadAdminPic(event)">
                                     </label>
                                     <button type="button" onclick="removeAdminPic()" class="text-xs bg-red-50 text-red-500 px-3 py-1.5 rounded-lg hover:bg-red-100 transition font-medium">
                                         <i class="fas fa-trash mr-1"></i>Remove

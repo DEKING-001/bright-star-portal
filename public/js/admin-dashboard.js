@@ -549,6 +549,17 @@ function loadProfilePic(storageKey, headerImgId, headerIconId, settingsImgId) {
         });
         const icon = document.getElementById(headerIconId);
         if (icon) icon.classList.add('hidden');
+        const settingsIcon = document.getElementById('adminSettingsIcon');
+        if (settingsIcon) settingsIcon.classList.add('hidden');
+    } else {
+        [headerImgId, settingsImgId].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) { el.src = ''; el.classList.add('hidden'); }
+        });
+        const icon = document.getElementById(headerIconId);
+        if (icon) icon.classList.remove('hidden');
+        const settingsIcon = document.getElementById('adminSettingsIcon');
+        if (settingsIcon) settingsIcon.classList.remove('hidden');
     }
 }
 
@@ -570,7 +581,8 @@ function removeAdminPic() {
     document.getElementById('adminProfileImg').classList.add('hidden');
     document.getElementById('adminProfileIcon').classList.remove('hidden');
     document.getElementById('adminSettingsImg').classList.add('hidden');
-    document.getElementById('adminSettingsImg').parentElement.querySelector('i')?.classList.remove('hidden');
+    document.getElementById('adminSettingsImg').src = '';
+    document.getElementById('adminSettingsIcon').classList.remove('hidden');
 }
 
 // Existing functions
