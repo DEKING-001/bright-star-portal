@@ -1220,7 +1220,7 @@ function createNewSession() {
     document.getElementById('newSessionYear').focus();
 }
 
-function saveSession() {
+function saveNextSession() {
     const year = document.getElementById('newSessionYear').value.trim();
     const start = document.getElementById('newSessionStart').value;
     const end = document.getElementById('newSessionEnd').value;
