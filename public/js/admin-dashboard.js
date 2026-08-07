@@ -1208,6 +1208,10 @@ async function saveTimetable() {
 }
 
 // Session management functions
+function getSessionsKey() {
+    return 'admin_sessions_' + currentBranch;
+}
+
 function createNewSession() {
     document.getElementById('newSessionYear').value = '';
     document.getElementById('newSessionStart').value = '';
@@ -1224,14 +1228,15 @@ function saveSession() {
 
     if (!year) { alert('Please enter a session year (e.g., 2026/2027)'); return; }
 
-    const sessions = JSON.parse(localStorage.getItem('admin_sessions') || '[]');
+    const key = getSessionsKey();
+    const sessions = JSON.parse(localStorage.getItem(key) || '[]');
     const exists = sessions.find(s => s.year === year);
-    if (exists) { alert('This session already exists.'); return; }
+    if (exists) { alert('This session already exists in ' + getBranchConfig().label + '.'); return; }
 
     sessions.push({ year, start, end, term, status: 'upcoming' });
-    localStorage.setItem('admin_sessions', JSON.stringify(sessions));
+    localStorage.setItem(key, JSON.stringify(sessions));
 
-    alert('Session ' + year + ' created successfully!');
+    alert('Session ' + year + ' created successfully for ' + getBranchConfig().label + '!');
     loadSessions();
     showSection('sessions');
 }
@@ -1240,9 +1245,10 @@ function loadSessions() {
     const container = document.getElementById('sessionsList');
     if (!container) return;
 
-    const sessions = JSON.parse(localStorage.getItem('admin_sessions') || '[]');
+    const sessions = JSON.parse(localStorage.getItem(getSessionsKey()) || '[]');
+    const branchYear = currentBranch === 'nursery' ? '2025/2026' : '2025/2026';
     const allSessions = [
-        { year: '2025/2026', start: '2025-09-01', end: '2026-07-31', term: 'Second Term', status: 'active' },
+        { year: branchYear, start: '2025-09-01', end: '2026-07-31', term: 'Second Term', status: 'active' },
         ...sessions
     ];
 
@@ -1265,8 +1271,8 @@ function loadSessions() {
 
 function deleteSession(year) {
     if (!confirm('Delete session ' + year + '?')) return;
-    let sessions = JSON.parse(localStorage.getItem('admin_sessions') || '[]');
+    let sessions = JSON.parse(localStorage.getItem(getSessionsKey()) || '[]');
     sessions = sessions.filter(s => s.year !== year);
-    localStorage.setItem('admin_sessions', JSON.stringify(sessions));
+    localStorage.setItem(getSessionsKey(), JSON.stringify(sessions));
     loadSessions();
 }
