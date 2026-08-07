@@ -1256,16 +1256,20 @@ function loadSessions() {
         const isActive = s.status === 'active';
         const startDate = s.start ? new Date(s.start).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '';
         const endDate = s.end ? new Date(s.end).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '';
-        return `
-            <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 ${isActive ? 'border-emerald-500' : 'border-slate-300'}">
-                <div class="flex items-center justify-between mb-3">
-                    <h3 class="font-bold text-slate-800">${s.year}</h3>
-                    <span class="${isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'} px-3 py-1 rounded-full text-xs font-semibold">${isActive ? 'Active' : 'Upcoming'}</span>
-                </div>
-                <p class="text-slate-500 text-sm">${startDate && endDate ? startDate + ' - ' + endDate : 'Dates TBD'}</p>
-                <p class="text-slate-400 text-sm mt-1">Current Term: <span class="text-slate-600 font-medium">${s.term}</span></p>
-                ${!isActive ? '<button onclick=\"deleteSession(\\'' + s.year + '\\')\" class=\"mt-3 text-xs text-red-500 hover:text-red-700 font-medium\"><i class=\"fas fa-trash mr-1\"></i>Delete</button>' : ''}
-            </div>`;
+        const borderClass = isActive ? 'border-emerald-500' : 'border-slate-300';
+        const badgeClass = isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500';
+        const badgeText = isActive ? 'Active' : 'Upcoming';
+        const dates = (startDate && endDate) ? startDate + ' - ' + endDate : 'Dates TBD';
+        const deleteBtn = isActive ? '' : `<button onclick="deleteSession('${s.year}')" class="mt-3 text-xs text-red-500 hover:text-red-700 font-medium"><i class="fas fa-trash mr-1"></i>Delete</button>`;
+        return '<div class="bg-white rounded-xl shadow-sm p-5 border-l-4 ' + borderClass + '">' +
+            '<div class="flex items-center justify-between mb-3">' +
+                '<h3 class="font-bold text-slate-800">' + s.year + '</h3>' +
+                '<span class="' + badgeClass + ' px-3 py-1 rounded-full text-xs font-semibold">' + badgeText + '</span>' +
+            '</div>' +
+            '<p class="text-slate-500 text-sm">' + dates + '</p>' +
+            '<p class="text-slate-400 text-sm mt-1">Current Term: <span class="text-slate-600 font-medium">' + s.term + '</span></p>' +
+            deleteBtn +
+        '</div>';
     }).join('');
 }
 
