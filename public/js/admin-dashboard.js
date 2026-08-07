@@ -52,15 +52,25 @@ function populateClassSelects() {
 }
 
 document.addEventListener('DOMContentLoaded', async function() {
-    const auth = await requireAuth('admin');
-    if (!auth.ok) return;
-    
-    document.getElementById('adminName').textContent = `${auth.user.firstName} ${auth.user.lastName}`;
-    // Restore branch selector from localStorage
-    document.getElementById('branchSwitcher').value = currentBranch;
-    populateClassSelects();
-    loadDashboard();
-    loadAdminProfile();
+    try {
+        console.log('[AdminDashboard] v6 loading...');
+        const auth = await requireAuth('admin');
+        if (!auth.ok) {
+            console.warn('[AdminDashboard] Auth failed — redirecting to login');
+            return;
+        }
+        console.log('[AdminDashboard] Auth OK:', auth.user.firstName, auth.user.lastName);
+
+        document.getElementById('adminName').textContent = `${auth.user.firstName} ${auth.user.lastName}`;
+        document.getElementById('branchSwitcher').value = currentBranch;
+        populateClassSelects();
+        await loadDashboard();
+        loadAdminProfile();
+        console.log('[AdminDashboard] Init complete');
+    } catch (err) {
+        console.error('[AdminDashboard] Init error:', err);
+        document.getElementById('recentStudents').innerHTML = '<p class="text-red-500 text-center py-4">Failed to load dashboard. Check console (F12) for errors.</p>';
+    }
 });
 
 function switchBranch(branch) {
@@ -92,9 +102,14 @@ async function loadDashboard() {
             const data = await response.json();
             document.getElementById('totalStudents').textContent = data.stats.totalStudents;
             document.getElementById('totalTeachers').textContent = data.stats.totalTeachers;
+            console.log('[AdminDashboard] Stats loaded:', data.stats);
+        } else {
+            console.error('[AdminDashboard] Dashboard API error:', response.status);
+            document.getElementById('recentStudents').innerHTML = '<p class="text-red-500 text-center py-4">API error: ' + response.status + '. Please log in again.</p>';
         }
     } catch (error) {
-        console.error('Error loading dashboard:', error);
+        console.error('[AdminDashboard] Error loading dashboard:', error);
+        document.getElementById('recentStudents').innerHTML = '<p class="text-red-500 text-center py-4">Network error. Check console (F12).</p>';
     }
 }
 
