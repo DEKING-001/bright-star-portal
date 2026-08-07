@@ -86,7 +86,7 @@ app.use('/vendor/js', express.static(path.join(__dirname, 'node_modules', 'html2
 // Demo Users Database
 const demoUsers = {
     // Admin — works for both branches (branch ignored for admin login)
-    'admin@brightstar.com': { id: '1', email: 'admin@brightstar.com', password: 'admin123', firstName: 'Admin', lastName: 'User', role: 'admin', branch: 'secondary' },
+    'brightstarsschools2@gmail.com': { id: '1', email: 'brightstarsschools2@gmail.com', password: 'admin123', firstName: 'Admin', lastName: 'User', role: 'admin', branch: 'secondary' },
     // Secondary branch
     'TCH/001': { id: '2', email: 'john.owens@brightstar.com', password: 'password123', firstName: 'John', lastName: 'Owens', role: 'teacher', staffId: 'TCH/001', branch: 'secondary' },
     'BSS/2026/001': { id: '3', email: 'chukwuemeka@student.com', password: 'password123', firstName: 'Chukwuemeka', lastName: 'Okonkwo', role: 'student', admissionNumber: 'BSS/2026/001', class: 'SS1', session: '2025/2026', term: 'Second Term', branch: 'secondary' },

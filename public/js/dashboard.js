@@ -442,7 +442,7 @@ async function downloadReportCard() {
         doc.setFontSize(8);
         doc.setFont('helvetica', 'normal');
         doc.text('10/12 Ikpeamaeze Street, Off Umuikpo Ariaria, ABA', margin + 25, y + 13);
-        doc.text('Phone: +234 703 568 5063  |  Email: brightstars@gmail.com', margin + 25, y + 17);
+        doc.text('Phone: +234 703 568 5063  |  Email: brightstarsschools2@gmail.com', margin + 25, y + 17);
 
         y += 25;
         drawLine(y, brand, 0.8);

@@ -530,7 +530,7 @@ function loadAdminProfile() {
         const profile = JSON.parse(saved);
         document.getElementById('adminFirstName').value = profile.firstName || 'Admin';
         document.getElementById('adminLastName').value = profile.lastName || 'User';
-        document.getElementById('adminEmail').value = profile.email || 'admin@brightstar.com';
+        document.getElementById('adminEmail').value = profile.email || 'brightstarsschools2@gmail.com';
 
         const sidebarName = document.getElementById('adminName');
         if (sidebarName) sidebarName.textContent = `${profile.firstName} ${profile.lastName}`;

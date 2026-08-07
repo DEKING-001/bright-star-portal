@@ -28,7 +28,7 @@ async function seed() {
         
         // Create Admin
         const admin = await User.create({
-            email: 'admin@brightstar.com',
+            email: 'brightstarsschools2@gmail.com',
             password: 'admin123',
             firstName: 'Admin',
             lastName: 'User',
@@ -176,7 +176,7 @@ async function seed() {
         console.log('Attendance records created');
         
         console.log('\n--- Demo Credentials ---');
-        console.log('Admin: admin@brightstar.com / admin123');
+        console.log('Admin: brightstarsschools2@gmail.com / admin123');
         console.log('Teacher: TCH/001 / password123');
         console.log('Student: BSS/2026/001 / password123');
         console.log('------------------------\n');
