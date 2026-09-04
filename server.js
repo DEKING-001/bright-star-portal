@@ -83,18 +83,30 @@ app.use('/images', express.static(path.join(__dirname, 'public', 'images')));
 app.use('/vendor/js', express.static(path.join(__dirname, 'node_modules', 'jspdf', 'dist'), { maxAge: 0, etag: false }));
 app.use('/vendor/js', express.static(path.join(__dirname, 'node_modules', 'html2canvas', 'dist'), { maxAge: 0, etag: false }));
 
-// Demo Users Database
+// Demo Users Database — keyed by staffId / admissionNumber / email
 const demoUsers = {
     // Admin — works for both branches (branch ignored for admin login)
     'brightstarsschools2@gmail.com': { id: '1', email: 'brightstarsschools2@gmail.com', password: 'admin123', firstName: 'Admin', lastName: 'User', role: 'admin', branch: 'secondary' },
-    // Secondary branch
+    // Secondary branch — teachers (keyed by staffId AND email)
     'TCH/001': { id: '2', email: 'john.owens@brightstar.com', password: 'password123', firstName: 'John', lastName: 'Owens', role: 'teacher', staffId: 'TCH/001', branch: 'secondary' },
+    'john.owens@brightstar.com': { id: '2', email: 'john.owens@brightstar.com', password: 'password123', firstName: 'John', lastName: 'Owens', role: 'teacher', staffId: 'TCH/001', branch: 'secondary' },
+    'sarah.adesanya@brightstar.com': { id: '8', email: 'sarah.adesanya@brightstar.com', password: 'password123', firstName: 'Sarah', lastName: 'Adesanya', role: 'teacher', staffId: 'TCH/002', branch: 'secondary' },
+    'TCH/002': { id: '8', email: 'sarah.adesanya@brightstar.com', password: 'password123', firstName: 'Sarah', lastName: 'Adesanya', role: 'teacher', staffId: 'TCH/002', branch: 'secondary' },
+    'michael.ugbo@brightstar.com': { id: '9', email: 'michael.ugbo@brightstar.com', password: 'password123', firstName: 'Michael', lastName: 'Ugbo', role: 'teacher', staffId: 'TCH/003', branch: 'secondary' },
+    'TCH/003': { id: '9', email: 'michael.ugbo@brightstar.com', password: 'password123', firstName: 'Michael', lastName: 'Ugbo', role: 'teacher', staffId: 'TCH/003', branch: 'secondary' },
+    // Secondary branch — students (keyed by admissionNumber AND email)
     'BSS/2026/001': { id: '3', email: 'chukwuemeka@student.com', password: 'password123', firstName: 'Chukwuemeka', lastName: 'Okonkwo', role: 'student', admissionNumber: 'BSS/2026/001', class: 'SS1', session: '2025/2026', term: 'Second Term', branch: 'secondary' },
+    'chukwuemeka@student.com': { id: '3', email: 'chukwuemeka@student.com', password: 'password123', firstName: 'Chukwuemeka', lastName: 'Okonkwo', role: 'student', admissionNumber: 'BSS/2026/001', class: 'SS1', session: '2025/2026', term: 'Second Term', branch: 'secondary' },
     'BSS/2026/002': { id: '4', email: 'amina@student.com', password: 'password123', firstName: 'Amina', lastName: 'Ibrahim', role: 'student', admissionNumber: 'BSS/2026/002', class: 'SS1', session: '2025/2026', term: 'Second Term', branch: 'secondary' },
-    // Nursery branch
+    'amina@student.com': { id: '4', email: 'amina@student.com', password: 'password123', firstName: 'Amina', lastName: 'Ibrahim', role: 'student', admissionNumber: 'BSS/2026/002', class: 'SS1', session: '2025/2026', term: 'Second Term', branch: 'secondary' },
+    // Nursery branch — teachers (keyed by staffId AND email)
     'TCH/N/001': { id: '5', email: 'ngozi.okafor@brightstar.com', password: 'password123', firstName: 'Ngozi', lastName: 'Okafor', role: 'teacher', staffId: 'TCH/N/001', branch: 'nursery' },
+    'ngozi.okafor@brightstar.com': { id: '5', email: 'ngozi.okafor@brightstar.com', password: 'password123', firstName: 'Ngozi', lastName: 'Okafor', role: 'teacher', staffId: 'TCH/N/001', branch: 'nursery' },
+    // Nursery branch — students (keyed by admissionNumber AND email)
     'BNP/2026/001': { id: '6', email: 'chinedu@student.com', password: 'password123', firstName: 'Chinedu', lastName: 'Eze', role: 'student', admissionNumber: 'BNP/2026/001', class: 'Nursery 3', session: '2025/2026', term: 'Second Term', branch: 'nursery' },
-    'BNP/2026/002': { id: '7', email: 'zainab@student.com', password: 'password123', firstName: 'Zainab', lastName: 'Bello', role: 'student', admissionNumber: 'BNP/2026/002', class: 'Primary 1', session: '2025/2026', term: 'Second Term', branch: 'nursery' }
+    'chinedu@student.com': { id: '6', email: 'chinedu@student.com', password: 'password123', firstName: 'Chinedu', lastName: 'Eze', role: 'student', admissionNumber: 'BNP/2026/001', class: 'Nursery 3', session: '2025/2026', term: 'Second Term', branch: 'nursery' },
+    'BNP/2026/002': { id: '7', email: 'zainab@student.com', password: 'password123', firstName: 'Zainab', lastName: 'Bello', role: 'student', admissionNumber: 'BNP/2026/002', class: 'Primary 1', session: '2025/2026', term: 'Second Term', branch: 'nursery' },
+    'zainab@student.com': { id: '7', email: 'zainab@student.com', password: 'password123', firstName: 'Zainab', lastName: 'Bello', role: 'student', admissionNumber: 'BNP/2026/002', class: 'Primary 1', session: '2025/2026', term: 'Second Term', branch: 'nursery' }
 };
 
 // Demo Results
