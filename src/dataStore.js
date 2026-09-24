@@ -560,13 +560,16 @@ async function getAnnouncements(filter = {}) {
 
 async function createAnnouncement({ title, content, category, branch }) {
     if (dbConnected) {
-        return await PortalAnnouncement.create({
+        const doc = await PortalAnnouncement.create({
             title,
             content,
             category: category || 'general',
             branch: branch || 'secondary',
             createdAt: new Date()
         });
+        const { _id, ...rest } = doc.toObject ? doc.toObject() : doc;
+        mem.announcements.unshift({ _id: String(_id), ...rest });
+        return doc;
     }
     const ann = { _id: String(mem.announcements.length + 1), title, content, category: category || 'general', branch: branch || 'secondary', createdAt: new Date() };
     mem.announcements.unshift(ann);
@@ -574,13 +577,14 @@ async function createAnnouncement({ title, content, category, branch }) {
 }
 
 async function deleteAnnouncement(id) {
+    const memIdx = mem.announcements.findIndex(a => String(a._id) === String(id));
+    if (memIdx !== -1) mem.announcements.splice(memIdx, 1);
+
     if (dbConnected) {
         const r = await PortalAnnouncement.findByIdAndDelete(id);
         return !!r;
     }
-    const idx = mem.announcements.findIndex(a => String(a._id) === String(id));
-    if (idx !== -1) { mem.announcements.splice(idx, 1); return true; }
-    return false;
+    return memIdx !== -1;
 }
 
 // ---------- Fees ----------
@@ -697,20 +701,26 @@ async function createAssignment(data) {
         postedAt: new Date(),
         isActive: true
     };
-    if (dbConnected) return await PortalAssignment.create(payload);
+    if (dbConnected) {
+        const doc = await PortalAssignment.create(payload);
+        const { _id, ...rest } = doc.toObject ? doc.toObject() : doc;
+        mem.assignments.push({ _id: String(_id), ...rest });
+        return doc;
+    }
     const a = { _id: String(mem.assignments.length + 1), ...payload };
     mem.assignments.push(a);
     return a;
 }
 
 async function deleteAssignment(id) {
+    const memIdx = mem.assignments.findIndex(a => String(a._id) === String(id));
+    if (memIdx !== -1) mem.assignments.splice(memIdx, 1);
+
     if (dbConnected) {
         const r = await PortalAssignment.findByIdAndDelete(id);
         return !!r;
     }
-    const idx = mem.assignments.findIndex(a => String(a._id) === String(id));
-    if (idx !== -1) { mem.assignments.splice(idx, 1); return true; }
-    return false;
+    return memIdx !== -1;
 }
 
 // ---------- Result uploads (pending_verification batch workflow) ----------

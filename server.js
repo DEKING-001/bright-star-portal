@@ -859,10 +859,12 @@ app.get('/api/fees/student', async (req, res) => {
     res.json({ success: true, fees, summary: { totalPaid, totalBalance } });
 });
 
-// Announcements - Get all (global — not filtered by branch)
+// Announcements - Get (optionally filtered by branch)
 app.get('/api/announcements', async (req, res) => {
     try {
-        const announcements = await store.getAnnouncements();
+        const filter = {};
+        if (req.query.branch) filter.branch = req.query.branch;
+        const announcements = await store.getAnnouncements(filter);
         res.json({ success: true, announcements });
     } catch (err) {
         console.error('Get announcements error:', err);

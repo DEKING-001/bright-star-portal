@@ -804,12 +804,12 @@ async function loadTeachers() {
 
 async function loadAnnouncements() {
     try {
-        const response = await fetch('/api/announcements');
+        const response = await fetch(`/api/announcements?branch=${currentBranch}`);
         if (response.ok) {
             const data = await response.json();
             const container = document.getElementById('announcementsList');
             
-            if (data.announcements.length === 0) {
+            if (!data.announcements || data.announcements.length === 0) {
                 container.innerHTML = '<p class="text-slate-400 text-center py-4">No announcements yet</p>';
                 return;
             }
