@@ -192,26 +192,8 @@ async function seedIfEmpty() {
         if (await PortalAssignment.countDocuments() === 0) {
             await PortalAssignment.insertMany(mem.assignments.map(({ _id, ...a }) => a));
         }
-
-        // ── Upsert nursery branch demo users (safe to re-run) ──
-        const nurseryStudents = mem.students.filter(s => s.branch === 'nursery');
-        for (const s of nurseryStudents) {
-            const { _id, ...studentData } = s;
-            await PortalStudent.findOneAndUpdate(
-                { admissionNumber: s.admissionNumber },
-                { $setOnInsert: studentData },
-                { upsert: true, new: true }
-            );
-        }
-        const nurseryTeachers = mem.teachers.filter(t => t.branch === 'nursery');
-        for (const t of nurseryTeachers) {
-            const { _id, ...teacherData } = t;
-            await PortalTeacher.findOneAndUpdate(
-                { staffId: t.staffId },
-                { $setOnInsert: teacherData },
-                { upsert: true, new: true }
-            );
-        }
+        // NOTE: Do NOT upsert demo records here — that would resurrect
+        // students/teachers the admin has deleted. Seed only when empty above.
     } catch (e) {
         console.error('Seed error:', e.message);
     }
@@ -278,6 +260,22 @@ async function updateStudent(id, data) {
         if (data.profilePic !== undefined) update.profilePic = data.profilePic;
         if (data.password !== undefined) update.password = data.password;
         const doc = await PortalStudent.findByIdAndUpdate(id, { $set: update }, { new: true });
+        // Mirror into mem for fallback consistency
+        if (doc) {
+            const memS = mem.students.find(s => String(s._id) === String(id));
+            if (memS) {
+                if (data.firstName) memS.user.firstName = data.firstName;
+                if (data.lastName) memS.user.lastName = data.lastName;
+                if (data.email) memS.user.email = data.email;
+                if (data.admissionNumber !== undefined) memS.admissionNumber = data.admissionNumber;
+                if (data.class !== undefined) memS.class = data.class;
+                if (data.gender !== undefined) memS.gender = data.gender;
+                if (data.parentName !== undefined) memS.parentName = data.parentName;
+                if (data.parentPhone !== undefined) memS.parentPhone = data.parentPhone;
+                if (data.profilePic !== undefined) memS.profilePic = data.profilePic;
+                if (data.password !== undefined) memS.password = data.password;
+            }
+        }
         return doc;
     }
     const student = mem.students.find(s => String(s._id) === String(id));
@@ -297,19 +295,26 @@ async function updateStudent(id, data) {
 
 // ---------- Delete Student ----------
 async function deleteStudent(id) {
+    // Always remove from in-memory store too, so a later DB fallback
+    // cannot resurrect the record.
+    const memIdx = mem.students.findIndex(s => String(s._id) === String(id));
+    if (memIdx !== -1) mem.students.splice(memIdx, 1);
+
     if (dbConnected) {
         const r = await PortalStudent.findByIdAndDelete(id);
         return !!r;
     }
-    const idx = mem.students.findIndex(s => String(s._id) === String(id));
-    if (idx !== -1) { mem.students.splice(idx, 1); return true; }
-    return false;
+    return memIdx !== -1;
 }
 
 // ---------- Create Student ----------
 async function createStudent(data) {
     if (dbConnected) {
-        return await PortalStudent.create(data);
+        const doc = await PortalStudent.create(data);
+        // Mirror into mem so fallback reads stay consistent
+        const { _id, ...rest } = doc.toObject ? doc.toObject() : doc;
+        mem.students.push({ _id: String(_id), ...rest });
+        return doc;
     }
     const newId = String(mem.students.length + 1);
     const student = { _id: newId, ...data };
@@ -320,7 +325,10 @@ async function createStudent(data) {
 // ---------- Create Teacher ----------
 async function createTeacher(data) {
     if (dbConnected) {
-        return await PortalTeacher.create(data);
+        const doc = await PortalTeacher.create(data);
+        const { _id, ...rest } = doc.toObject ? doc.toObject() : doc;
+        mem.teachers.push({ _id: String(_id), ...rest });
+        return doc;
     }
     const newId = String(mem.teachers.length + 1);
     const teacher = { _id: newId, ...data };
@@ -481,6 +489,19 @@ async function updateTeacher(id, data) {
         if (data.profilePic !== undefined) update.profilePic = data.profilePic;
         if (data.password !== undefined) update.password = data.password;
         const doc = await PortalTeacher.findByIdAndUpdate(id, { $set: update }, { new: true });
+        if (doc) {
+            const memT = mem.teachers.find(t => String(t._id) === String(id));
+            if (memT) {
+                if (data.firstName) memT.user.firstName = data.firstName;
+                if (data.lastName) memT.user.lastName = data.lastName;
+                if (data.email) memT.user.email = data.email;
+                if (data.staffId !== undefined) memT.staffId = data.staffId;
+                if (data.department !== undefined) memT.department = data.department;
+                if (data.qualification !== undefined) memT.qualification = data.qualification;
+                if (data.profilePic !== undefined) memT.profilePic = data.profilePic;
+                if (data.password !== undefined) memT.password = data.password;
+            }
+        }
         return doc;
     }
     const teacher = mem.teachers.find(t => String(t._id) === String(id));
@@ -498,13 +519,14 @@ async function updateTeacher(id, data) {
 
 // ---------- Delete Teacher ----------
 async function deleteTeacher(id) {
+    const memIdx = mem.teachers.findIndex(t => String(t._id) === String(id));
+    if (memIdx !== -1) mem.teachers.splice(memIdx, 1);
+
     if (dbConnected) {
         const r = await PortalTeacher.findByIdAndDelete(id);
         return !!r;
     }
-    const idx = mem.teachers.findIndex(t => String(t._id) === String(id));
-    if (idx !== -1) { mem.teachers.splice(idx, 1); return true; }
-    return false;
+    return memIdx !== -1;
 }
 
 // ---------- Statistics ----------

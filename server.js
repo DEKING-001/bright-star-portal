@@ -45,9 +45,11 @@ async function connectDB() {
 
 // Reset dbConnected when MongoDB disconnects
 mongoose.connection.on('disconnected', () => {
-    console.warn('MongoDB disconnected — falling back to in-memory store');
+    console.warn('MongoDB disconnected — attempting reconnect');
     dbReady = false;
     store.setDbConnected(false);
+    // Kick off reconnect so next API request can use MongoDB again
+    dbConnectPromise = connectDB().catch(() => {});
 });
 mongoose.connection.on('error', (err) => {
     console.error('MongoDB connection error:', err.message);
@@ -68,10 +70,15 @@ async function start() {
 }
 start();
 
-// Middleware: wait for DB connection attempt to finish before API writes/reads
+// Middleware: wait for DB (re)connection before API writes/reads
 app.use('/api', async (req, res, next) => {
-    if (!dbReady && dbConnectPromise) {
+    if (!dbReady) {
+        if (!dbConnectPromise) dbConnectPromise = connectDB().catch(() => {});
         try { await dbConnectPromise; } catch (_) {}
+        // If still not ready, give it one more short attempt
+        if (!dbReady) {
+            try { await connectDB(); } catch (_) {}
+        }
     }
     next();
 });
