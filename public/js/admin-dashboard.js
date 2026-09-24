@@ -331,20 +331,17 @@ async function saveStudent(event) {
             body: JSON.stringify(updateData)
         });
         
+        const data = await response.json().catch(() => ({}));
         if (response.ok) {
             alert('Student updated successfully');
             closeModal('editStudentModal');
             loadStudents();
             loadSettingsStudents();
         } else {
-            const data = await response.json();
-            alert(data.message || 'Error updating student');
+            alert(data.message || 'Error updating student (HTTP ' + response.status + ')');
         }
     } catch (error) {
-        alert('Student updated successfully');
-        closeModal('editStudentModal');
-        loadStudents();
-        loadSettingsStudents();
+        alert('Network error — student was NOT updated. Please try again.');
     }
 }
 
@@ -354,7 +351,7 @@ async function resetStudentPassword(id) {
     
     try {
         const token = getSession('admin')?.token;
-        await fetch(`/api/students/${id}`, {
+        const response = await fetch(`/api/students/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -362,9 +359,14 @@ async function resetStudentPassword(id) {
             },
             body: JSON.stringify({ password: newPassword })
         });
-        alert('Password reset successfully');
+        if (response.ok) {
+            alert('Password reset successfully');
+        } else {
+            const data = await response.json().catch(() => ({}));
+            alert(data.message || 'Error resetting password (HTTP ' + response.status + ')');
+        }
     } catch (error) {
-        alert('Password reset successfully');
+        alert('Network error — password was NOT reset. Please try again.');
     }
 }
 
@@ -373,15 +375,20 @@ async function deleteStudent(id) {
     
     try {
         const token = getSession('admin')?.token;
-        await fetch(`/api/students/${id}`, {
+        const response = await fetch(`/api/students/${id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
-        alert('Student deleted');
+        if (response.ok) {
+            alert('Student deleted');
+        } else {
+            const data = await response.json().catch(() => ({}));
+            alert(data.message || 'Error deleting student (HTTP ' + response.status + ')');
+        }
         loadStudents();
         loadSettingsStudents();
     } catch (error) {
-        alert('Student deleted');
+        alert('Network error — student was NOT deleted. Please try again.');
         loadStudents();
         loadSettingsStudents();
     }
@@ -493,20 +500,17 @@ async function saveTeacher(event) {
             body: JSON.stringify(updateData)
         });
         
+        const data = await response.json().catch(() => ({}));
         if (response.ok) {
             alert('Teacher updated successfully');
             closeModal('editTeacherModal');
             loadTeachers();
             loadSettingsTeachers();
         } else {
-            const data = await response.json();
-            alert(data.message || 'Error updating teacher');
+            alert(data.message || 'Error updating teacher (HTTP ' + response.status + ')');
         }
     } catch (error) {
-        alert('Teacher updated successfully');
-        closeModal('editTeacherModal');
-        loadTeachers();
-        loadSettingsTeachers();
+        alert('Network error — teacher was NOT updated. Please try again.');
     }
 }
 
@@ -516,7 +520,7 @@ async function resetTeacherPassword(id) {
     
     try {
         const token = getSession('admin')?.token;
-        await fetch(`/api/teachers/${id}`, {
+        const response = await fetch(`/api/teachers/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -524,9 +528,14 @@ async function resetTeacherPassword(id) {
             },
             body: JSON.stringify({ password: newPassword })
         });
-        alert('Password reset successfully');
+        if (response.ok) {
+            alert('Password reset successfully');
+        } else {
+            const data = await response.json().catch(() => ({}));
+            alert(data.message || 'Error resetting password (HTTP ' + response.status + ')');
+        }
     } catch (error) {
-        alert('Password reset successfully');
+        alert('Network error — password was NOT reset. Please try again.');
     }
 }
 
@@ -535,26 +544,32 @@ async function deleteTeacher(id) {
     
     try {
         const token = getSession('admin')?.token;
-        await fetch(`/api/teachers/${id}`, {
+        const response = await fetch(`/api/teachers/${id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
-        alert('Teacher deleted');
+        if (response.ok) {
+            alert('Teacher deleted');
+        } else {
+            const data = await response.json().catch(() => ({}));
+            alert(data.message || 'Error deleting teacher (HTTP ' + response.status + ')');
+        }
         loadTeachers();
         loadSettingsTeachers();
     } catch (error) {
-        alert('Teacher deleted');
+        alert('Network error — teacher was NOT deleted. Please try again.');
         loadTeachers();
         loadSettingsTeachers();
     }
 }
 
 // Admin Profile
-function updateAdminProfile(event) {
+async function updateAdminProfile(event) {
     event.preventDefault();
     const firstName = document.getElementById('adminFirstName').value.trim();
     const lastName = document.getElementById('adminLastName').value.trim();
     const email = document.getElementById('adminEmail').value.trim();
+    const currentPassword = document.getElementById('adminCurrentPassword').value;
     const newPassword = document.getElementById('adminNewPassword').value;
     const confirmPassword = document.getElementById('adminConfirmPassword').value;
     
@@ -563,18 +578,33 @@ function updateAdminProfile(event) {
         return;
     }
     
-    if (newPassword && newPassword !== confirmPassword) {
-        alert('Passwords do not match');
-        return;
+    if (newPassword || confirmPassword || currentPassword) {
+        if (!currentPassword) { alert('Please enter your current password to change password.'); return; }
+        if (newPassword !== confirmPassword) { alert('Passwords do not match'); return; }
+        try {
+            const session = getSession('admin');
+            const response = await fetch('/api/auth/change-password', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session?.token}` },
+                body: JSON.stringify({ currentPassword, newPassword })
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) { alert(data.message || 'Failed to change password.'); return; }
+        } catch (error) {
+            alert('Network error — password was NOT changed. Please try again.');
+            return;
+        }
     }
 
-    // Save to localStorage
+    // Save profile name/email to localStorage (display only)
     const profile = { firstName, lastName, email };
     localStorage.setItem('admin_profile', JSON.stringify(profile));
 
     // Update sidebar name
     const sidebarName = document.getElementById('adminName');
     if (sidebarName) sidebarName.textContent = `${firstName} ${lastName}`;
+    const settingsName = document.getElementById('adminSettingsName');
+    if (settingsName) settingsName.textContent = `${firstName} ${lastName}`;
 
     // Clear password fields
     document.getElementById('adminCurrentPassword').value = '';
@@ -830,19 +860,17 @@ async function addStudent(event) {
             })
         });
         
+        const data = await response.json().catch(() => ({}));
         if (response.ok) {
-            const data = await response.json();
             alert(`Student added successfully!\n\nAdmission Number: ${data.student.admissionNumber}`);
             closeModal('addStudentModal');
             loadStudents();
             document.getElementById('addStudentForm').reset();
         } else {
-            const data = await response.json();
-            alert(data.message || 'Error adding student');
+            alert(data.message || 'Error adding student (HTTP ' + response.status + ')');
         }
     } catch (error) {
-        alert('Student added successfully');
-        closeModal('addStudentModal');
+        alert('Network error — student was NOT added. Please try again.');
     }
 }
 
@@ -867,18 +895,17 @@ async function addTeacher(event) {
             })
         });
         
+        const data = await response.json().catch(() => ({}));
         if (response.ok) {
             alert('Teacher added successfully');
             closeModal('addTeacherModal');
             loadTeachers();
             document.getElementById('addTeacherForm').reset();
         } else {
-            const data = await response.json();
-            alert(data.message || 'Error adding teacher');
+            alert(data.message || 'Error adding teacher (HTTP ' + response.status + ')');
         }
     } catch (error) {
-        alert('Teacher added successfully');
-        closeModal('addTeacherModal');
+        alert('Network error — teacher was NOT added. Please try again.');
     }
 }
 
@@ -900,15 +927,17 @@ async function addAnnouncement(event) {
             })
         });
         
+        const data = await response.json().catch(() => ({}));
         if (response.ok) {
             alert('Announcement posted');
             closeModal('addAnnouncementModal');
             loadAnnouncements();
             document.getElementById('addAnnouncementForm').reset();
+        } else {
+            alert(data.message || 'Error posting announcement (HTTP ' + response.status + ')');
         }
     } catch (error) {
-        alert('Announcement posted');
-        closeModal('addAnnouncementModal');
+        alert('Network error — announcement was NOT posted. Please try again.');
     }
 }
 
@@ -916,12 +945,17 @@ async function deleteAnnouncement(id) {
     if (!confirm('Delete this announcement?')) return;
     try {
         const token = getSession('admin')?.token;
-        await fetch(`/api/announcements/${id}`, {
+        const response = await fetch(`/api/announcements/${id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
+        if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            alert(data.message || 'Error deleting announcement (HTTP ' + response.status + ')');
+        }
         loadAnnouncements();
     } catch (error) {
+        alert('Network error — announcement was NOT deleted. Please try again.');
         loadAnnouncements();
     }
 }

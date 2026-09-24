@@ -27,7 +27,7 @@ const protect = async (req, res, next) => {
     }
     
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'bright_star_secret');
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'bright_star_international_school_secret_key_2026');
         req.user = await User.findById(decoded.id);
         if (!req.user) {
             return res.status(401).json({ success: false, message: 'User not found' });

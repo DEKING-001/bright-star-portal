@@ -276,6 +276,7 @@ async function updateStudent(id, data) {
         if (data.parentPhone !== undefined) update.parentPhone = data.parentPhone;
         if (data.status !== undefined) update.status = data.status;
         if (data.profilePic !== undefined) update.profilePic = data.profilePic;
+        if (data.password !== undefined) update.password = data.password;
         const doc = await PortalStudent.findByIdAndUpdate(id, { $set: update }, { new: true });
         return doc;
     }
@@ -290,6 +291,7 @@ async function updateStudent(id, data) {
     if (data.parentName !== undefined) student.parentName = data.parentName;
     if (data.parentPhone !== undefined) student.parentPhone = data.parentPhone;
     if (data.profilePic !== undefined) student.profilePic = data.profilePic;
+    if (data.password !== undefined) student.password = data.password;
     return student;
 }
 
@@ -477,6 +479,7 @@ async function updateTeacher(id, data) {
         if (data.experience !== undefined) update.experience = data.experience;
         if (data.status !== undefined) update.status = data.status;
         if (data.profilePic !== undefined) update.profilePic = data.profilePic;
+        if (data.password !== undefined) update.password = data.password;
         const doc = await PortalTeacher.findByIdAndUpdate(id, { $set: update }, { new: true });
         return doc;
     }
@@ -489,6 +492,7 @@ async function updateTeacher(id, data) {
     if (data.department !== undefined) teacher.department = data.department;
     if (data.qualification !== undefined) teacher.qualification = data.qualification;
     if (data.profilePic !== undefined) teacher.profilePic = data.profilePic;
+    if (data.password !== undefined) teacher.password = data.password;
     return teacher;
 }
 

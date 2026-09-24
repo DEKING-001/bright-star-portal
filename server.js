@@ -11,7 +11,7 @@ const { setBlacklist } = require('./src/middleware/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || 'bright_star_secret';
+const JWT_SECRET = process.env.JWT_SECRET || 'bright_star_international_school_secret_key_2026';
 
 // ---------- MongoDB connection (optional; falls back to in-memory) ----------
 let cachedConnection = null;
@@ -19,7 +19,8 @@ let dbReady = false;
 
 async function connectDB() {
     if (dbReady && mongoose.connection.readyState === 1) return cachedConnection;
-    const uri = process.env.MONGODB_URI;
+    const uri = process.env.MONGODB_URI ||
+        'mongodb+srv://brightstar:brightstar123@cluster0.k3v880e.mongodb.net/brightstar?retryWrites=true&w=majority';
     if (!uri) {
         console.log('No MONGODB_URI set — using in-memory data store (data will not persist).');
         return;
@@ -55,8 +56,10 @@ mongoose.connection.on('error', (err) => {
 });
 
 // Start server immediately, connect to DB in background
+let dbConnectPromise = null;
 async function start() {
-    await connectDB().catch(() => {});
+    dbConnectPromise = connectDB().catch(() => {});
+    await dbConnectPromise;
     if (require.main === module) {
         app.listen(PORT, '0.0.0.0', () => {
             console.log(`Server running on http://localhost:${PORT}`);
@@ -65,10 +68,24 @@ async function start() {
 }
 start();
 
-// Middleware
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Middleware: wait for DB connection attempt to finish before API writes/reads
+app.use('/api', async (req, res, next) => {
+    if (!dbReady && dbConnectPromise) {
+        try { await dbConnectPromise; } catch (_) {}
+    }
+    next();
+});
+
+// Debug: DB connection status
+app.get('/api/debug/db', (req, res) => {
+    res.json({
+        success: true,
+        dbReady,
+        mongooseState: mongoose.connection.readyState,
+        hasMongoUri: !!process.env.MONGODB_URI,
+        storeConnected: store.isDbConnected()
+    });
+});
 
 // Middleware
 app.use(cors());
@@ -322,8 +339,45 @@ app.post('/api/auth/logout', (req, res) => {
 });
 
 // Auth - Change Password
-app.put('/api/auth/change-password', (req, res) => {
-    res.json({ success: true, message: 'Password updated successfully' });
+// Auth - Change password (requires current password)
+app.put('/api/auth/change-password', async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
+    if (isTokenBlacklisted(token)) return res.status(401).json({ success: false, message: 'Token invalidated' });
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const { currentPassword, newPassword } = req.body;
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ success: false, message: 'Current and new password are required' });
+        }
+        if (newPassword.length < 6) {
+            return res.status(400).json({ success: false, message: 'New password must be at least 6 characters' });
+        }
+
+        let user = await store.findUserById(decoded.id);
+        if (!user) user = Object.values(demoUsers).find(u => u.id === decoded.id);
+        if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+        if (user.password !== currentPassword) {
+            return res.status(401).json({ success: false, message: 'Current password is incorrect' });
+        }
+
+        if (user.role === 'student') {
+            await store.updateStudent(decoded.id, { password: newPassword });
+        } else if (user.role === 'teacher') {
+            await store.updateTeacher(decoded.id, { password: newPassword });
+        } else {
+            // Admin lives in demoUsers — update every alias entry for this id
+            for (const key of Object.keys(demoUsers)) {
+                if (demoUsers[key].id === decoded.id) demoUsers[key].password = newPassword;
+            }
+        }
+
+        res.json({ success: true, message: 'Password updated successfully' });
+    } catch (err) {
+        res.status(401).json({ success: false, message: 'Not authorized' });
+    }
 });
 
 // Profile picture - save (any authenticated role)
@@ -452,10 +506,13 @@ app.put('/api/students/:id', requireRole('admin'), async (req, res) => {
     try {
         const { firstName, lastName, email, admissionNumber, class: studentClass, gender, parentName, parentPhone, password } = req.body;
 
-        const student = await store.updateStudent(req.params.id, {
+        const updateData = {
             firstName, lastName, email, admissionNumber,
             class: studentClass, gender, parentName, parentPhone
-        });
+        };
+        if (password) updateData.password = password;
+
+        const student = await store.updateStudent(req.params.id, updateData);
         if (!student) return res.status(404).json({ success: false, message: 'Student not found' });
 
         res.json({ success: true, message: 'Student updated successfully', student });
@@ -530,9 +587,10 @@ app.put('/api/teachers/:id', requireRole('admin'), async (req, res) => {
     try {
         const { firstName, lastName, email, staffId, department, qualification, password } = req.body;
 
-        const teacher = await store.updateTeacher(req.params.id, {
-            firstName, lastName, email, staffId, department, qualification
-        });
+        const updateData = { firstName, lastName, email, staffId, department, qualification };
+        if (password) updateData.password = password;
+
+        const teacher = await store.updateTeacher(req.params.id, updateData);
         if (!teacher) return res.status(404).json({ success: false, message: 'Teacher not found' });
 
         res.json({ success: true, message: 'Teacher updated successfully', teacher });
