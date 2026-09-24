@@ -179,6 +179,11 @@ individualResultSchema.index({ class: 1, session: 1, term: 1, admissionNumber: 1
 individualResultSchema.index({ batchId: 1 });
 individualResultSchema.index({ class: 1, session: 1, term: 1, status: 1 });
 
+const seedMetaSchema = new mongoose.Schema({
+    key: { type: String, required: true, unique: true },
+    createdAt: { type: Date, default: Date.now }
+});
+
 module.exports = {
     PortalStudent: mongoose.model('PortalStudent', portalStudentSchema),
     PortalTeacher: mongoose.model('PortalTeacher', portalTeacherSchema),
@@ -188,5 +193,6 @@ module.exports = {
     PortalTimetable: mongoose.model('PortalTimetable', timetableSchema),
     PortalAssignment: mongoose.model('PortalAssignment', assignmentSchema),
     StudentResult: mongoose.model('StudentResult', individualResultSchema),
-    ResultBatch: mongoose.model('ResultBatch', resultBatchSchema)
+    ResultBatch: mongoose.model('ResultBatch', resultBatchSchema),
+    PortalSeedMeta: mongoose.model('PortalSeedMeta', seedMetaSchema)
 };

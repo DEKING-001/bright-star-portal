@@ -10,7 +10,8 @@ const {
     PortalTimetable,
     PortalAssignment,
     StudentResult,
-    ResultBatch
+    ResultBatch,
+    PortalSeedMeta
 } = require('./models/portal');
 
 // ---------- In-memory fallback seed ----------
@@ -167,33 +168,50 @@ async function seedIfEmpty() {
             );
         }
 
-        // Seed only if empty
-        if (await PortalStudent.countDocuments() === 0) {
-            await PortalStudent.insertMany(mem.students.map(({ _id, ...s }) => ({
-                ...s,
-                password: s.password || 'password123'
-            })));
+        // One-time full seed for both branches, then never again.
+        // Flag prevents resurrecting records the admin deletes later.
+        const alreadySeeded = await PortalSeedMeta.findOne({ key: 'demo_seeded_v1' });
+        if (!alreadySeeded) {
+            // Students: insert only if admissionNumber missing (won't overwrite existing)
+            for (const { _id, ...s } of mem.students) {
+                const exists = await PortalStudent.findOne({ admissionNumber: s.admissionNumber });
+                if (!exists) {
+                    await PortalStudent.create({ ...s, password: s.password || 'password123' });
+                }
+            }
+            for (const { _id, ...t } of mem.teachers) {
+                const exists = await PortalTeacher.findOne({ staffId: t.staffId });
+                if (!exists) {
+                    await PortalTeacher.create({ ...t, password: t.password || 'password123' });
+                }
+            }
+            for (const { _id, ...a } of mem.announcements) {
+                const exists = await PortalAnnouncement.findOne({ title: a.title, branch: a.branch });
+                if (!exists) {
+                    await PortalAnnouncement.create(a);
+                }
+            }
+            for (const { _id, ...f } of mem.fees) {
+                const exists = await PortalFee.findOne({ admissionNumber: f.admissionNumber, session: f.session, term: f.term });
+                if (!exists) {
+                    await PortalFee.create(f);
+                }
+            }
+            for (const { _id, ...t } of mem.timetables) {
+                const exists = await PortalTimetable.findOne({ class: t.class, session: t.session, term: t.term, branch: t.branch });
+                if (!exists) {
+                    await PortalTimetable.create(t);
+                }
+            }
+            for (const { _id, ...a } of mem.assignments) {
+                const exists = await PortalAssignment.findOne({ title: a.title, branch: a.branch });
+                if (!exists) {
+                    await PortalAssignment.create(a);
+                }
+            }
+            await PortalSeedMeta.create({ key: 'demo_seeded_v1' });
+            console.log('One-time demo seed completed for both branches.');
         }
-        if (await PortalTeacher.countDocuments() === 0) {
-            await PortalTeacher.insertMany(mem.teachers.map(({ _id, ...t }) => ({
-                ...t,
-                password: t.password || 'password123'
-            })));
-        }
-        if (await PortalAnnouncement.countDocuments() === 0) {
-            await PortalAnnouncement.insertMany(mem.announcements.map(({ _id, ...a }) => a));
-        }
-        if (await PortalFee.countDocuments() === 0) {
-            await PortalFee.insertMany(mem.fees.map(({ _id, ...f }) => f));
-        }
-        if (await PortalTimetable.countDocuments() === 0) {
-            await PortalTimetable.insertMany(mem.timetables.map(({ _id, ...t }) => t));
-        }
-        if (await PortalAssignment.countDocuments() === 0) {
-            await PortalAssignment.insertMany(mem.assignments.map(({ _id, ...a }) => a));
-        }
-        // NOTE: Do NOT upsert demo records here — that would resurrect
-        // students/teachers the admin has deleted. Seed only when empty above.
     } catch (e) {
         console.error('Seed error:', e.message);
     }
