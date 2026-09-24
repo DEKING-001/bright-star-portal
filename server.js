@@ -1026,6 +1026,49 @@ app.get('/api/students', requireRole('admin', 'teacher'), async (req, res) => {
     }
 });
 
+// Attendance - Mark (teacher/admin) — persists to MongoDB
+app.post('/api/attendance', requireRole('teacher', 'admin'), async (req, res) => {
+    try {
+        const { records } = req.body;
+        if (!Array.isArray(records) || records.length === 0) {
+            return res.status(400).json({ success: false, message: 'records array is required' });
+        }
+        for (const r of records) {
+            if (!r.admissionNumber || !r.class || !r.date || !r.status) {
+                return res.status(400).json({ success: false, message: 'Each record needs admissionNumber, class, date, status' });
+            }
+            await store.saveAttendance({
+                admissionNumber: r.admissionNumber,
+                class: r.class,
+                branch: r.branch,
+                date: r.date,
+                status: r.status,
+                remark: r.remark,
+                markedBy: req.user.id
+            });
+        }
+        res.json({ success: true, message: 'Attendance saved', count: records.length });
+    } catch (err) {
+        console.error('Save attendance error:', err);
+        res.status(500).json({ success: false, message: 'Failed to save attendance' });
+    }
+});
+
+// Attendance - Class records for a date
+app.get('/api/attendance/class', requireRole('teacher', 'admin'), async (req, res) => {
+    try {
+        const filter = {};
+        if (req.query.class) filter.class = req.query.class;
+        if (req.query.date) filter.date = req.query.date;
+        if (req.query.branch) filter.branch = req.query.branch;
+        const records = await store.getClassAttendance(filter);
+        res.json({ success: true, records });
+    } catch (err) {
+        console.error('Get class attendance error:', err);
+        res.status(500).json({ success: false, message: 'Failed to load attendance' });
+    }
+});
+
 // Get all teachers
 app.get('/api/teachers', requireRole('admin'), async (req, res) => {
     try {

@@ -95,9 +95,12 @@ async function loadDashboardData() {
             const statsData = await statsResponse.json();
             if (statsData.success) {
                 classBreakdown = statsData.statistics.classBreakdown || {};
+                attendanceClassBreakdown = classBreakdown;
                 document.getElementById('totalStudents').textContent = statsData.statistics.totalStudents;
                 document.getElementById('totalTeachers').textContent = statsData.statistics.totalTeachers;
                 renderMyClasses(classBreakdown, user);
+                populateAttendanceClassSelect();
+                setDefaultAttendanceDate();
             }
         }
         
@@ -329,6 +332,10 @@ function showSection(section, event) {
     if (section === 'assignments') loadTeacherAssignments();
     if (section === 'announcements') loadTeacherAnnouncements();
     if (section === 'results') loadTeacherUploadedResults();
+    if (section === 'attendance') {
+        populateAttendanceClassSelect();
+        setDefaultAttendanceDate();
+    }
 }
 
 // Load teacher's own uploaded result batches with approval status
@@ -497,13 +504,145 @@ async function loadTeacherAnnouncements() {
     }
 }
 
-// Attendance functions
-function loadAttendanceStudents() {
-    alert('Loading students for attendance...');
+// Attendance functions — students come live from the API (deleted admin students never appear)
+let attendanceClassBreakdown = {};
+
+function populateAttendanceClassSelect() {
+    const select = document.getElementById('attendanceClassSelect');
+    if (!select) return;
+    const classes = Object.keys(attendanceClassBreakdown);
+    const current = select.value;
+    select.innerHTML = '<option value="">Select Class</option>' +
+        classes.map(c => `<option value="${c}">${cleanClassName(c) !== 'Unknown Class' ? cleanClassName(c) : c}</option>`).join('');
+    if (classes.includes(current)) select.value = current;
+    else if (classes.length === 1) select.value = classes[0];
 }
 
-function saveAttendance() {
-    alert('Attendance saved successfully!');
+function setDefaultAttendanceDate() {
+    const input = document.getElementById('attendanceDateInput');
+    if (input && !input.value) {
+        input.value = new Date().toISOString().slice(0, 10);
+    }
+}
+
+async function loadAttendanceStudents() {
+    const cls = document.getElementById('attendanceClassSelect')?.value;
+    const date = document.getElementById('attendanceDateInput')?.value;
+    const container = document.getElementById('attendanceStudentsList');
+    if (!container) return;
+    if (!cls) {
+        container.innerHTML = '<p class="text-amber-600 text-center py-4 text-sm">Please select a class first.</p>';
+        return;
+    }
+    container.innerHTML = '<p class="text-slate-400 text-center py-4 text-sm">Loading students...</p>';
+    try {
+        const token = getSession('teacher')?.token;
+        const branch = getSession('teacher')?.user?.branch || 'secondary';
+        const qs = new URLSearchParams({ class: cls });
+        if (branch) qs.set('branch', branch);
+        const res = await fetch(`/api/students?${qs.toString()}`, {
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
+        const data = await res.json();
+        let students = data.success ? data.students : [];
+
+        // Pre-select any attendance already saved for this class+date
+        let existing = {};
+        if (date) {
+            try {
+                const attQs = new URLSearchParams({ class: cls, date });
+                if (branch) attQs.set('branch', branch);
+                const attRes = await fetch(`/api/attendance/class?${attQs.toString()}`, {
+                    headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+                });
+                const attData = await attRes.json();
+                if (attData.success && Array.isArray(attData.records)) {
+                    attData.records.forEach(r => { existing[r.admissionNumber] = r.status; });
+                }
+            } catch (_) {}
+        }
+
+        if (students.length === 0) {
+            container.innerHTML = '<p class="text-slate-400 text-center py-4 text-sm">No students found in this class. If you deleted them in admin, they will not appear here.</p>';
+            return;
+        }
+        container.innerHTML = students.map((s, i) => {
+            const name = `${s.user?.firstName || ''} ${s.user?.lastName || ''}`.trim();
+            const pre = existing[s.admissionNumber] || '';
+            const radio = (val, label) => {
+                const checked = pre === val ? 'checked' : '';
+                return `<label class="flex items-center text-slate-600"><input type="radio" name="att_${i}" value="${val}" data-admission="${s.admissionNumber}" class="att-radio mr-1 text-primary" ${checked}> ${label}</label>`;
+            };
+            return `
+                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition" data-admission="${s.admissionNumber}">
+                    <div>
+                        <span class="font-medium text-slate-700">${name}</span>
+                        <span class="text-xs text-slate-400 ml-2">${s.admissionNumber}</span>
+                    </div>
+                    <div class="flex space-x-2">
+                        ${radio('present', 'Present')}
+                        ${radio('absent', 'Absent')}
+                        ${radio('late', 'Late')}
+                    </div>
+                </div>`;
+        }).join('');
+    } catch (e) {
+        console.error(e);
+        container.innerHTML = '<p class="text-red-500 text-center py-4 text-sm">Failed to load students.</p>';
+    }
+}
+
+async function saveAttendance() {
+    const cls = document.getElementById('attendanceClassSelect')?.value;
+    const date = document.getElementById('attendanceDateInput')?.value;
+    if (!cls || !date) {
+        alert('Please select a class and date first, then load students.');
+        return;
+    }
+    const rows = document.querySelectorAll('#attendanceStudentsList [data-admission]');
+    if (rows.length === 0) {
+        alert('No students loaded. Click Load Students first.');
+        return;
+    }
+    const records = [];
+    const missing = [];
+    rows.forEach(row => {
+        const admission = row.getAttribute('data-admission');
+        const checked = row.querySelector('input.att-radio:checked');
+        if (checked) {
+            records.push({ admissionNumber: admission, class: cls, date, status: checked.value });
+        } else {
+            missing.push(admission);
+        }
+    });
+    if (records.length === 0) {
+        alert('Please mark Present/Absent/Late for each student.');
+        return;
+    }
+    if (missing.length > 0 && !confirm(`${missing.length} student(s) have no mark. Save only the marked ones?`)) return;
+
+    try {
+        const token = getSession('teacher')?.token;
+        const branch = getSession('teacher')?.user?.branch || 'secondary';
+        const res = await fetch('/api/attendance', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ records: records.map(r => ({ ...r, branch })) })
+        });
+        const data = await res.json();
+        if (data.success) {
+            alert(`Attendance saved for ${data.count} student(s).`);
+            loadAttendanceStudents();
+        } else {
+            alert(data.message || 'Failed to save attendance.');
+        }
+    } catch (e) {
+        console.error(e);
+        alert('Network error — attendance was NOT saved.');
+    }
 }
 
 // Settings functions

@@ -184,6 +184,18 @@ const seedMetaSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 });
 
+const portalAttendanceSchema = new mongoose.Schema({
+    admissionNumber: { type: String, required: true },
+    class: { type: String, required: true },
+    branch: { type: String, enum: ['nursery', 'secondary'], default: 'secondary' },
+    date: { type: String, required: true },
+    status: { type: String, enum: ['present', 'absent', 'late', 'excused'], required: true },
+    remark: String,
+    markedBy: String
+}, { timestamps: true });
+
+portalAttendanceSchema.index({ admissionNumber: 1, date: 1 }, { unique: true });
+
 module.exports = {
     PortalStudent: mongoose.model('PortalStudent', portalStudentSchema),
     PortalTeacher: mongoose.model('PortalTeacher', portalTeacherSchema),
@@ -194,5 +206,6 @@ module.exports = {
     PortalAssignment: mongoose.model('PortalAssignment', assignmentSchema),
     StudentResult: mongoose.model('StudentResult', individualResultSchema),
     ResultBatch: mongoose.model('ResultBatch', resultBatchSchema),
-    PortalSeedMeta: mongoose.model('PortalSeedMeta', seedMetaSchema)
+    PortalSeedMeta: mongoose.model('PortalSeedMeta', seedMetaSchema),
+    PortalAttendance: mongoose.model('PortalAttendance', portalAttendanceSchema)
 };

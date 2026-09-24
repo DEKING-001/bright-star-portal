@@ -11,7 +11,8 @@ const {
     PortalAssignment,
     StudentResult,
     ResultBatch,
-    PortalSeedMeta
+    PortalSeedMeta,
+    PortalAttendance
 } = require('./models/portal');
 
 // ---------- In-memory fallback seed ----------
@@ -1248,5 +1249,39 @@ module.exports = {
     approveResultBatch,
     getStudentApprovedResults,
     getAllPendingStudentResults,
-    getStudentResultSummary
+    getStudentResultSummary,
+    saveAttendance,
+    getClassAttendance
 };
+
+// ---------- Attendance ----------
+async function saveAttendance({ admissionNumber, class: cls, branch, date, status, remark, markedBy }) {
+    const day = String(date).slice(0, 10);
+    if (dbConnected) {
+        try {
+            await PortalAttendance.findOneAndUpdate(
+                { admissionNumber, date: day },
+                { admissionNumber, class: cls, branch: branch || 'secondary', date: day, status, remark: remark || '', markedBy: markedBy || '' },
+                { upsert: true, new: true, setDefaultsOnInsert: true }
+            );
+        } catch (err) {
+            console.error('MongoDB saveAttendance failed:', err.message);
+        }
+    }
+    return { success: true };
+}
+
+async function getClassAttendance(filter = {}) {
+    if (dbConnected) {
+        try {
+            const q = {};
+            if (filter.class) q.class = filter.class;
+            if (filter.date) q.date = String(filter.date).slice(0, 10);
+            if (filter.branch) q.branch = filter.branch;
+            return await PortalAttendance.find(q).sort({ date: -1 }).lean();
+        } catch (err) {
+            console.error('MongoDB getClassAttendance failed:', err.message);
+        }
+    }
+    return [];
+}

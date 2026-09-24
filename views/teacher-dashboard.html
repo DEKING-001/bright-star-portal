@@ -310,13 +310,13 @@
                     <div class="grid md:grid-cols-3 gap-4 mb-6">
                         <div>
                             <label class="block text-sm font-semibold text-slate-700 mb-1">Class</label>
-                            <select class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
-                                <option>SS1A</option><option>SS1B</option><option>SS2A</option>
+                            <select id="attendanceClassSelect" class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                <option value="">Select Class</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-slate-700 mb-1">Date</label>
-                            <input type="date" class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                            <input type="date" id="attendanceDateInput" class="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
                         </div>
                         <div class="flex items-end">
                             <button onclick="loadAttendanceStudents()" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark transition">
@@ -324,24 +324,9 @@
                             </button>
                         </div>
                     </div>
-                    
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition">
-                            <span class="font-medium text-slate-700">Chukwuemeka Okonkwo</span>
-                            <div class="flex space-x-2">
-                                <label class="flex items-center text-slate-600"><input type="radio" name="att_1" value="present" class="mr-1 text-primary"> Present</label>
-                                <label class="flex items-center text-slate-600"><input type="radio" name="att_1" value="absent" class="mr-1 text-primary"> Absent</label>
-                                <label class="flex items-center text-slate-600"><input type="radio" name="att_1" value="late" class="mr-1 text-primary"> Late</label>
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition">
-                            <span class="font-medium text-slate-700">Amina Ibrahim</span>
-                            <div class="flex space-x-2">
-                                <label class="flex items-center text-slate-600"><input type="radio" name="att_2" value="present" class="mr-1 text-primary"> Present</label>
-                                <label class="flex items-center text-slate-600"><input type="radio" name="att_2" value="absent" class="mr-1 text-primary"> Absent</label>
-                                <label class="flex items-center text-slate-600"><input type="radio" name="att_2" value="late" class="mr-1 text-primary"> Late</label>
-                            </div>
-                        </div>
+
+                    <div id="attendanceStudentsList" class="space-y-3">
+                        <p class="text-slate-400 text-center py-4 text-sm">Select a class and date, then click Load Students.</p>
                     </div>
                     <div class="mt-6 flex justify-end">
                         <button onclick="saveAttendance()" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark transition">
@@ -500,6 +485,6 @@
     <script src="/js/theme.js?v=2"></script>
     <script src="/js/sidebar.js?v=2"></script>
     <script src="/js/session.js?v=2"></script>
-    <script src="/js/teacher-dashboard.js?v=3"></script>
+    <script src="/js/teacher-dashboard.js?v=4"></script>
 </body>
 </html>
