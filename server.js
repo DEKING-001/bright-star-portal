@@ -326,6 +326,50 @@ app.put('/api/auth/change-password', (req, res) => {
     res.json({ success: true, message: 'Password updated successfully' });
 });
 
+// Profile picture - save (any authenticated role)
+const profilePics = {}; // in-memory fallback keyed by user id
+app.put('/api/users/profile-pic', async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
+    if (isTokenBlacklisted(token)) return res.status(401).json({ success: false, message: 'Token invalidated' });
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const { pic } = req.body;
+        if (typeof pic !== 'string') return res.status(400).json({ success: false, message: 'Invalid picture data' });
+        profilePics[decoded.id] = pic;
+        if (store.isDbConnected()) {
+            try {
+                await store.updateStudent(decoded.id, { profilePic: pic });
+            } catch (_) {
+                try { await store.updateTeacher(decoded.id, { profilePic: pic }); } catch (_) {}
+            }
+        }
+        res.json({ success: true, message: 'Profile picture saved' });
+    } catch (err) {
+        res.status(401).json({ success: false, message: 'Not authorized' });
+    }
+});
+
+// Profile picture - get
+app.get('/api/users/profile-pic', async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ success: false, message: 'Not authorized' });
+    if (isTokenBlacklisted(token)) return res.status(401).json({ success: false, message: 'Token invalidated' });
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        let pic = profilePics[decoded.id] || '';
+        if (!pic && store.isDbConnected()) {
+            try {
+                const user = await store.findUserById(decoded.id);
+                if (user) pic = user.profilePic || '';
+            } catch (_) {}
+        }
+        res.json({ success: true, pic });
+    } catch (err) {
+        res.status(401).json({ success: false, message: 'Not authorized' });
+    }
+});
+
 // Students - Get profile
 app.get('/api/students/profile', async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1];
@@ -922,6 +966,38 @@ app.get('/api/teachers', requireRole('admin'), async (req, res) => {
     }
 });
 
+// Get current teacher's own profile
+app.get('/api/teachers/me', requireRole('teacher'), async (req, res) => {
+    try {
+        let user = await store.findUserById(req.user.id);
+        if (!user) user = Object.values(demoUsers).find(u => u.id === req.user.id);
+        if (!user) return res.status(404).json({ success: false, message: 'Teacher not found' });
+        const { password, ...teacher } = user;
+        res.json({ success: true, teacher });
+    } catch (err) {
+        console.error('Get teacher profile error:', err);
+        res.status(500).json({ success: false, message: 'Failed to load teacher profile' });
+    }
+});
+
+// Public: submit an admission application (no auth required)
+const admissionApplications = [];
+app.post('/api/admissions', async (req, res) => {
+    const { firstName, lastName, gender, class: studentClass, parentName, parentPhone, parentEmail } = req.body;
+    if (!firstName || !lastName || !parentName || !parentPhone) {
+        return res.status(400).json({ success: false, message: 'First name, last name, parent name and parent phone are required' });
+    }
+    const application = {
+        id: `APP/${Date.now()}`,
+        firstName, lastName, gender, class: studentClass,
+        parentName, parentPhone, parentEmail,
+        status: 'pending',
+        submittedAt: new Date().toISOString()
+    };
+    admissionApplications.push(application);
+    res.status(201).json({ success: true, message: 'Application received', admissionNumber: application.id, application });
+});
+
 // Get statistics
 app.get('/api/statistics', async (req, res) => {
     try {
@@ -941,12 +1017,15 @@ app.get('/api/admin/dashboard', requireRole('admin'), async (req, res) => {
         const filter = {};
         if (req.query.branch) filter.branch = req.query.branch;
         const stats = await store.getStatistics(filter);
+        let announcements = [];
+        try { announcements = await store.getAnnouncements(filter); } catch (_) {}
         res.json({
             success: true,
             stats: {
                 totalStudents: stats.totalStudents,
                 totalTeachers: stats.totalTeachers,
                 totalAdmins: 1,
+                totalAnnouncements: announcements.length,
                 recentStudents: (await store.getStudents(filter)).slice(0, 3),
                 activeSession: { name: '2025/2026', currentTerm: 'Second Term' }
             }

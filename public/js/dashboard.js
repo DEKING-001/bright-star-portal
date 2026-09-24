@@ -46,6 +46,19 @@ function loadStudentPic() {
             const el = document.getElementById(id);
             if (el) el.classList.add('hidden');
         });
+        return;
+    }
+    // Fallback: try server
+    const session = getSession('student');
+    if (session?.token) {
+        fetch('/api/users/profile-pic', { headers: { 'Authorization': `Bearer ${session.token}` } })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success && data.pic) {
+                    localStorage.setItem('student_profile_pic', data.pic);
+                    loadStudentPic();
+                }
+            }).catch(() => {});
     }
 }
 
@@ -55,8 +68,17 @@ function uploadStudentPic(event) {
     if (file.size > 2 * 1024 * 1024) { alert('Image must be under 2MB'); return; }
     const reader = new FileReader();
     reader.onload = function(e) {
-        localStorage.setItem('student_profile_pic', e.target.result);
+        const pic = e.target.result;
+        localStorage.setItem('student_profile_pic', pic);
         loadStudentPic();
+        const session = getSession('student');
+        if (session?.token) {
+            fetch('/api/users/profile-pic', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.token}` },
+                body: JSON.stringify({ pic })
+            }).catch(() => {});
+        }
     };
     reader.readAsDataURL(file);
 }
@@ -71,6 +93,14 @@ function removeStudentPic() {
         const el = document.getElementById(id);
         if (el) el.classList.remove('hidden');
     });
+    const session = getSession('student');
+    if (session?.token) {
+        fetch('/api/users/profile-pic', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.token}` },
+            body: JSON.stringify({ pic: '' })
+        }).catch(() => {});
+    }
 }
 
 // Load dashboard data from API
@@ -772,6 +802,58 @@ function formatDate(dateString) {
 }
 
 // Download fee receipt
-function downloadFeeReceipt() {
-    alert('Fee receipt download feature coming soon!');
+async function downloadFeeReceipt() {
+    try {
+        const session = getSession('student');
+        const token = session?.token;
+        const response = await fetch('/api/fees/student', {
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
+        if (!response.ok) throw new Error('Failed to load fee data');
+        const data = await response.json();
+        const fees = data.fees || [];
+        const withPayments = fees.filter(f => f.paymentHistory && f.paymentHistory.length > 0);
+        if (withPayments.length === 0) {
+            alert('No payment records available for a receipt yet.');
+            return;
+        }
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('p', 'mm', 'a4');
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const margin = 15;
+        let y = margin;
+        const user = session.user || {};
+        doc.setFontSize(16);
+        doc.setFont(undefined, 'bold');
+        doc.text('Bright Star International School', pageWidth / 2, y, { align: 'center' });
+        y += 8;
+        doc.setFontSize(12);
+        doc.setFont(undefined, 'normal');
+        doc.text('Fee Payment Receipt', pageWidth / 2, y, { align: 'center' });
+        y += 12;
+        doc.setFontSize(10);
+        doc.text(`Student: ${user.firstName || ''} ${user.lastName || ''}`, margin, y); y += 6;
+        doc.text(`Admission No: ${user.admissionNumber || 'N/A'}`, margin, y); y += 6;
+        doc.text(`Date: ${new Date().toLocaleDateString()}`, margin, y); y += 10;
+        doc.setDrawColor(200); doc.line(margin, y, pageWidth - margin, y); y += 8;
+        withPayments.forEach(fee => {
+            doc.setFont(undefined, 'bold');
+            doc.text(`${fee.term || ''} ${fee.session || ''} Fees`.trim(), margin, y);
+            doc.setFont(undefined, 'normal');
+            y += 6;
+            doc.text(`Total Fee: ₦${(fee.totalFee || 0).toLocaleString()}`, margin, y); y += 5;
+            doc.text(`Amount Paid: ₦${(fee.amountPaid || 0).toLocaleString()}`, margin, y); y += 5;
+            doc.text(`Balance: ₦${(fee.balance || 0).toLocaleString()}`, margin, y); y += 5;
+            doc.text(`Status: ${fee.status || 'N/A'}`, margin, y); y += 8;
+            (fee.paymentHistory || []).forEach(p => {
+                doc.text(`  Payment: ₦${(p.amount || 0).toLocaleString()} on ${p.date ? new Date(p.date).toLocaleDateString() : 'N/A'} (${p.method || 'N/A'}) Ref: ${p.reference || 'N/A'}`, margin, y);
+                y += 5;
+            });
+            y += 6;
+        });
+        doc.save(`fee-receipt-${(user.admissionNumber || 'student').replace(/\//g, '-')}.pdf`);
+    } catch (error) {
+        console.error('Fee receipt error:', error);
+        alert('Unable to generate fee receipt. Please try again later.');
+    }
 }

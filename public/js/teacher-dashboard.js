@@ -25,6 +25,18 @@ function loadTeacherPic() {
         if (img) { img.src = pic; img.classList.remove('hidden'); }
         const icon = document.getElementById('teacherProfileIcon');
         if (icon) icon.classList.add('hidden');
+        return;
+    }
+    const session = getSession('teacher');
+    if (session?.token) {
+        fetch('/api/users/profile-pic', { headers: { 'Authorization': `Bearer ${session.token}` } })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success && data.pic) {
+                    localStorage.setItem('teacher_profile_pic', data.pic);
+                    loadTeacherPic();
+                }
+            }).catch(() => {});
     }
 }
 
@@ -34,8 +46,17 @@ function uploadTeacherPic(event) {
     if (file.size > 2 * 1024 * 1024) { alert('Image must be under 2MB'); return; }
     const reader = new FileReader();
     reader.onload = function(e) {
-        localStorage.setItem('teacher_profile_pic', e.target.result);
+        const pic = e.target.result;
+        localStorage.setItem('teacher_profile_pic', pic);
         loadTeacherPic();
+        const session = getSession('teacher');
+        if (session?.token) {
+            fetch('/api/users/profile-pic', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.token}` },
+                body: JSON.stringify({ pic })
+            }).catch(() => {});
+        }
     };
     reader.readAsDataURL(file);
 }
@@ -46,6 +67,14 @@ function removeTeacherPic() {
     if (img) { img.src = ''; img.classList.add('hidden'); }
     const icon = document.getElementById('teacherProfileIcon');
     if (icon) icon.classList.remove('hidden');
+    const session = getSession('teacher');
+    if (session?.token) {
+        fetch('/api/users/profile-pic', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.token}` },
+            body: JSON.stringify({ pic: '' })
+        }).catch(() => {});
+    }
 }
 
 // Load dashboard data from API
@@ -73,19 +102,23 @@ async function loadDashboardData() {
         }
         
         // Fetch teacher's subjects from demo data
-        const teachersResponse = await fetch(`/api/teachers?branch=${teacherBranch}`, {
-            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
-        });
-        
-        if (teachersResponse.ok) {
-            const teachersData = await teachersResponse.json();
-            if (teachersData.success) {
-                const teacher = teachersData.teachers.find(t => t.staffId === user.staffId);
-                if (teacher && teacher.subjects) {
-                    document.getElementById('mySubjects').textContent = teacher.subjects.length;
+        try {
+            const teachersResponse = await fetch(`/api/teachers/me`, {
+                headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+            });
+            if (teachersResponse.ok) {
+                const teachersData = await teachersResponse.json();
+                if (teachersData.success && teachersData.teacher) {
+                    const teacher = teachersData.teacher;
+                    if (teacher.subjects) {
+                        document.getElementById('mySubjects').textContent = teacher.subjects.length;
+                    }
                     populateClassSelect();
                 }
             }
+        } catch (e) {
+            console.warn('Could not load teacher profile:', e);
+            populateClassSelect();
         }
     } catch (error) {
         console.error('Error loading dashboard data:', error);
@@ -393,7 +426,7 @@ async function loadTeacherAssignments() {
     try {
         const token = getSession('teacher')?.token;
         const teacherBranch = getSession('teacher')?.user?.branch || 'secondary';
-        const res = await fetch(`/api/assignments/all?branch=${teacherBranch}`, {
+        const res = await fetch(`/api/assignments?branch=${teacherBranch}`, {
             headers: token ? { 'Authorization': `Bearer ${token}` } : {}
         });
         const data = await res.json();
@@ -474,20 +507,45 @@ function saveAttendance() {
 }
 
 // Settings functions
-function saveTeacherSettings() {
+async function saveTeacherSettings() {
     const firstName = document.getElementById('teacherSettingsFirstName')?.value;
     const lastName = document.getElementById('teacherLastName')?.value;
     const email = document.getElementById('teacherEmail')?.value;
-    
+    const currentPassword = document.getElementById('teacherCurrentPassword')?.value;
+    const newPassword = document.getElementById('teacherNewPassword')?.value;
+    const confirmPassword = document.getElementById('teacherConfirmPassword')?.value;
+
     if (firstName) {
         document.getElementById('teacherFirstName').textContent = firstName;
         const session = getSession('teacher');
         if (session?.user) {
             session.user.firstName = firstName;
             if (lastName) session.user.lastName = lastName;
-            setSession('teacher', session);
+            if (email) session.user.email = email;
+            saveSession('teacher', session.token, session.user);
         }
     }
-    
+
+    if (newPassword || confirmPassword || currentPassword) {
+        if (!currentPassword) { alert('Please enter your current password to change password.'); return; }
+        if (newPassword !== confirmPassword) { alert('New passwords do not match.'); return; }
+        try {
+            const session = getSession('teacher');
+            const response = await fetch('/api/auth/change-password', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session?.token}` },
+                body: JSON.stringify({ currentPassword, newPassword })
+            });
+            const data = await response.json();
+            if (!response.ok) { alert(data.message || 'Failed to change password.'); return; }
+            document.getElementById('teacherCurrentPassword').value = '';
+            document.getElementById('teacherNewPassword').value = '';
+            document.getElementById('teacherConfirmPassword').value = '';
+        } catch (err) {
+            alert('Error changing password.');
+            return;
+        }
+    }
+
     alert('Settings saved successfully!');
 }

@@ -13,6 +13,7 @@ const portalStudentSchema = new mongoose.Schema({
     gender: String,
     parentName: String,
     parentPhone: String,
+    profilePic: { type: String, default: '' },
     user: {
         firstName: String,
         lastName: String,
@@ -29,6 +30,7 @@ const portalTeacherSchema = new mongoose.Schema({
     qualification: String,
     experience: Number,
     status: String,
+    profilePic: { type: String, default: '' },
     user: {
         firstName: String,
         lastName: String,

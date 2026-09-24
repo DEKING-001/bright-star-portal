@@ -272,29 +272,25 @@
             };
             
             try {
-                const response = await fetch('/api/students', {
+                const response = await fetch('/api/admissions', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         ...formData,
-                        email: formData.parentEmail,
-                        password: 'password123',
                         session: '2025/2026',
                         term: 'Second Term'
                     })
                 });
                 
-                if (response.ok) {
-                    const data = await response.json();
-                    alert(`Application submitted successfully!\n\nStudent: ${formData.firstName} ${formData.lastName}\nAdmission Number: ${data.student.admissionNumber}\nClass: ${formData.class}\n\nPlease visit the school with required documents to complete registration.`);
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    alert(`Application submitted successfully!\n\nStudent: ${formData.firstName} ${formData.lastName}\nAdmission Number: ${data.admissionNumber || 'Pending'}\nClass: ${formData.class}\n\nPlease visit the school with required documents to complete registration.`);
                     document.getElementById('onlineAdmissionForm').reset();
                 } else {
-                    const data = await response.json();
-                    alert(data.message || 'Error submitting application');
+                    alert(data.message || 'Error submitting application. Please try again or contact the school.');
                 }
             } catch (error) {
-                alert('Application submitted successfully! Please visit the school to complete registration.');
-                document.getElementById('onlineAdmissionForm').reset();
+                alert('Network error. Please check your connection and try again, or contact the school directly at brightstarsschools2@gmail.com.');
             }
         }
     </script>

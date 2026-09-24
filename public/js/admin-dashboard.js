@@ -53,7 +53,7 @@ function populateClassSelects() {
 
 document.addEventListener('DOMContentLoaded', async function() {
     try {
-        console.log('[AdminDashboard] v6 loading...');
+        console.log('[AdminDashboard] v7 loading...');
         const auth = await requireAuth('admin');
         if (!auth.ok) {
             console.warn('[AdminDashboard] Auth failed — redirecting to login');
@@ -102,7 +102,25 @@ async function loadDashboard() {
             const data = await response.json();
             document.getElementById('totalStudents').textContent = data.stats.totalStudents;
             document.getElementById('totalTeachers').textContent = data.stats.totalTeachers;
+            const totalAnnEl = document.getElementById('totalAnnouncements');
+            if (totalAnnEl && data.stats.totalAnnouncements !== undefined) totalAnnEl.textContent = data.stats.totalAnnouncements;
             console.log('[AdminDashboard] Stats loaded:', data.stats);
+            const recentList = data.stats.recentStudents || data.recentStudents || [];
+            if (recentList.length) {
+                const recent = document.getElementById('recentStudents');
+                if (recent) {
+                    recent.innerHTML = recentList.slice(0, 5).map(s => `
+                        <div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg mb-2">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 bg-brand-100 text-brand-600 rounded-full flex items-center justify-center text-xs font-bold">${((s.user && s.user.firstName) || s.firstName || '').charAt(0)}${((s.user && s.user.lastName) || s.lastName || '').charAt(0)}</div>
+                                <div>
+                                    <p class="text-sm font-medium text-slate-700">${(s.user && s.user.firstName) || s.firstName || ''} ${(s.user && s.user.lastName) || s.lastName || ''}</p>
+                                    <p class="text-xs text-slate-500">${s.admissionNumber || 'N/A'} • ${s.class || ''}</p>
+                                </div>
+                            </div>
+                        </div>`).join('');
+                }
+            }
         } else {
             console.error('[AdminDashboard] Dashboard API error:', response.status);
             document.getElementById('recentStudents').innerHTML = '<p class="text-red-500 text-center py-4">API error: ' + response.status + '. Please log in again.</p>';
@@ -146,6 +164,33 @@ function showSection(section, event) {
     if (section === 'sessions') loadSessions();
     if (section === 'results') loadPendingResults();
     if (section === 'timetable') loadTimetableForAdmin();
+    if (section === 'statistics') loadStatistics();
+}
+
+async function loadStatistics() {
+    try {
+        const token = getSession('admin')?.token;
+        const response = await fetch(`/api/statistics${getBranchParam()}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!response.ok) return;
+        const data = await response.json();
+        const stats = data.statistics || {};
+        const totalStudentsEl = document.getElementById('statTotalStudents');
+        const totalTeachersEl = document.getElementById('statTotalTeachers');
+        if (totalStudentsEl) totalStudentsEl.textContent = stats.totalStudents ?? '—';
+        if (totalTeachersEl) totalTeachersEl.textContent = stats.totalTeachers ?? '—';
+        const breakdown = stats.classBreakdown || {};
+        const classListEl = document.getElementById('statisticsClassList');
+        if (classListEl) {
+            const entries = Object.entries(breakdown);
+            classListEl.innerHTML = entries.length
+                ? entries.map(([cls, count]) => `<div class="text-center p-4 bg-slate-50 rounded-xl"><p class="text-2xl font-bold text-slate-800">${count}</p><p class="text-slate-500 text-sm">${cls}</p></div>`).join('')
+                : '<p class="text-slate-400 text-sm col-span-full">No class data available.</p>';
+        }
+    } catch (err) {
+        console.error('Error loading statistics:', err);
+    }
 }
 
 
@@ -557,7 +602,26 @@ function loadAdminProfile() {
 }
 
 function loadProfilePic(storageKey, headerImgId, headerIconId, settingsImgId) {
-    const pic = localStorage.getItem(storageKey);
+    let pic = localStorage.getItem(storageKey);
+    if (pic) {
+        applyProfilePic(pic, headerImgId, headerIconId, settingsImgId);
+        return;
+    }
+    // Fallback: try server
+    const session = getSession('admin');
+    if (session?.token) {
+        fetch('/api/users/profile-pic', { headers: { 'Authorization': `Bearer ${session.token}` } })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success && data.pic) {
+                    localStorage.setItem(storageKey, data.pic);
+                    applyProfilePic(data.pic, headerImgId, headerIconId, settingsImgId);
+                }
+            }).catch(() => {});
+    }
+}
+
+function applyProfilePic(pic, headerImgId, headerIconId, settingsImgId) {
     if (pic) {
         [headerImgId, settingsImgId].forEach(id => {
             const el = document.getElementById(id);
@@ -588,6 +652,14 @@ function uploadAdminPic(event) {
         const pic = e.target.result;
         localStorage.setItem('admin_profile_pic', pic);
         loadProfilePic('admin_profile_pic', 'adminProfileImg', 'adminProfileIcon', 'adminSettingsImg');
+        const session = getSession('admin');
+        if (session?.token) {
+            fetch('/api/users/profile-pic', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.token}` },
+                body: JSON.stringify({ pic })
+            }).catch(() => {});
+        }
     };
     reader.readAsDataURL(file);
 }
@@ -599,6 +671,14 @@ function removeAdminPic() {
     document.getElementById('adminSettingsImg').classList.add('hidden');
     document.getElementById('adminSettingsImg').src = '';
     document.getElementById('adminSettingsIcon').classList.remove('hidden');
+    const session = getSession('admin');
+    if (session?.token) {
+        fetch('/api/users/profile-pic', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.token}` },
+            body: JSON.stringify({ pic: '' })
+        }).catch(() => {});
+    }
 }
 
 // Existing functions
@@ -890,9 +970,9 @@ async function submitAdmission(event) {
         class: document.getElementById('admClass').value,
         session: document.getElementById('admSession').value,
         term: document.getElementById('admTerm').value,
-        email: `${formData.firstName.toLowerCase()}@student.com`,
         password: 'password123'
     };
+    formData.email = `${formData.firstName.toLowerCase()}@student.com`;
     
     try {
         const token = getSession('admin')?.token;

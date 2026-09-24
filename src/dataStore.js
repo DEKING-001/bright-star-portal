@@ -275,6 +275,7 @@ async function updateStudent(id, data) {
         if (data.parentName !== undefined) update.parentName = data.parentName;
         if (data.parentPhone !== undefined) update.parentPhone = data.parentPhone;
         if (data.status !== undefined) update.status = data.status;
+        if (data.profilePic !== undefined) update.profilePic = data.profilePic;
         const doc = await PortalStudent.findByIdAndUpdate(id, { $set: update }, { new: true });
         return doc;
     }
@@ -288,6 +289,7 @@ async function updateStudent(id, data) {
     if (data.gender !== undefined) student.gender = data.gender;
     if (data.parentName !== undefined) student.parentName = data.parentName;
     if (data.parentPhone !== undefined) student.parentPhone = data.parentPhone;
+    if (data.profilePic !== undefined) student.profilePic = data.profilePic;
     return student;
 }
 
@@ -415,7 +417,8 @@ async function findUserById(id) {
                     admissionNumber: doc.admissionNumber,
                     class: doc.class,
                     session: doc.session,
-                    term: doc.term
+                    term: doc.term,
+                    profilePic: doc.profilePic || ''
                 };
             }
             doc = await PortalTeacher.findById(id).lean();
@@ -428,7 +431,8 @@ async function findUserById(id) {
                     lastName: doc.user?.lastName,
                     role: 'teacher',
                     branch: doc.branch || 'secondary',
-                    staffId: doc.staffId
+                    staffId: doc.staffId,
+                    profilePic: doc.profilePic || ''
                 };
             }
         } catch (e) {
@@ -472,6 +476,7 @@ async function updateTeacher(id, data) {
         if (data.qualification !== undefined) update.qualification = data.qualification;
         if (data.experience !== undefined) update.experience = data.experience;
         if (data.status !== undefined) update.status = data.status;
+        if (data.profilePic !== undefined) update.profilePic = data.profilePic;
         const doc = await PortalTeacher.findByIdAndUpdate(id, { $set: update }, { new: true });
         return doc;
     }
@@ -483,6 +488,7 @@ async function updateTeacher(id, data) {
     if (data.staffId !== undefined) teacher.staffId = data.staffId;
     if (data.department !== undefined) teacher.department = data.department;
     if (data.qualification !== undefined) teacher.qualification = data.qualification;
+    if (data.profilePic !== undefined) teacher.profilePic = data.profilePic;
     return teacher;
 }
 

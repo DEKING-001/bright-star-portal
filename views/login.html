@@ -66,8 +66,10 @@
                     <button id="teacherBtn" onclick="selectRole('teacher')" class="flex-1 py-2.5 px-4 rounded-lg text-sm font-semibold transition text-slate-500 hover:text-slate-700">
                         <i class="fas fa-chalkboard-teacher mr-1"></i> Teacher
                     </button>
-                    <!-- Admin access: click logo 5 times or use hidden link -->
-                    <button id="adminBtn" onclick="selectRole('admin')" class="hidden"></button>
+                    <!-- Admin access: click logo 5 times or use ?role=admin -->
+                    <button id="adminBtn" onclick="selectRole('admin')" class="hidden flex-1 py-2.5 px-4 rounded-lg text-sm font-semibold transition text-slate-500 hover:text-slate-700">
+                        <i class="fas fa-user-shield mr-1"></i> Admin
+                    </button>
                     <a href="#" id="adminBackdoor" onclick="event.preventDefault(); selectRole('admin');" class="hidden">Admin</a>
                 </div>
 
@@ -142,7 +144,7 @@
                             <input type="checkbox" class="rounded border-slate-300 text-brand-600 focus:ring-brand-500">
                             <span class="ml-2 text-sm text-slate-600">Remember me</span>
                         </label>
-                        <a href="#" class="text-sm text-brand-600 hover:text-brand-700 font-medium transition">Forgot Password?</a>
+                        <a href="/contact" class="text-sm text-brand-600 hover:text-brand-700 font-medium transition">Forgot Password?</a>
                     </div>
 
                     <div id="errorMessage" class="hidden mb-4 p-3 bg-red-50 text-red-600 rounded-xl text-sm border border-red-200"></div>
