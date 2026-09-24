@@ -481,9 +481,15 @@ app.post('/api/students', requireRole('admin'), async (req, res) => {
         const currentYear = new Date().getFullYear();
         const prefix = studentBranch === 'nursery' ? 'BNP' : 'BSS';
         const existingStudents = await store.getAllStudents({ branch: studentBranch });
-        const yearStudents = existingStudents.filter(s => s.admissionNumber && s.admissionNumber.includes(`${prefix}/${currentYear}`));
-        const nextNumber = yearStudents.length + 1;
-        admissionNumber = `${prefix}/${currentYear}/${String(nextNumber).padStart(3, '0')}`;
+        // Find max existing number for this prefix/year so deletes don't cause collisions
+        let maxNum = 0;
+        for (const s of existingStudents) {
+            if (s.admissionNumber && s.admissionNumber.startsWith(`${prefix}/${currentYear}/`)) {
+                const n = parseInt(s.admissionNumber.split('/').pop(), 10);
+                if (!isNaN(n) && n > maxNum) maxNum = n;
+            }
+        }
+        admissionNumber = `${prefix}/${currentYear}/${String(maxNum + 1).padStart(3, '0')}`;
     }
     
     const existingStudents = await store.getAllStudents({ branch: studentBranch });
@@ -1104,6 +1110,15 @@ app.get('/api/admin/dashboard', requireRole('admin'), async (req, res) => {
 });
 
 // ============ HTML PAGES ============
+// Always serve fresh HTML (avoids stale cache-bust versions on Vercel)
+app.use((req, res, next) => {
+    if (req.method === 'GET' && !req.path.startsWith('/api/') && !req.path.startsWith('/js/') && !req.path.startsWith('/css/') && !req.path.startsWith('/public/') && !req.path.startsWith('/images/') && !req.path.startsWith('/vendor/')) {
+        res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+        res.set('Pragma', 'no-cache');
+        res.set('Expires', '0');
+    }
+    next();
+});
 
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'index.html')));
 app.get('/about', (req, res) => res.sendFile(path.join(__dirname, 'views', 'about.html')));
